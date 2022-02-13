@@ -9,6 +9,7 @@ use Drupal\wbumenudomain\Entity\Wbumenudomain;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Component\Serialization\Json;
 use Drupal\node\Entity\node;
+use Drupal\Core\Url;
 
 /**
  * Class CreatePagesSiteForm.
@@ -423,8 +424,9 @@ class CreatePagesSiteForm extends FormBase {
     else
       $entity_node->save();
     
-    // Nodes en masse.
-    foreach ($form_state->get('new_contents') as $content) {
+    // Enregistre en masse les nodes.
+    $contents = $form_state->get('new_contents');
+    foreach ($contents as $k => $content) {
       /**
        *
        * @var \Drupal\node\Entity\Node $content
@@ -432,12 +434,25 @@ class CreatePagesSiteForm extends FormBase {
       if (self::$demo)
         dump($content->toArray());
       else
-        $content->save();
+        $contents[$k]->save();
     }
     $message = 'Les differentes pages ont été crée';
     \Drupal::messenger()->addMessage($message);
     if (self::$demo)
       die();
+    // Redirection vers la page de creation de theme.
+    $homePageContentType = $entity_wbumenudomain->getContentTypeHomePage();
+    if (isset($contents[$homePageContentType])) {
+      $url = Url::fromRoute('entity.config_theme_entity.add_form', [], [
+        'query' => [
+          'content-type-home' => $homePageContentType,
+          'content-type-home-id' => $entity_wbumenudomain->id(),
+          'lirairy' => $entity_wbumenudomain->getLirairy(),
+          'domaine-id' => $entity_wbumenudomain->getHostname()
+        ]
+      ]);
+      $form_state->setRedirectUrl($url);
+    }
   }
   
   private function createNode(array $values) {

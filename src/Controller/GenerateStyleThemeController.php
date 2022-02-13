@@ -82,14 +82,31 @@ class GenerateStyleThemeController extends ControllerBase {
           $editConfig->set('default', $domaine_id)->save();
           \Drupal::messenger()->addStatus(' Theme definie par defaut : ' . $key);
         }
+        /**
+         *
+         * @var \Drupal\domain\Entity\Domain $Domain
+         */
+        $Domain = \Drupal::entityTypeManager()->getStorage('domain')->load($domaine_id);
+        $uri = $Domain->getScheme() . $Domain->getHostname();
+        $options = [];
+        $options['absolute'] = true;
+        $options['external'] = true;
+        $options['attributes']['target'] = 'blank';
         $build = [
           '#theme' => 'generate_style_theme_success',
-          '#description' => "Le theme a été cree mais il ne dispose pas de contenu. <br> Vous pouvez passez à l'etape suivante ",
+          '#description' => "Le theme a été cree. <br> Vous pouvez acceder à dernier via le lien ci-dessous",
           '#title' => 'Les fichiers de votre theme ont eté creer avec success ',
-          'etape_suivante' => [
+          '#description2' => "Le theme a été cree mais il ne dispose pas de contenu. <br> Vous pouvez passez à l'etape suivante ",
+          '#title' => 'Les fichiers de votre theme ont eté creer avec success ',
+          'etape_suivante2' => [
             '#type' => 'link',
             '#title' => 'Etape suivante : Ajouter du contenu',
             '#url' => \Drupal\Core\Url::fromRoute('generate_style_theme.create_pages_site_form')
+          ],
+          'etape_suivante' => [
+            '#type' => 'link',
+            '#title' => 'voir le theme',
+            '#url' => \Drupal\Core\Url::fromUri($uri, $options)
           ]
         ];
         return $build;

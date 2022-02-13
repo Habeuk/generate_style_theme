@@ -1,0 +1,42 @@
+generate_style_theme.example:
+  path: '/generate-style-theme/example'
+  defaults:
+    _title: 'Example'
+    _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::build'
+  requirements:
+    _role: 'administrator'
+generate_style_theme.installtheme:
+  path: '/generate-style-theme/installtheme/{themename}/{domaine_id}'
+  defaults:
+    _title: 'Example'
+    _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::installTheme'
+  requirements:
+    _role: 'administrator'
+generate_style_theme.layout_entete_form:
+  path: '/generate_style_theme/form/layout_entete'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\LayoutEnteteForm'
+    _title: 'LayoutEnteteForm'
+  requirements:
+    _role: 'administrator'
+generate_style_theme.layout_footer_form:
+  path: '/generate_style_theme/form/layout_footer'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\LayoutFooterForm'
+    _title: 'LayoutEnteteForm'
+  requirements:
+    _role: 'administrator'
+generate_style_theme.layout_default_form:
+  path: '/generate_style_theme/form/layout_default'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\LayoutDefaultForm'
+    _title: 'LayoutDefaultForm'
+  requirements:
+    _role: 'administrator'
+generate_style_theme.create_pages_site_form:
+  path: '/generate_style_theme/form/create_pages_site'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\CreatePagesSiteForm'
+    _title: 'CreatePagesSiteForm'
+  requirements:
+    _access: 'TRUE'

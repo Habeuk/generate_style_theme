@@ -1,0 +1,20 @@
+add config theme entity entities:
+  title: 'Create new Config theme entity entities'
+
+administer config theme entity entities:
+  title: 'Administer Config theme entity entities'
+  description: 'Allow to access the administration form to configure Config theme entity entities.'
+  restrict access: true
+
+delete config theme entity entities:
+  title: 'Delete Config theme entity entities'
+
+edit config theme entity entities:
+  title: 'Edit Config theme entity entities'
+
+view published config theme entity entities:
+  title: 'View published Config theme entity entities'
+
+view unpublished config theme entity entities:
+  title: 'View unpublished Config theme entity entities'
+

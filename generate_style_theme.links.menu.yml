@@ -1,0 +1,28 @@
+
+# Style de theme menu items definition
+entity.style_theme_entity.collection:
+  title: 'Style de theme'
+  route_name: entity.style_theme_entity.collection
+  description: 'List Style de theme (bundles)'
+  parent: system.admin_structure
+  weight: 99
+
+# Config theme entity menu items definition
+entity.config_theme_entity.collection:
+  title: 'Config theme entity list'
+  route_name: entity.config_theme_entity.collection
+  description: 'List Config theme entity entities'
+  parent: system.admin_structure
+  weight: 100
+
+config_theme_entity.admin.structure.settings:
+  title: 'Configiguration des champs de theme'
+  description: 'Configure Config theme entity entities'
+  route_name: config_theme_entity.settings
+  parent: system.admin_structure
+
+create_pages_site_form.admin.structure.settings:
+  title: 'Ajouter un nouveau domaine'
+  description: 'Configure Config theme entity entities'
+  route_name: generate_style_theme.create_pages_site_form
+  parent: system.admin_structure

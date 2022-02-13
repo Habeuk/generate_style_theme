@@ -1,0 +1,10 @@
+field.widget.settings.color_theme_widget_type:
+  type: mapping
+  label: 'Color theme widget type widget settings'
+  mapping:
+    size:
+      type: integer
+      label: 'Size'
+    placeholder:
+      type: textfield
+      label: 'Placeholder'

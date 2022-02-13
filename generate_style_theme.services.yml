@@ -1,0 +1,13 @@
+services:
+  logger.channel.generate_style_theme:
+    parent: logger.channel_base
+    arguments: ['generate_style_theme']
+  generate_style_theme.active_asign:
+    class: Drupal\generate_style_theme\Services\Themes\ActiveAsignService
+    arguments: ['@theme_installer']
+  generate_style_theme.menustopagecreate:
+    class: Drupal\generate_style_theme\Services\MenusToPageCreate
+    arguments: []
+  generate_style_theme.createentiyfromwidget:
+    class: Drupal\generate_style_theme\Services\CreateEntityFromWidget
+    arguments: []

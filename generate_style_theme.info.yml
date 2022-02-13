@@ -1,0 +1,8 @@
+name: Generate style theme
+type: module
+description: permet de modifier les styles d&#039;un theme.
+package: Custom
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - domain

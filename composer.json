@@ -1,0 +1,17 @@
+{
+    "name": "stephane888/generate_style_theme",
+    "description": "generate subtheme",
+    "type": "drupal-module-custom",
+    "require": {
+        "joachim-n/case-converter": "^1.0",
+        "scssphp/scssphp": "^1.10"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "stephane888",
+            "email": "kksasteph888@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}

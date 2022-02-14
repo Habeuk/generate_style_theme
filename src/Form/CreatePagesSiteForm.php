@@ -18,6 +18,7 @@ use Drupal\Core\Url;
  */
 class CreatePagesSiteForm extends FormBase {
   protected $NombrePageMax = 3;
+  protected static $field_domain_access = 'field_domain_access';
   
   /**
    * Drupal\domain_config_ui\Config\ConfigFactory definition.
@@ -358,7 +359,7 @@ class CreatePagesSiteForm extends FormBase {
             "value" => "page d'accueil"
           ]
         ],
-        'field_domain_access' => [
+        self::$field_domain_access => [
           [
             'target_id' => $form_state->get('hostname')
           ]
@@ -446,7 +447,7 @@ class CreatePagesSiteForm extends FormBase {
       $url = Url::fromRoute('entity.config_theme_entity.add_form', [], [
         'query' => [
           'content-type-home' => $homePageContentType,
-          'content-type-home-id' => $entity_wbumenudomain->id(),
+          'content-type-home-id' => $contents[$homePageContentType]->id(),
           'lirairy' => $entity_wbumenudomain->getLirairy(),
           'domaine-id' => $entity_wbumenudomain->getHostname()
         ]
@@ -474,6 +475,7 @@ class CreatePagesSiteForm extends FormBase {
        * @var \Drupal\Core\Field\Plugin\Field\FieldWidget\StringTextfieldWidget $widget
        */
       $widget = $this->getWidget($entity, $field);
+      
       if ($widget && $widget->getPluginId() == 'wbumenudomainhost_complex_inline') {
         if (!self::$demo)
           $this->CreateEntityFromWidget->createEntity($widget, $entity, $field);
@@ -563,7 +565,7 @@ class CreatePagesSiteForm extends FormBase {
         $Ids = $this->Connection->query($query)->fetchAll(\PDO::FETCH_ASSOC);
         if (empty($Ids)) {
           $ar = $content;
-          $ar['field_domain_access'] = [
+          $ar[self::$field_domain_access] = [
             [
               'target_id' => $hostname
             ]

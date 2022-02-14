@@ -10,6 +10,8 @@ use Drupal\Core\Entity\EntityPublishedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\file\Entity\File;
+use CaseConverter\CaseString;
 
 /**
  * Defines the Config theme entity entity.
@@ -85,8 +87,12 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getLogo() {
     $fid = $this->get('logo')->first()->getValue();
     if (!empty($fid)) {
-      $file = \Drupal\file\Entity\File::load($fid["target_id"]);
+      $file = File::load($fid["target_id"]);
       if ($file) {
+        // $new_filename = CaseString::title($file->getFilename())->snake();
+        // $stream_wrapper = \Drupal::service('stream_wrapper_manager')->getScheme($file->getFileUri());
+        // $new_filename_uri = "{$stream_wrapper}://logos/{$new_filename}";
+        // file_move($file, $new_filename_uri);
         return ImageStyle::load('medium')->buildUri($file->getFileUri());
       }
     }

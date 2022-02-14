@@ -175,6 +175,62 @@ libraries:
         ',
         'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/variables.scss";'
       ];
+    elseif ($libray == 'lesroisdelareno/prestataires_m1')
+      return [
+        'files' => '
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m1/prestataires-m1-default.scss";
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m1/prestataires-m1.scss";
+        ',
+        'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m1/variables.scss";'
+      ];
+    elseif ($libray == 'lesroisdelareno/prestataires_m2')
+      return [
+        'files' => '
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m2/prestataires-m2-default.scss";
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m2/prestataires-m2.scss";
+        ',
+        'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m2/variables.scss";'
+      ];
+    elseif ($libray == 'lesroisdelareno/prestataires_m3')
+      return [
+        'files' => '
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m3/prestataires-m3-default.scss";
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m3/prestataires-m3.scss";
+        ',
+        'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m3/variables.scss";'
+      ];
+    elseif ($libray == 'lesroisdelareno/prestataires_m4')
+      return [
+        'files' => '
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m4/prestataires-m4-default.scss";
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m4/prestataires-m4.scss";
+        ',
+        'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m4/variables.scss";'
+      ];
+    elseif ($libray == 'lesroisdelareno/prestataires_m5')
+      return [
+        'files' => '
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m5/prestataires-m5-default.scss";
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m5/prestataires-m5.scss";
+        ',
+        'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m5/variables.scss";'
+      ];
+    elseif ($libray == 'lesroisdelareno/prestataires_m6')
+      return [
+        'files' => '
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m6/prestataires-m6-default.scss";
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m6/prestataires-m6.scss";
+        ',
+        'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m6/variables.scss";'
+      ];
+    elseif ($libray == 'lesroisdelareno/prestataires_m7')
+      return [
+        'files' => '
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m7/prestataires-m7-default.scss";
+          @use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m7/prestataires-m7.scss";
+        ',
+        'configs' => '@use "' . $this->themePath . '/lesroisdelareno/wbu-atomique-theme/src/scss/m7/variables.scss";'
+      ];
     else
       throw new \Exception(" Fichier de style scss non definit ");
   }

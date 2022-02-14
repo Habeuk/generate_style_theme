@@ -19,7 +19,7 @@ class CreateEntityFromWidget {
    * @param FieldItemListInterface $field
    */
   public function createEntity(PluginSettingsInterface $widget, ContentEntityInterface &$entity, FieldItemListInterface $field) {
-    debugLog::$max_depth = 7;
+    debugLog::$max_depth = 4;
     $values = $field->getValue();
     $settings = $field->getSettings();
     if ($settings['handler'] == 'default:block_content') {
@@ -56,7 +56,6 @@ class CreateEntityFromWidget {
   }
   
   /**
-   * --
    *
    * @param array $values
    */
@@ -65,12 +64,46 @@ class CreateEntityFromWidget {
     foreach ($values as $value) {
       $block = BlockContent::load($value['target_id']);
       if ($block) {
+        $status = 'vide';
         $cloneBlock = $block->createDuplicate();
         // On ajoute le champs field_domain_access; ci-possible.
         if ($cloneBlock->hasField(self::$field_domain_access) && $entity->hasField(self::$field_domain_access)) {
-          $cloneBlock->get(self::$field_domain_access)->setValue($entity->get(self::$field_domain_access)->getValue());
+          $dmn = $entity->get(self::$field_domain_access)->first()->getValue();
+          $dmn = empty($dmn['target_id']) ? null : [
+            'value' => $dmn['target_id']
+          ];
+          if ($dmn)
+            $cloneBlock->get(self::$field_domain_access)->setValue($dmn);
+          $status = [
+            'MAJ du champs : ' . self::$field_domain_access,
+            $cloneBlock->get(self::$field_domain_access)
+          ];
         }
+        // on met à jour le champs info (car sa valeur doit etre unique).
+        if ($cloneBlock->hasField("info")) {
+          $val = $cloneBlock->get('info')->first()->getValue();
+          $dmn = $entity->get(self::$field_domain_access)->first()->getValue();
+          $dmn = empty($dmn['target_id']) ? 'domaine.test' : $dmn['target_id'];
+          if (!empty($val['value']))
+            $val = $val['value'] . ' -- ' . $dmn . ' -- ' . $entity->bundle();
+          
+          $cloneBlock->get('info')->setValue([
+            'value' => $val
+          ]);
+        }
+        
         $cloneBlock->save();
+        // debugLog::kintDebugDrupal([
+        // "cloneBlock" => $cloneBlock,
+        // "cloneBlock->hasField" => $cloneBlock->hasField(self::$field_domain_access),
+        // "cloneBlock->value" => $cloneBlock->get(self::$field_domain_access)->getValue(),
+        // "entity" => $entity,
+        // "entity->hasField" => $entity->hasField(self::$field_domain_access),
+        // "entity->value" => $entity->get(self::$field_domain_access)->getValue(),
+        // "entity->value:fist" => $entity->get(self::$field_domain_access)->first()->getValue(),
+        // 'id' => $cloneBlock->id(),
+        // 'status' => $status
+        // ], "createBlockContent", true);
         $newValues[] = [
           'target_id' => $cloneBlock->id()
         ];

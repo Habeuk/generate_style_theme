@@ -25,7 +25,7 @@ class GenerateStyleTheme {
       Throw new \Exception("Le nom du theme n'est pas valide : " . $configs['themeName']);
     }
     $this->themeName = $configs['themeName'];
-    $this->themeDirectory = CaseString::camel($configs['themeName']);
+    $this->themeDirectory = CaseString::camel($configs['themeName'])->camel();
     $this->themePath = $this->getPath();
     $this->entity = $entity;
   }

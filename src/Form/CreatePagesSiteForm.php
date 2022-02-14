@@ -434,8 +434,10 @@ class CreatePagesSiteForm extends FormBase {
        */
       if (self::$demo)
         dump($content->toArray());
-      else
+      else {
+        $this->createNewEntityReference($contents[$k]);
         $contents[$k]->save();
+      }
     }
     $message = 'Les differentes pages ont été crée';
     \Drupal::messenger()->addMessage($message);

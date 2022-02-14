@@ -64,7 +64,6 @@ class CreateEntityFromWidget {
     foreach ($values as $value) {
       $block = BlockContent::load($value['target_id']);
       if ($block) {
-        $status = 'vide';
         $cloneBlock = $block->createDuplicate();
         // On ajoute le champs field_domain_access; ci-possible.
         if ($cloneBlock->hasField(self::$field_domain_access) && $entity->hasField(self::$field_domain_access)) {
@@ -74,10 +73,6 @@ class CreateEntityFromWidget {
           ];
           if ($dmn)
             $cloneBlock->get(self::$field_domain_access)->setValue($dmn);
-          $status = [
-            'MAJ du champs : ' . self::$field_domain_access,
-            $cloneBlock->get(self::$field_domain_access)
-          ];
         }
         // on met à jour le champs info (car sa valeur doit etre unique).
         if ($cloneBlock->hasField("info")) {
@@ -85,7 +80,7 @@ class CreateEntityFromWidget {
           $dmn = $entity->get(self::$field_domain_access)->first()->getValue();
           $dmn = empty($dmn['target_id']) ? 'domaine.test' : $dmn['target_id'];
           if (!empty($val['value']))
-            $val = $val['value'] . ' -- ' . $dmn . ' -- ' . $entity->bundle();
+            $val = $val['value'] . ' -- ' . $dmn . ' -- ' . $entity->bundle() . rand(1, 999);
           
           $cloneBlock->get('info')->setValue([
             'value' => $val
@@ -93,17 +88,7 @@ class CreateEntityFromWidget {
         }
         
         $cloneBlock->save();
-        // debugLog::kintDebugDrupal([
-        // "cloneBlock" => $cloneBlock,
-        // "cloneBlock->hasField" => $cloneBlock->hasField(self::$field_domain_access),
-        // "cloneBlock->value" => $cloneBlock->get(self::$field_domain_access)->getValue(),
-        // "entity" => $entity,
-        // "entity->hasField" => $entity->hasField(self::$field_domain_access),
-        // "entity->value" => $entity->get(self::$field_domain_access)->getValue(),
-        // "entity->value:fist" => $entity->get(self::$field_domain_access)->first()->getValue(),
-        // 'id' => $cloneBlock->id(),
-        // 'status' => $status
-        // ], "createBlockContent", true);
+        
         $newValues[] = [
           'target_id' => $cloneBlock->id()
         ];

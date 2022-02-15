@@ -66,6 +66,11 @@ class LayoutEnteteForm extends FormBase {
     $pluginHeader->setConfiguration($currentSetting);
     // dump($currentSetting['v2lesroisdelareno_kksa']);
     $form += $pluginHeader->buildConfigurationForm($form, $form_state);
+    // on supprime la marge-bottom
+    if (empty($form['css_class']['css']['#default_value'])) {
+      $form['css_class']['css']['#default_value'] = 'mb-0';
+    }
+    
     $form['submit'] = [
       '#type' => 'submit',
       '#attributes' => [

@@ -100,4 +100,61 @@ function generate_style_theme_theme($existing, $type, $theme, $path) {
   return GenerateStyleThemeHook::getThemeHooks();
 }
 
+/**
+ * Pour ajouter les onglets de gestions dans les nodes.
+ *
+ * @param array $variables
+ */
+function generate_style_theme_preprocess_node(&$variables) {
+  $entityNodeRoute = 'entity.node.canonical';
+  $entityFormEdit = 'entity.node.edit_form';
+  $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+  // dump($variables);
+  if (!$variables['page'] && $variables['view_mode'] == 'default' && !empty($user) && in_array('administrator', $user->getRoles())) {
+    $request = \Drupal::request();
+    $destination = $request->getRequestUri();
+    /**
+     *
+     * @var \Drupal\Node\Entity\node $node
+     */
+    $node = $variables['elements']['#node'];
+    $variables['content']['onglets'] = [
+      '#theme' => 'menu_local_tasks',
+      '#weight' => -40,
+      '#secondary' => [
+        [
+          "#theme" => "menu_local_task",
+          '#link' => [
+            'title' => 'Voir',
+            'url' => \Drupal\Core\Url::fromRoute($entityNodeRoute, [
+              'node' => $node->id()
+            ]),
+            'localized_options' => []
+          ],
+          "#active" => true,
+          "#weight" => 100,
+          '#access' => true
+        ],
+        [
+          "#theme" => "menu_local_task",
+          '#link' => [
+            'title' => 'Modifier',
+            'url' => \Drupal\Core\Url::fromRoute($entityFormEdit, [
+              'node' => $node->id()
+            ], [
+              'query' => array(
+                'destination' => $destination
+              )
+            ]),
+            'localized_options' => []
+          ],
+          "#active" => false,
+          "#weight" => 100,
+          '#access' => true
+        ]
+      ]
+    ];
+  }
+}
+
 

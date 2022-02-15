@@ -6,6 +6,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Stephane888\Debug\debugLog;
+use Drupal\layout_builder\SectionStorageInterface;
+use Drupal\Core\Plugin\Context\EntityContext;
 
 /**
  * Class LayoutDefaultForm.
@@ -27,13 +29,6 @@ class LayoutDefaultForm extends FormBase {
   protected $layoutBuilderTempstoreRepository;
   
   /**
-   * Drupal\layout_builder\SectionStorage\SectionStorageManagerInterface definition.
-   *
-   * @var \Drupal\layout_builder\SectionStorage\SectionStorageManagerInterface
-   */
-  protected $pluginManagerLayoutBuilderSectionStorage;
-  
-  /**
    * Drupal\layout_builder\Entity\SampleEntityGeneratorInterface definition.
    *
    * @var \Drupal\layout_builder\Entity\SampleEntityGeneratorInterface
@@ -46,6 +41,20 @@ class LayoutDefaultForm extends FormBase {
    * @var \Drupal\Core\Layout\LayoutPluginManagerInterface
    */
   protected $layoutManager;
+  
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+  
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\layout_builder\SectionStorage\SectionStorageManager
+   */
+  protected $LayoutBuilderSectionStorage;
   
   /**
    *
@@ -63,10 +72,11 @@ class LayoutDefaultForm extends FormBase {
     $instance = parent::create($container);
     $instance->loggerFactory = $container->get('logger.factory');
     $instance->layoutBuilderTempstoreRepository = $container->get('layout_builder.tempstore_repository');
-    $instance->pluginManagerLayoutBuilderSectionStorage = $container->get('plugin.manager.layout_builder.section_storage');
+    $instance->LayoutBuilderSectionStorage = $container->get('plugin.manager.layout_builder.section_storage');
     $instance->layoutBuilderSampleEntityGenerator = $container->get('layout_builder.sample_entity_generator');
     $instance->layoutManager = $container->get('plugin.manager.core.layout');
     $instance->ConfigFactory = $container->get('config.factory');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     return $instance;
   }
   
@@ -82,25 +92,64 @@ class LayoutDefaultForm extends FormBase {
    *
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state, SectionStorageInterface $section_storage = NULL, $delta = NULL, $plugin_id = NULL) {
     $plugin_id = 'formatage_models_header1';
+    $entity_type_id = 'entity_view_display';
+    $entity_storage_id = 'block_content.layout_entete_m1.full';
     /**
+     *
+     * @var \Drupal\Core\Form\FormBuilderInterface $builder
+     */
+    // $builder = \Drupal::formBuilder();
+    // $form = $builder->getForm('\Drupal\layout_builder\Form\ConfigureSectionForm', $section_storage, $delta, $plugin_id);
+    
+    /**
+     * On charge un pluginId
      *
      * @var \Drupal\formatage_models\Plugin\Layout\Sections\Headers\FormatageModelsheader1 $pluginHeader
      */
     $pluginHeader = $this->layoutManager->createInstance($plugin_id);
+    //
+    /**
+     * On initialise l'object qui gere les sauvegardes.
+     *
+     * @var \Drupal\Core\Entity\EntityStorageInterface $storage
+     */
+    $storage = $this->entityTypeManager->getStorage($entity_type_id);
+    /**
+     * ici, on charge la donnée.
+     * (il faut penser à la creer si elle n'existe pas ).
+     * Ce bloc fait un chargement par defaut des données.
+     *
+     * @var Ambigous <\Drupal\Core\Entity\EntityInterface, NULL> $display
+     */
+    $entityViewDisplay = $storage->load($entity_storage_id);
+    // on recupere le contexte. ( à quoi correspond contexte, ou il est definit au niveau de layout buider )???
+    $contexts = [];
+    $contexts['display'] = EntityContext::fromEntity($entityViewDisplay);
     
+    // Ici, on charge le model de stokage definit par layout. ce dernier à besoin d'un contexte d'affichage.
+    /**
+     *
+     * @var \Drupal\layout_builder\Plugin\SectionStorage\DefaultsSectionStorage $LayoutBuilderSectionStorage
+     */
+    $LayoutBuilderSectionStorage = $this->LayoutBuilderSectionStorage->load('defaults', $contexts);
+    // dump($LayoutBuilderSectionStorage->get);
+    $pluginHeader->setContext('display', $contexts['display']);
+    // $pluginHeader->
     // v2lesroisdelareno_kksa
-    $currentSetting = $this->getLayoutCurrentConfig();
+    // $currentSetting = $this->getLayoutCurrentConfig();
     // dump($currentSetting);
-    $pluginHeader->setConfiguration($currentSetting);
+    // $pluginHeader->setConfiguration($currentSetting);
     // dump($currentSetting['v2lesroisdelareno_kksa']);
-    $form += $pluginHeader->buildConfigurationForm($form, $form_state);
+    $form['#tree'] = TRUE;
+    $form['layout_settings'] = [];
+    $form['layout_settings'] = $pluginHeader->buildConfigurationForm($form, $form_state);
+    
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Submit')
     ];
-    
     return $form;
   }
   

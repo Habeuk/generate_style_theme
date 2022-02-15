@@ -51,13 +51,17 @@ class LayoutEnteteForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // $LayoutConfig = \Drupal::config(self::$LayoutBaseKey);
+    // dump($LayoutConfig->getRawData());
     /**
      *
      * @var \Drupal\formatage_models\Plugin\Layout\Sections\Headers\FormatageModelsheader1 $pluginHeader
      */
     $pluginHeader = $this->layoutManager->createInstance(self::$plugin_id);
+    // $pluginHeader->setContext($name, $context);
     // v2lesroisdelareno_kksa
     $currentSetting = $this->getLayoutCurrentConfig();
+    
     // dump($currentSetting);
     $pluginHeader->setConfiguration($currentSetting);
     // dump($currentSetting['v2lesroisdelareno_kksa']);

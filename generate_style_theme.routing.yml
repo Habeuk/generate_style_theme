@@ -30,9 +30,18 @@ generate_style_theme.layout_default_form:
   path: '/generate_style_theme/form/layout_default'
   defaults:
     _form: '\Drupal\generate_style_theme\Form\LayoutDefaultForm'
-    _title: 'LayoutDefaultForm'
+    _title: 'LayoutDefaultForm'    
+    section_storage_type: defaults
+    section_storage: block_content.layout_entete_m1.default
+    delta: 0
+    plugin_id: null
   requirements:
     _role: 'administrator'
+  options:
+    _admin_route: FALSE
+    parameters:
+      section_storage:
+        layout_builder_tempstore: TRUE
 generate_style_theme.create_pages_site_form:
   path: '/generate_style_theme/form/create_pages_site'
   defaults:

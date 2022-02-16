@@ -30,12 +30,12 @@ create_pages_site_form.admin.structure.settings:
 
 generate_style_theme.layout_entete_form:
   title: "Mettre à jour l'entete'"
-  description: 'Configure Config theme entity entities'
-  route_name: generate_style_theme.create_pages_site_form
+  description: 'Layout edition'
+  route_name: generate_style_theme.layout_entete_form
   parent: system.admin_structure
 
 generate_style_theme.layout_footer_form:
   title: "Mettre à jour l'entete'"
-  description: 'Configure Config theme entity entities'
-  route_name: generate_style_theme.create_pages_site_form
+  description: 'Layout edition'
+  route_name: generate_style_theme.layout_footer_form
   parent: system.admin_structure

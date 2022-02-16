@@ -404,6 +404,7 @@ class CreatePagesSiteForm extends FormBase {
     
     //
     /**
+     * Creation de l'entite wbumenudomain.
      *
      * @var Wbumenudomain $entity_wbumenudomain
      */
@@ -415,7 +416,7 @@ class CreatePagesSiteForm extends FormBase {
       $entity_wbumenudomain->save();
     
     /**
-     * Prestataires.
+     * Creation du node prestataures.
      *
      * @var \Drupal\node\Entity\Node $entity_node
      */
@@ -426,6 +427,11 @@ class CreatePagesSiteForm extends FormBase {
       $entity_node->save();
     
     // Enregistre en masse les nodes.
+    /**
+     * Creation des pages (page d'accuiel et des pages selectionnées au niveau du menu.
+     *
+     * @var Array $contents
+     */
     $contents = $form_state->get('new_contents');
     foreach ($contents as $k => $content) {
       /**
@@ -549,7 +555,8 @@ class CreatePagesSiteForm extends FormBase {
   }
   
   /**
-   * Cree un node s'il nya aucune equivalance pour le domaine.
+   * Cree les nodes s'il nya aucune equivalance pour le domaine.
+   * Cela permet de d'initialiser les pages.
    * un tableau de données se cree lors du passage de l'etape 1 => 2.
    * L valisation de ces données se fait de 2 => 3.
    */

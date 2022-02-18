@@ -4,7 +4,7 @@ entity.style_theme_entity.collection:
   title: 'Style de theme'
   route_name: entity.style_theme_entity.collection
   description: 'List Style de theme (bundles)'
-  parent: system.admin_structure
+  parent: create_pages_site_form.admin.structure.settings
   weight: 99
 
 # Config theme entity menu items definition
@@ -12,14 +12,14 @@ entity.config_theme_entity.collection:
   title: 'Config theme entity list'
   route_name: entity.config_theme_entity.collection
   description: 'List Config theme entity entities'
-  parent: system.admin_structure
+  parent: create_pages_site_form.admin.structure.settings
   weight: 100
 
 config_theme_entity.admin.structure.settings:
   title: 'Configiguration des champs de theme'
   description: 'Configure Config theme entity entities'
   route_name: config_theme_entity.settings
-  parent: system.admin_structure
+  parent: create_pages_site_form.admin.structure.settings
 
 create_pages_site_form.admin.structure.settings:
   title: 'Ajouter un nouveau domaine'
@@ -32,10 +32,10 @@ generate_style_theme.layout_entete_form:
   title: "Mettre à jour l'entete'"
   description: 'Layout edition'
   route_name: generate_style_theme.layout_entete_form
-  parent: system.admin_structure
+  parent: create_pages_site_form.admin.structure.settings
 
 generate_style_theme.layout_footer_form:
   title: "Mettre à jour le footer'"
   description: 'Layout edition'
   route_name: generate_style_theme.layout_footer_form
-  parent: system.admin_structure
+  parent: create_pages_site_form.admin.structure.settings

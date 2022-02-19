@@ -75,7 +75,8 @@ libraries:
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $script = '';
-    $script .= $this->npm . " --prefix " . $pathNpm . " run ProdCMD ";
+    // $script .= $this->npm . " --prefix " . $pathNpm . " run ProdCMD ";
+    $script .= " npm --prefix " . $pathNpm . " run ProdCMD ";
     $this->excuteCmd($script, 'RunNpm');
   }
   

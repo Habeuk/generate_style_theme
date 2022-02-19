@@ -34,6 +34,7 @@ function generate_style_theme_form_config_theme_entity_form_alter(&$form, FormSt
       $query['lirairy']
     ];
   }
+  
   if (!empty($query['domaine-id']) && isset($form['hostname']['widget'][0])) {
     $form['hostname']['widget'][0]['value']['#default_value'] = $query['domaine-id'];
   }

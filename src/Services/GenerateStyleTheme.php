@@ -12,6 +12,12 @@ class GenerateStyleTheme {
   protected $themeDirectory;
   protected $themePath;
   protected $entity;
+  /**
+   * Chemin vers l'executable NPM.
+   *
+   * @var Object
+   */
+  protected $npm;
   
   use GenerateFiles;
   
@@ -28,6 +34,21 @@ class GenerateStyleTheme {
     $this->themeDirectory = CaseString::camel($configs['themeName'])->camel();
     $this->themePath = $this->getPath();
     $this->entity = $entity;
+    $this->createInstanceNpm();
+  }
+  
+  function createInstanceNpm() {
+    $ar = dump(explode("/", DRUPAL_ROOT));
+    $pr = '';
+    for ($i = 0; $i < count($ar) - 1; $i++) {
+      if (!empty($ar[$i])) {
+        $pr .= "/" . $ar[$i];
+      }
+    }
+    $this->npm = $pr . '/node/bin/npm';
+    if (!file_exists($this->npm)) {
+      \Drupal::messenger()->addError("Le module node n'est pas installé, veillez telecharger nodejs, decompresser et placer les fichiers dans le public/node ");
+    }
   }
   
   /**

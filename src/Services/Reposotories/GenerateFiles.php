@@ -59,7 +59,7 @@ libraries:
    */
   function jsFiles() {
     $string = '
-      // surcharge la scss.
+      // Surcharge la scss.
       import "../scss/' . $this->themeName . '.scss";  
       import "bootstrap/dist/js/bootstrap.min.js";
       import "@stephane888/wbu-atomique/js/swiper/swiper-big-v3.js";
@@ -74,10 +74,8 @@ libraries:
   
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
-    $script = ' cd  ' . $pathNpm;
-    $script .= " && npm -v && ";
-    // $script .= " && npm -v && ";
-    $script .= " npm run ProdCMD ";
+    $script = '';
+    $script .= $this->npm . " --prefix " . $pathNpm . " run ProdCMD ";
     $this->excuteCmd($script, 'RunNpm');
   }
   

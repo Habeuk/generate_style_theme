@@ -80,13 +80,44 @@ libraries:
   }
   
   /**
-   * .
+   * On va faire un lien, Car cela est plus facile à gerer et occupe moins d'espace.
    */
   function CopyWbuAtomiqueTheme() {
     // wbu-atomique-theme/src/js
     $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('module', "generate_style_theme") . "/wbu-atomique-theme";
-    $script = ' cp -r ' . $modulePath . '  ' . $this->themePath . '/' . $this->themeName;
+    $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName;
+    $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
+  }
+  
+  /**
+   * Les liens symbolique ne marge pas.
+   * On va faire un lien, Car cela est plus facile à gerer et occupe moins d'espace.
+   */
+  function CopyWbuAtomiqueTheme2() {
+    // wbu-atomique-theme/src/js
+    $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('module', "generate_style_theme") . "/wbu-atomique-theme";
+    // $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName;
     // $script .= " && ";
+    $script = null;
+    $cmd = "ls " . $modulePath;
+    $outputs = '';
+    $return_var = '';
+    exec($cmd . " 2>&1", $outputs, $return_var);
+    // On copie tous les fichiers present dans wbu-atomique-theme, sauf le dossier node_modules.
+    if ($return_var === 0) {
+      foreach ($outputs as $output) {
+        
+        if ($output !== 'node_modules') {
+          if ($script) {
+            $script .= ' && cp -r ' . $modulePath . '/' . $output . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
+          }
+          else
+            $script .= ' cp -r ' . $modulePath . '/' . $output . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
+        }
+      }
+    }
+    // on fait un lien symbolique avec node_modules.
+    $script .= ' && ln -s ' . $modulePath . '/node_modules ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
     $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
   }
   
@@ -153,6 +184,7 @@ libraries:
     ];
     debugLog::$debug = false;
     debugLog::kintDebugDrupal($debug, $name);
+    return $output;
   }
   
   protected function getScssFromLibrairy($libray) {

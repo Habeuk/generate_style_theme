@@ -38,7 +38,7 @@ class GenerateStyleTheme {
   }
   
   function createInstanceNpm() {
-    $ar = dump(explode("/", DRUPAL_ROOT));
+    $ar = explode("/", DRUPAL_ROOT);
     $pr = '';
     for ($i = 0; $i < count($ar) - 1; $i++) {
       if (!empty($ar[$i])) {
@@ -81,10 +81,11 @@ class GenerateStyleTheme {
   function buildSubTheme($createThme = false) {
     $this->InfoYml();
     $this->LibrairiesYml();
-    if ($createThme)
-      $this->CopyWbuAtomiqueTheme();
+    // if ($createThme)
+    // $this->CopyWbuAtomiqueTheme();
     $this->scssFiles();
     $this->jsFiles();
+    $this->CopyWbuAtomiqueTheme();
     $this->RunNpm();
     $this->setLogoToTheme();
   }

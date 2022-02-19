@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "Dev": "webpack --watch --mode='development' --progress",
     "Prod": "NODE_ENV=production webpack --watch --progress",
-    "ProdCMD": "NODE_ENV=production webpack",
+    "ProdCMD": "NODE_ENV=production ./node_modules/.bin/webpack",
     "copy": "NODE_ENV=production node scripts/build.js  --watch",
     "serve": "webpack serve --mode='production' --open"
   },

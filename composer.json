@@ -20,6 +20,6 @@
         ],
         "pre-package-update": [
             "post-update.sh"
-        ],
+        ]
     }
 }

@@ -13,5 +13,13 @@
             "email": "kksasteph888@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "scripts": {
+    	"post-package-install": [
+            "post-install.sh"
+        ],
+        "pre-package-update": [
+            "post-update.sh"
+        ],
+    }
 }

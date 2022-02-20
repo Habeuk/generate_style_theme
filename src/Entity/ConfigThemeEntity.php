@@ -210,7 +210,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     
     $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo ')->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'image'
-    ])->setDisplayConfigurable('view', TRUE);
+    ])->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
     
     $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'colorapi_color_display'

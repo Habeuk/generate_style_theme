@@ -75,13 +75,23 @@ libraries:
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $script = '';
-    // $script .= $this->npm . " --prefix " . $pathNpm . " run ProdCMD ";
-    $script .= " npm --prefix " . $pathNpm . " run ProdCMD ";
-    $this->excuteCmd($script, 'RunNpm');
+    if (!empty($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], ".kksa") !== false) {
+      $script .= " npm --prefix " . $pathNpm . " run ProdCMD ";
+    }
+    else {
+      $script .= " /homez.707/lesroig/tools/node15/bin/npm --prefix " . $pathNpm . " run ProdCMD ";
+    }
+    $exc = $this->excuteCmd($script, 'RunNpm');
+    if ($exc['return_var']) {
+      \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");
+    }
+    else {
+      \Drupal::messenger()->addStatus(" Fichier du theme generer avec success, veuillez utiliser CTRL+F5 ");
+    }
   }
   
   /**
-   * On va faire un lien, Car cela est plus facile à gerer et occupe moins d'espace.
+   * On copie les fichiers.
    */
   function CopyWbuAtomiqueTheme() {
     // wbu-atomique-theme/src/js
@@ -93,6 +103,8 @@ libraries:
   /**
    * Les liens symbolique ne marge pas.
    * On va faire un lien, Car cela est plus facile à gerer et occupe moins d'espace.
+   *
+   * @deprecated
    */
   function CopyWbuAtomiqueTheme2() {
     // wbu-atomique-theme/src/js
@@ -183,9 +195,7 @@ libraries:
       'return_var' => $return_var,
       'result' => $result
     ];
-    debugLog::$debug = false;
-    debugLog::kintDebugDrupal($debug, $name);
-    return $output;
+    return $debug;
   }
   
   protected function getScssFromLibrairy($libray) {

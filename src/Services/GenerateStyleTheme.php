@@ -81,11 +81,11 @@ class GenerateStyleTheme {
   function buildSubTheme($createThme = false) {
     $this->InfoYml();
     $this->LibrairiesYml();
-    // if ($createThme)
-    // $this->CopyWbuAtomiqueTheme();
+    if ($createThme)
+      $this->CopyWbuAtomiqueTheme();
     $this->scssFiles();
     $this->jsFiles();
-    $this->CopyWbuAtomiqueTheme();
+    // $this->CopyWbuAtomiqueTheme();
     $this->RunNpm();
     $this->setLogoToTheme();
   }

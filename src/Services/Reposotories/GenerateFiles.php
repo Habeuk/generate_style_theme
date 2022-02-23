@@ -84,6 +84,7 @@ libraries:
     $exc = $this->excuteCmd($script, 'RunNpm');
     if ($exc['return_var']) {
       \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");
+      debugLog::kintDebugDrupal($exc, 'RunNpmError--' . $this->themeName, true);
     }
     else {
       \Drupal::messenger()->addStatus(" Fichier du theme generer avec success, veuillez utiliser CTRL+F5 ");

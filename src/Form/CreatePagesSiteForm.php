@@ -10,6 +10,8 @@ use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Component\Serialization\Json;
 use Drupal\node\Entity\node;
 use Drupal\Core\Url;
+use Drupal\user\Entity\User;
+use Drupal\Component\Utility\Random;
 
 /**
  * Class CreatePagesSiteForm.
@@ -19,6 +21,7 @@ use Drupal\Core\Url;
 class CreatePagesSiteForm extends FormBase {
   protected $NombrePageMax = 3;
   protected static $field_domain_access = 'field_domain_access';
+  protected static $field_domain_admin = 'field_domain_admin';
   
   /**
    * Drupal\domain_config_ui\Config\ConfigFactory definition.
@@ -449,6 +452,10 @@ class CreatePagesSiteForm extends FormBase {
     \Drupal::messenger()->addMessage($message);
     if (self::$demo)
       die();
+    // Creation de l'utilisateur.
+    if (!self::$demo)
+      $this->createUserByDomain($entity_wbumenudomain, $form_state);
+    
     // Redirection vers la page de creation de theme.
     $homePageContentType = $entity_wbumenudomain->getContentTypeHomePage();
     if (isset($contents[$homePageContentType])) {
@@ -462,6 +469,61 @@ class CreatePagesSiteForm extends FormBase {
       ]);
       $form_state->setRedirectUrl($url);
     }
+  }
+  
+  /**
+   * Permet de creer un utilisateur avec les droits necessaire pour pouvoir manager le domaine encours.
+   *
+   * @param FormStateInterface $form_state
+   */
+  private function createUserByDomain(Wbumenudomain $entity_wbumenudomain, FormStateInterface $form_state) {
+    $hostName = $entity_wbumenudomain->getHostname();
+    $typeContenuHomePage = $entity_wbumenudomain->getContentTypeHomePage();
+    $random = new Random();
+    $password = $random->string(12, true);
+    $user = User::create([
+      'name' => $hostName,
+      'pass' => $password
+    ]);
+    /**
+     * On donne les access par rapport au domaine.
+     */
+    //
+    if ($user->hasField(self::$field_domain_access)) {
+      $user->get(self::$field_domain_access)->setValue([
+        [
+          'target_id' => $hostName
+        ]
+      ]);
+    }
+    //
+    if ($user->hasField(self::$field_domain_admin)) {
+      $user->get(self::$field_domain_admin)->setValue([
+        [
+          'target_id' => $hostName
+        ]
+      ]);
+    }
+    /**
+     * On definie le role.
+     */
+    $rid = 'prestataires';
+    if ($typeContenuHomePage == 'model_d_affichage_theme_commerce') {
+      $rid = 'vendeurs';
+    }
+    elseif ($typeContenuHomePage == 'model_d_affichage_architecte_') {
+      $rid = 'architecte';
+    }
+    $user->addRole($rid);
+    $user->save();
+    /**
+     * \Drupal\Component\Render\MarkupInterface
+     */
+    $message = ' Nouveau compte créé, bien vouloir noter ces identifiants.';
+    \Drupal::messenger()->addMessage($message);
+    $message = ' Login : ' . $hostName;
+    $message .= ' Password : ' . $password;
+    \Drupal::messenger()->addMessage($message);
   }
   
   private function createNode(array $values) {

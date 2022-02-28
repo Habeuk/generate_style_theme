@@ -39,3 +39,10 @@ generate_style_theme.layout_footer_form:
   description: 'Layout edition'
   route_name: generate_style_theme.layout_footer_form
   parent: create_pages_site_form.admin.structure.settings
+# Contenu creer automatiquement menu items definition
+entity.content_create_automaticaly.collection:
+  title: 'Contenu creer automatiquement'
+  route_name: entity.content_create_automaticaly.collection
+  description: 'List Contenu creer automatiquement (bundles)'
+  parent: create_pages_site_form.admin.structure.settings
+  weight: 99

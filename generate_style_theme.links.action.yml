@@ -8,3 +8,8 @@ entity.config_theme_entity.add_form:
   title: 'Add Config theme entity'
   appears_on:
     - entity.config_theme_entity.collection
+entity.content_create_automaticaly.add_form:
+  route_name: entity.content_create_automaticaly.add_form
+  title: 'Add Contenu creer automatiquement'
+  appears_on:
+    - entity.content_create_automaticaly.collection

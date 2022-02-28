@@ -1,0 +1,35 @@
+generate_style_theme.content_create_automaticaly.*:
+  type: config_entity
+  label: 'Contenu creer automatiquement config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    test_valeur:
+      type: integer
+      label: " Page d'accueil "
+    home_page:
+      type: mapping
+      label: " Page d'accueil "
+      mapping: 
+        nid:
+          type: integer
+          label: "id de la page d'accueil"
+        contents: 
+          type: mapping
+          label: 'Liste de contenus'
+        blocks:
+          type: mapping
+          label: 'Liste de blocs'
+    contents:
+      type: mapping
+      label: 'Liste de contenus'
+    blocks:
+      type: mapping
+      label: 'Liste de blocs'
+    

@@ -11,3 +11,12 @@ services:
   generate_style_theme.createentiyfromwidget:
     class: Drupal\generate_style_theme\Services\CreateEntityFromWidget
     arguments: []
+  generate_style_theme.theme-utility:
+    class: Stephane888\HtmlBootstrap\ThemeUtility
+    arguments: []
+  generate_style_theme.create_auto_contents.wbumenudomain:
+    class: Drupal\generate_style_theme\Form\Repositories\FormWbumenudomain
+    arguments: ['@entity_type.manager','@config.factory']
+  generate_style_theme.create_auto_contents.entity:
+    class: Drupal\generate_style_theme\Form\Repositories\FormEntity
+    arguments: ['@entity_type.manager','@config.factory','@generate_style_theme.menustopagecreate','@database','@generate_style_theme.createentiyfromwidget']

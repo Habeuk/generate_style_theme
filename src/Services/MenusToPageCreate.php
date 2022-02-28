@@ -89,6 +89,12 @@ class MenusToPageCreate {
     ]
   ];
   
+  /**
+   * Retourne, un array contenant les pages qui vont etre creer en function des items du menu selectionnées.
+   *
+   * @param array $menuValue
+   * @return NULL[]|number[]|string[][]|string[][][][]
+   */
   function getListPageToCreate(array $menuValue) {
     $newContent = [];
     foreach ($menuValue as $value) {

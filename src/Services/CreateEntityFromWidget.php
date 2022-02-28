@@ -8,7 +8,14 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Stephane888\Debug\debugLog;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\node\Entity\node;
+use Drupal\generate_style_theme\Entity\ContentCreateAutomaticaly;
 
+/**
+ * Permet de dupliquer les contenus, si elle n'existe pas.
+ *
+ * @author stephane
+ *        
+ */
 class CreateEntityFromWidget {
   protected static $field_domain_access = 'field_domain_access';
   
@@ -18,15 +25,15 @@ class CreateEntityFromWidget {
    * @param ContentEntityInterface $entity
    * @param FieldItemListInterface $field
    */
-  public function createEntity(PluginSettingsInterface $widget, ContentEntityInterface &$entity, FieldItemListInterface $field) {
+  public function createEntity(PluginSettingsInterface $widget, ContentEntityInterface &$entity, FieldItemListInterface $field, ContentCreateAutomaticaly &$storageCreateAutomaticaly) {
     debugLog::$max_depth = 4;
     $values = $field->getValue();
     $settings = $field->getSettings();
     if ($settings['handler'] == 'default:block_content') {
-      $entity->get($field->getName())->setValue($this->createBlockContent($values, $entity));
+      $entity->get($field->getName())->setValue($this->createBlockContent($values, $entity, $storageCreateAutomaticaly));
     }
     elseif ($settings['handler'] == 'default:node') {
-      $entity->get($field->getName())->setValue($this->createNode($values, $entity));
+      $entity->get($field->getName())->setValue($this->createNode($values, $entity, $storageCreateAutomaticaly));
     }
   }
   
@@ -36,7 +43,7 @@ class CreateEntityFromWidget {
    * @param ContentEntityInterface $entity
    * @return string[][]|number[][]|NULL[][]
    */
-  protected function createNode(array $values, ContentEntityInterface $entity) {
+  protected function createNode(array $values, ContentEntityInterface $entity, ContentCreateAutomaticaly &$contentCreateAutomaticaly) {
     $newValues = [];
     foreach ($values as $value) {
       $node = node::load($value['target_id']);
@@ -50,6 +57,7 @@ class CreateEntityFromWidget {
         $newValues[] = [
           'target_id' => $cloneNode->id()
         ];
+        $contentCreateAutomaticaly->AddSubContentToPage($entity->bundle(), $cloneNode->id());
       }
     }
     return $newValues;
@@ -59,7 +67,7 @@ class CreateEntityFromWidget {
    *
    * @param array $values
    */
-  protected function createBlockContent(array $values, ContentEntityInterface $entity) {
+  protected function createBlockContent(array $values, ContentEntityInterface $entity, ContentCreateAutomaticaly &$contentCreateAutomaticaly) {
     $newValues = [];
     foreach ($values as $value) {
       $block = BlockContent::load($value['target_id']);
@@ -92,6 +100,7 @@ class CreateEntityFromWidget {
         $newValues[] = [
           'target_id' => $cloneBlock->id()
         ];
+        $contentCreateAutomaticaly->AddSubBlockToPage($entity->bundle(), $cloneBlock->id());
       }
     }
     return $newValues;

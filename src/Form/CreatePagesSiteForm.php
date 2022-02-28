@@ -7,11 +7,13 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\wbumenudomain\Entity\Wbumenudomain;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
-use Drupal\Component\Serialization\Json;
-use Drupal\node\Entity\node;
+use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
 use Drupal\user\Entity\User;
 use Drupal\Component\Utility\Random;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\generate_style_theme\Form\Repositories\FormWbumenudomain;
+use Drupal\generate_style_theme\Form\Repositories\FormEntity;
 
 /**
  * Class CreatePagesSiteForm.
@@ -22,6 +24,8 @@ class CreatePagesSiteForm extends FormBase {
   protected $NombrePageMax = 3;
   protected static $field_domain_access = 'field_domain_access';
   protected static $field_domain_admin = 'field_domain_admin';
+  protected static $storage_auto = 'content_create_automaticaly';
+  protected static $key = 'hp___---__#';
   
   /**
    * Drupal\domain_config_ui\Config\ConfigFactory definition.
@@ -33,14 +37,9 @@ class CreatePagesSiteForm extends FormBase {
   /**
    * Drupal\Core\Entity\EntityTypeManagerInterface definition.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-  /**
-   *
-   * @var \Drupal\generate_style_theme\Services\MenusToPageCreate
-   */
-  protected $MenusToPageCreate;
   
   /**
    *
@@ -50,9 +49,15 @@ class CreatePagesSiteForm extends FormBase {
   
   /**
    *
-   * @var \Drupal\generate_style_theme\Services\CreateEntityFromWidget
+   * @var FormWbumenudomain
    */
-  protected $CreateEntityFromWidget;
+  protected $FormWbumenudomain;
+  
+  /**
+   *
+   * @var FormEntity
+   */
+  protected $FormEntity;
   /**
    *
    * @var boolean
@@ -70,6 +75,9 @@ class CreatePagesSiteForm extends FormBase {
     $instance->MenusToPageCreate = $container->get('generate_style_theme.menustopagecreate');
     $instance->Connection = $container->get('database');
     $instance->CreateEntityFromWidget = $container->get('generate_style_theme.createentiyfromwidget');
+    $instance->FormWbumenudomain = $container->get('generate_style_theme.create_auto_contents.wbumenudomain');
+    $instance->FormEntity = $container->get('generate_style_theme.create_auto_contents.entity');
+    
     return $instance;
   }
   
@@ -96,12 +104,17 @@ class CreatePagesSiteForm extends FormBase {
         return $this->CreatePagesNextPage($form, $form_state);
       }
       else {
+        $form['email-user-d'] = [
+          '#type' => 'email',
+          '#title' => 'Email du proproitaire de domaine',
+          '#require' => true
+        ];
         return $this->CreatePagesNextPage($form, $form_state);
       }
     }
     else {
       $form_state->set('page_num', 1);
-      $this->buildFormWbumenudomain($form, $form_state);
+      $this->FormWbumenudomain->buildFormWbumenudomain($form, $form_state);
     }
     
     // Group submit handlers in an actions element with a key of "actions" so
@@ -124,53 +137,34 @@ class CreatePagesSiteForm extends FormBase {
     return $form;
   }
   
-  /**
-   * Permet de construire le formulaire de l'entite Wbumenudomain.
-   *
-   * @param array $form
-   * @param FormStateInterface $form_state
-   */
-  protected function buildFormWbumenudomain(array &$form, FormStateInterface $form_state, $datas = []) {
-    
-    /**
-     * Si l'utilisateur revient sur cette etape, on recupere son precedant choix.
-     */
-    if ($form_state->has('entity_wbumenudomain')) {
-      $entityWbumenudomain = $form_state->get('entity_wbumenudomain');
-    }
-    else
-      /**
-       * On cre l'entite à partir des données.
-       *
-       * @var \Drupal\Core\Entity\EntityInterface $entityWbumenudomain
-       */
-      $entityWbumenudomain = $this->entityTypeManager->getStorage('wbumenudomain')->create($datas);
-    
-    $form_state->set('entity_wbumenudomain', $entityWbumenudomain);
-    
-    $form_display = EntityFormDisplay::collectRenderDisplay($entityWbumenudomain, 'default');
-    $form_display->buildForm($entityWbumenudomain, $form, $form_state);
-    $form_state->set('form_display_wbumenudomain', $form_display);
-  }
-  
   protected function buildFormPrestataire(array &$form, FormStateInterface $form_state, $datas = []) {
     /**
      * Si l'utilisateur revient sur cette etape, on recupere son precedant choix.
      */
-    if ($form_state->has('entity_node')) {
-      $entity = $form_state->get('entity_node');
+    if ($form_state->has('new_contents') && $form_state->get([
+      'new_contents',
+      'prestataires'
+    ])) {
+      $entity = $form_state->get([
+        'new_contents',
+        'prestataires'
+      ]);
     }
     else
       $entity = $this->entityTypeManager->getStorage('node')->create([
         'type' => 'prestataires'
       ]);
     /**
-     * On cre l'entite à partir des données.
+     * On cree l'entite à partir des données.
      *
      * @var \Drupal\Core\Entity\EntityInterface $entityWbumenudomain
      */
-    
-    $form_state->set('entity_node', $entity);
+    $contents = $form_state->get('new_contents');
+    if (empty($contents)) {
+      $contents = [];
+    }
+    // $contents['prestataires'] = $entity;
+    // $form_state->set('new_contents', $contents);
     //
     $form_display = EntityFormDisplay::collectRenderDisplay($entity, 'default');
     $form_display->buildForm($entity, $form, $form_state);
@@ -264,6 +258,7 @@ class CreatePagesSiteForm extends FormBase {
   
   /**
    * Provides custom submission handler for page 1.
+   * NB: cette fonction s'execute apres la validation.
    *
    * @param array $form
    *        An associative array containing the structure of the form.
@@ -271,13 +266,93 @@ class CreatePagesSiteForm extends FormBase {
    *        The current state of the form.
    */
   public function CreatePageSubmitNext(array &$form, FormStateInterface $form_state) {
-    $this->temporySaveWbumenudomain($form, $form_state);
-    $this->temporySaveNode($form, $form_state);
+    $this->FormWbumenudomain->temporySaveWbumenudomain($form, $form_state);
     //
-    
+    $this->CreateInstanceHomePage($form_state);
+    $this->FormEntity->createInstancePageItemsMenu($form_state);
+    // On doit recuperer les données dans le formulaire utiliser et les mettres dans l'entité avant d'effectuer la validation.
+    $this->temporySavePrestataireNode($form, $form_state);
+    //
     $n = $form_state->get('page_num');
     // dump('last page : ', $n);
     $form_state->set('page_num', $n + 1)->setRebuild(TRUE);
+  }
+  
+  /**
+   * Creer l'intances de la page d'accueil.
+   * On a opté de mettre tous les contenus dans 'new_contents' mais la page d'accueil est particuliere, car elle peut etre modifier par l'utilisateur.
+   * Donc, on va fixe sont id avec une valeur non valide pour les champs machine_name(afin d'eviter les conflits avec les type de contenu).
+   * on fixe: hp___---__#
+   * On va egalement remettre 'new_contents' à [] si le model de page d'accueil est modifié.
+   *
+   * Apres l'exection de cette fonction, on a l'instance de la page d'accueil qui est crée et les instances de pages lies au menu.
+   *
+   * @param FormStateInterface $form_state
+   */
+  protected function CreateInstanceHomePage(FormStateInterface $form_state) {
+    /**
+     *
+     * @var Wbumenudomain $entity_wbumenudomain
+     */
+    $entity_wbumenudomain = $form_state->get('entity_wbumenudomain');
+    
+    // Creation de l'instance de la page d'accueil.
+    $homePageContentType = $entity_wbumenudomain->getContentTypeHomePage();
+    if (!empty($homePageContentType)) {
+      // si cest la meme page de home. on passe à la suite.
+      if ($form_state->has([
+        'new_contents',
+        self::$key
+      ])) {
+        /**
+         *
+         * @var \Drupal\node\Entity\Node $homePage
+         */
+        $homePage = $form_state->get([
+          'new_contents',
+          self::$key
+        ]);
+        if ($homePage->bundle() == $homePageContentType) {
+          return;
+        }
+      }
+      
+      // Une page doit etre unique, on se rassure qu'elle n'existe pas deja pour le domaine.
+      $query = " SELECT nid from {node_field_data} as fd ";
+      $query .= " inner join {node__field_domain_access} as fda ON fda.entity_id = fd.nid ";
+      $query .= " where fd.type ='" . $homePageContentType . "' and fda.field_domain_access_target_id = '" . $entity_wbumenudomain->getHostname() . "' ";
+      $Ids = $this->Connection->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+      if (!empty($Ids)) {
+        \Drupal::messenger()->addWarning(" Un model existe deja pour le domaine %domaine, veillez la supprimer avant de creer une nouvelle ", [
+          '%domaine' => $entity_wbumenudomain->getHostname()
+        ]);
+        return;
+      }
+      
+      // Soit c'est la premiere fois que l'utilisateur execute next, soit ce dernier à modifier la page d'accueil.
+      $contents = [];
+      $contents[self::$key] = $this->createNode([
+        'type' => $homePageContentType,
+        'title' => [
+          [
+            "value" => "page d'accueil"
+          ]
+        ],
+        self::$field_domain_access => [
+          [
+            'target_id' => $form_state->get('hostname')
+          ]
+        ],
+        'field_domain_source' => [
+          [
+            'target_id' => $form_state->get('hostname')
+          ]
+        ]
+      ]);
+      // on ne peut pas dupliquer le contenu à ce niveau...
+      // $this->createNewEntityReference($contents[$key]);
+      $form_state->set('new_contents', $contents);
+    }
   }
   
   /**
@@ -332,51 +407,27 @@ class CreatePagesSiteForm extends FormBase {
     $n = $form_state->get('page_num');
     if ($n > 1)
       $n = $n - 1;
-    $form_state->set('page_num', $n)->
-    // Since we have logic in our buildForm() method, we have to tell the form
-    // builder to rebuild the form. Otherwise, even though we set 'page_num'
-    // to 1, the AJAX-rendered form will still show page 2.
-    setRebuild(TRUE);
+    $form_state->set('page_num', $n)->setRebuild(TRUE);
   }
   
   /**
+   * NB: elle s'execute à chaque submit.
+   * (bouton trigger, #ajax, add_more).
    *
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    /**
-     *
-     * @var Wbumenudomain $entity_wbumenudomain
-     */
-    $entity_wbumenudomain = $form_state->get('entity_wbumenudomain');
-    // Creation de la page d'accueil.
-    $homePageContentType = $entity_wbumenudomain->getContentTypeHomePage();
-    if (!empty($homePageContentType)) {
-      $contents = $form_state->get('new_contents');
-      if (!$contents)
-        $contents = [];
-      $contents[$homePageContentType] = $this->createNode([
-        'type' => $homePageContentType,
-        'title' => [
-          [
-            "value" => "page d'accueil"
-          ]
-        ],
-        self::$field_domain_access => [
-          [
-            'target_id' => $form_state->get('hostname')
-          ]
-        ],
-        'field_domain_source' => [
-          [
-            'target_id' => $form_state->get('hostname')
-          ]
-        ]
-      ]);
-      $this->createNewEntityReference($contents[$homePageContentType]);
-      $form_state->set('new_contents', $contents);
-      $this->createNodeIfNotOccurrence($form, $form_state);
+    // On empeche la verification si c'est une action liée à un bouton add more.
+    $button = $form_state->getTriggeringElement();
+    if (in_array('add_more', $button['#parents']))
+      return true;
+    // Validation de l'email
+    if ($form_state->has('email-user-d')) {
+      if (\Drupal::entityQuery('user')->condition('mail', $form_state->get('email-user-d'))->execute()) {
+        $form_state->setErrorByName('email-user-d', ' Ce email existe deja ');
+      }
     }
+    //
     $this->validation($form_state);
     parent::validateForm($form, $form_state);
   }
@@ -392,7 +443,7 @@ class CreatePagesSiteForm extends FormBase {
        */
       $status = $content->validate();
       foreach ($status->getFieldNames() as $field_name) {
-        $form_state->setErrorByName($field_name, 'erreur sur le champs ' . $field_name . ' du type de contenu : ' . $content->bundle());
+        $form_state->setErrorByName($field_name, ' Erreur sur le champs ' . $field_name . ' du type de contenu : ' . $content->bundle());
       }
     }
   }
@@ -402,54 +453,55 @@ class CreatePagesSiteForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // $this->temporySaveWbumenudomain($form, $form_state);
-    // $this->temporySaveNode($form, $form_state);
-    
-    //
-    /**
-     * Creation de l'entite wbumenudomain.
-     *
-     * @var Wbumenudomain $entity_wbumenudomain
-     */
     $entity_wbumenudomain = $form_state->get('entity_wbumenudomain');
-    $entity_wbumenudomain->validate();
-    if (self::$demo)
+    /**
+     * On sauvgarde la page d'accueil.
+     */
+    if (self::$demo) {
+      /**
+       * Creation de l'entite wbumenudomain.
+       *
+       * @var Wbumenudomain $entity_wbumenudomain
+       */
       dump($entity_wbumenudomain->toArray());
+    }
     else
-      $entity_wbumenudomain->save();
+      $this->FormWbumenudomain->submitForm($form, $form_state);
     
     /**
      * Creation du node prestataures.
      *
      * @var \Drupal\node\Entity\Node $entity_node
      */
-    $entity_node = $form_state->get('entity_node');
-    if (self::$demo)
-      dump($entity_node->toArray());
-    else
-      $entity_node->save();
+    // $entity_node = $form_state->get('entity_node');
+    // if (self::$demo)
+    // dump($entity_node->toArray());
+    // else
+    // $entity_node->save();
     
     // Enregistre en masse les nodes.
-    /**
-     * Creation des pages (page d'accuiel et des pages selectionnées au niveau du menu.
-     *
-     * @var Array $contents
-     */
-    $contents = $form_state->get('new_contents');
-    foreach ($contents as $k => $content) {
-      /**
-       *
-       * @var \Drupal\node\Entity\Node $content
-       */
-      if (self::$demo)
-        dump($content->toArray());
-      else {
-        $this->createNewEntityReference($contents[$k]);
-        $contents[$k]->save();
-      }
-    }
-    $message = 'Les differentes pages ont été crée';
-    \Drupal::messenger()->addMessage($message);
+    $this->FormEntity->submitForm($form, $form_state);
+    // /**
+    // * Creation des pages (page d'accuiel et des pages selectionnées au niveau du menu.
+    // * NB: cest
+    // *
+    // * @var Array $contents
+    // */
+    // $contents = $form_state->get('new_contents');
+    // foreach ($contents as $k => $content) {
+    // /**
+    // *
+    // * @var \Drupal\node\Entity\Node $content
+    // */
+    // if (self::$demo)
+    // dump($content->toArray());
+    // else {
+    // $this->createNewEntityReference($contents[$k]);
+    // $contents[$k]->save();
+    // }
+    // }
+    // $message = 'Les differentes pages ont été crée';
+    // \Drupal::messenger()->addMessage($message);
     if (self::$demo)
       die();
     // Creation de l'utilisateur.
@@ -457,12 +509,19 @@ class CreatePagesSiteForm extends FormBase {
       $this->createUserByDomain($entity_wbumenudomain, $form_state);
     
     // Redirection vers la page de creation de theme.
-    $homePageContentType = $entity_wbumenudomain->getContentTypeHomePage();
-    if (isset($contents[$homePageContentType])) {
+    $contents = $form_state->get('new_contents');
+    /**
+     *
+     * @var Node $node
+     */
+    $node = $contents[self::$key];
+    // remove it
+    \Drupal::messenger()->addStatus(" Identifiant du node : " . $node->isNew());
+    if ($node) {
       $url = Url::fromRoute('entity.config_theme_entity.add_form', [], [
         'query' => [
-          'content-type-home' => $homePageContentType,
-          'content-type-home-id' => $contents[$homePageContentType]->id(),
+          'content-type-home' => $node->bundle(),
+          'content-type-home-id' => $node->id(),
           'lirairy' => $entity_wbumenudomain->getLirairy(),
           'domaine-id' => $entity_wbumenudomain->getHostname()
         ]
@@ -479,12 +538,16 @@ class CreatePagesSiteForm extends FormBase {
   private function createUserByDomain(Wbumenudomain $entity_wbumenudomain, FormStateInterface $form_state) {
     $hostName = $entity_wbumenudomain->getHostname();
     $typeContenuHomePage = $entity_wbumenudomain->getContentTypeHomePage();
+    $email = $form_state->getValue('email-user-d');
     $random = new Random();
     $password = $random->string(12, true);
     $user = User::create([
       'name' => $hostName,
-      'pass' => $password
+      'pass' => $password,
+      'mail' => empty($email) ? 'auto' . rand(1, 999) . $random->name() . '@example.com' : $email,
+      'notify' => false
     ]);
+    
     /**
      * On donne les access par rapport au domaine.
      */
@@ -527,80 +590,19 @@ class CreatePagesSiteForm extends FormBase {
   }
   
   private function createNode(array $values) {
-    return node::create($values);
+    return Node::create($values);
   }
   
   /**
-   * - Lors de la creation d'un nouveau entity ses entitées reference doivent etre dupliquer
-   */
-  private function createNewEntityReference(&$entity) {
-    $fields = $entity->getFields();
-    foreach ($fields as $field) {
-      /**
-       *
-       * @var \Drupal\Core\Field\FieldItemList $field
-       */
-      /**
-       *
-       * @var \Drupal\Core\Field\Plugin\Field\FieldWidget\StringTextfieldWidget $widget
-       */
-      $widget = $this->getWidget($entity, $field);
-      
-      if ($widget && $widget->getPluginId() == 'wbumenudomainhost_complex_inline') {
-        if (!self::$demo)
-          $this->CreateEntityFromWidget->createEntity($widget, $entity, $field);
-      }
-    }
-  }
-  
-  public function getWidget($entity, $field) {
-    /**
-     *
-     * @var \Drupal\Core\Entity\Entity\EntityFormDisplay $entity_form_display
-     */
-    $entity_form_display = \Drupal::service('entity_display.repository')->getFormDisplay($entity->getEntityTypeId(), $entity->bundle());
-    $widget = $entity_form_display->getRenderer($field->getFieldDefinition()->getName());
-    return $widget;
-  }
-  
-  /**
+   * On enregistre l'instance de node prestataire.
    *
    * @param array $form
    * @param FormStateInterface $form_state
    */
-  protected function temporySaveWbumenudomain(array &$form, FormStateInterface $form_state) {
-    if ($form_state->has('form_display_wbumenudomain') && $form_state->has('entity_wbumenudomain')) {
-      /**
-       *
-       * @var EntityFormDisplay $form_display
-       */
-      $form_display = $form_state->get('form_display_wbumenudomain');
-      
-      /**
-       *
-       * @var Wbumenudomain $entity
-       */
-      $entity = $form_state->get('entity_wbumenudomain');
-      /**
-       * Cette fonction permet de recuperer les données dans $form pour mettre dans $entity.
-       */
-      $form_display->extractFormValues($entity, $form, $form_state);
-      $form_state->set('entity_wbumenudomain', $entity);
-      $form_state->set('hostname', $entity->getHostname());
-      $ar = $entity->get('field_element_de_menu_valides')->first()->getValue();
-      if (!empty($ar))
-        $form_state->set('field_element_de_menu_valides', $ar['value']);
-    }
-  }
-  
-  /**
-   * Enregistre le node prestataires.
-   *
-   * @param array $form
-   * @param FormStateInterface $form_state
-   */
-  protected function temporySaveNode(array &$form, FormStateInterface $form_state) {
-    if ($form_state->has('form_display_node') && $form_state->has('entity_node')) {
+  protected function temporySavePrestataireNode(array &$form, FormStateInterface $form_state) {
+    // Il faut se rassurer que l'utilisateur passe à l'etape 2.
+    if ($form_state->has('form_display_node') && $form_state->get('page_num') == 2) {
+      // \Drupal::messenger()->addMessage(" temporySavePrestataireNode ");
       /**
        *
        * @var EntityFormDisplay $form_display_node
@@ -610,44 +612,23 @@ class CreatePagesSiteForm extends FormBase {
        *
        * @var \Drupal\node\Entity\Node $entity_node
        */
-      $entity_node = $form_state->get('entity_node');
+      if ($form_state->has([
+        'new_contents',
+        'prestataires'
+      ]))
+        $entity_node = $form_state->get([
+          'new_contents',
+          'prestataires'
+        ]);
+      else
+        $entity_node = $this->createNode([
+          'type' => 'prestataires'
+        ]);
       $form_display_node->extractFormValues($entity_node, $form, $form_state);
-      $form_state->set('entity_node', $entity_node);
-    }
-  }
-  
-  /**
-   * Cree les nodes s'il nya aucune equivalance pour le domaine.
-   * Cela permet de d'initialiser les pages.
-   * un tableau de données se cree lors du passage de l'etape 1 => 2.
-   * L valisation de ces données se fait de 2 => 3.
-   */
-  protected function createNodeIfNotOccurrence(array &$form, FormStateInterface $form_state) {
-    $hostname = $form_state->get('hostname');
-    $field_element_de_menu_valides = $form_state->get('field_element_de_menu_valides');
-    if ($hostname && $field_element_de_menu_valides) {
-      $Contents = $form_state->get('new_contents');
-      if (!$Contents)
-        $Contents = [];
-      foreach ($this->MenusToPageCreate->getListPageToCreate(json::decode($field_element_de_menu_valides)) as $content) {
-        $query = " SELECT nid from {node_field_data} as fd ";
-        $query .= " inner join {node__field_domain_access} as fda ON fda.entity_id = fd.nid ";
-        $query .= " where fd.type ='" . $content['type'] . "' and fda.field_domain_access_target_id = '" . $hostname . "' ";
-        $Ids = $this->Connection->query($query)->fetchAll(\PDO::FETCH_ASSOC);
-        if (empty($Ids)) {
-          $ar = $content;
-          $ar[self::$field_domain_access] = [
-            [
-              'target_id' => $hostname
-            ]
-          ];
-          $Contents[$content['type']] = $this->createNode($ar);
-        }
-      }
-      $form_state->set('new_contents', $Contents);
-    }
-    else {
-      \Drupal::messenger()->addWarning(" Le nom d'hote n'est pas definit ");
+      $form_state->set([
+        'new_contents',
+        'prestataires'
+      ], $entity_node);
     }
   }
   

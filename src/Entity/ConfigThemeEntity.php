@@ -176,6 +176,10 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     return $this->get('color_link_hover')->first()->getValue();
   }
   
+  public function getColorBackground() {
+    return $this->get('wbu-background')->first()->getValue();
+  }
+  
   public function getLirairy() {
     return $this->get('lirairy')->first()->getValue();
   }
@@ -216,11 +220,15 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('view', TRUE);
     
-    $fields['color_secondaire'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur secondaire & Couleur d'arrière plan ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['color_secondaire'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur secondaire  ")->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('view', TRUE);
     
     $fields['color_link_hover'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur des liens ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+      'type' => 'colorapi_color_display'
+    ])->setDisplayConfigurable('view', TRUE);
+    
+    $fields['wbu-background'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur d'arrière plan ")->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('view', TRUE);
     

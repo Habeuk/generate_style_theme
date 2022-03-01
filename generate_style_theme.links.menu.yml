@@ -9,7 +9,7 @@ entity.style_theme_entity.collection:
 
 # Config theme entity menu items definition
 entity.config_theme_entity.collection:
-  title: 'Config theme entity list'
+  title: ' Creation/MAJ du styles des themes '
   route_name: entity.config_theme_entity.collection
   description: 'List Config theme entity entities'
   parent: create_pages_site_form.admin.structure.settings

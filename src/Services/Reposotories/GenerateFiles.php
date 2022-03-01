@@ -84,7 +84,6 @@ libraries:
     $exc = $this->excuteCmd($script, 'RunNpm');
     if ($exc['return_var']) {
       \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");
-      debugLog::kintDebugDrupal($exc, 'RunNpmError--' . $this->themeName, true);
     }
     else {
       \Drupal::messenger()->addStatus(" Fichier du theme generer avec success, veuillez utiliser CTRL+F5 ");
@@ -93,8 +92,10 @@ libraries:
   
   /**
    * On copie les fichiers.
+   *
+   * @deprecated
    */
-  function CopyWbuAtomiqueTheme() {
+  function CopyWbuAtomiqueThemeOld() {
     // wbu-atomique-theme/src/js
     $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('module', "generate_style_theme") . "/wbu-atomique-theme";
     $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName;
@@ -104,10 +105,8 @@ libraries:
   /**
    * Les liens symbolique ne marge pas.
    * On va faire un lien, Car cela est plus facile à gerer et occupe moins d'espace.
-   *
-   * @deprecated
    */
-  function CopyWbuAtomiqueTheme2() {
+  function CopyWbuAtomiqueTheme() {
     // wbu-atomique-theme/src/js
     $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('module', "generate_style_theme") . "/wbu-atomique-theme";
     // $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName;
@@ -119,8 +118,8 @@ libraries:
     exec($cmd . " 2>&1", $outputs, $return_var);
     // On copie tous les fichiers present dans wbu-atomique-theme, sauf le dossier node_modules.
     if ($return_var === 0) {
+      $script = ' mkdir ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
       foreach ($outputs as $output) {
-        
         if ($output !== 'node_modules') {
           if ($script) {
             $script .= ' && cp -r ' . $modulePath . '/' . $output . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
@@ -130,8 +129,12 @@ libraries:
         }
       }
     }
+    else {
+      throw new \Exception(' Impossible de lire le contenu des fichiers  ');
+    }
     // on fait un lien symbolique avec node_modules.
-    $script .= ' && ln -s ' . $modulePath . '/node_modules ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
+    $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('theme', "lesroisdelareno") . "/wbu-atomique-theme";
+    $script .= ' && ln -s ' . $modulePath . '/node_modules   ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
     $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
   }
   
@@ -194,8 +197,11 @@ libraries:
     $debug = [
       'output' => $output,
       'return_var' => $return_var,
-      'result' => $result
+      'result' => $result,
+      'script' => $cmd
     ];
+    if ($debug['return_var'])
+      debugLog::kintDebugDrupal($debug, $name);
     return $debug;
   }
   

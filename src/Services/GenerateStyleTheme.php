@@ -16,6 +16,7 @@ class GenerateStyleTheme {
    * Chemin vers l'executable NPM.
    *
    * @var Object
+   * @deprecated
    */
   protected $npm;
   
@@ -34,9 +35,13 @@ class GenerateStyleTheme {
     $this->themeDirectory = CaseString::camel($configs['themeName'])->camel();
     $this->themePath = $this->getPath();
     $this->entity = $entity;
-    $this->createInstanceNpm();
+    // $this->createInstanceNpm();
   }
   
+  /**
+   *
+   * @deprecated
+   */
   function createInstanceNpm() {
     $ar = explode("/", DRUPAL_ROOT);
     $pr = '';
@@ -47,7 +52,7 @@ class GenerateStyleTheme {
     }
     $this->npm = $pr . '/node/bin/npm';
     if (!file_exists($this->npm)) {
-      \Drupal::messenger()->addError("Le module node n'est pas installé, veillez telecharger nodejs, decompresser et placer les fichiers dans le public/node ");
+      \Drupal::messenger()->addError(" Le module node n'est pas installé, veillez telecharger nodejs, decompresser et placer les fichiers dans le public/node ");
     }
   }
   
@@ -160,4 +165,3 @@ class GenerateStyleTheme {
   }
   
 }
-

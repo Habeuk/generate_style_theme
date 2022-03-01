@@ -228,9 +228,9 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('view', TRUE);
     
-    $fields['wbu_background'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur d'arrière plan ")->setRequired(TRUE)->setDisplayConfigurable('form', [
-      'type' => 'colorapi_color_display'
-    ])->setDisplayConfigurable('view', TRUE);
+    // $fields['wbu_background'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur d'arrière plan ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    // 'type' => 'colorapi_color_display'
+    // ])->setDisplayConfigurable('view', TRUE);
     
     $fields['h1_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre ")->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'string_textfield'

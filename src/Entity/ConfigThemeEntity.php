@@ -234,11 +234,11 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     
     $fields['h1_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre ")->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'string_textfield'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue('5.4rem');
+    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue('3.4rem');
     
     $fields['h2_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre ")->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'string_textfield'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue('3.4rem');
+    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue('2.4rem');
     
     $fields['text_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police par defaut ")->setRequired(TRUE)->setDisplayConfigurable('form', [
       'type' => 'string_textfield'

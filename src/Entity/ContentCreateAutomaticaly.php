@@ -37,7 +37,6 @@ use Drupal\block_content\Entity\BlockContent;
  *     "label",
  *     "home_page",
  *     "contents",
- *     "test_valeur",
  *     "blocks"
  *   },
  *   links = {

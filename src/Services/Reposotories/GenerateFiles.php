@@ -167,7 +167,7 @@ libraries:
     $space_bottom: $wbu-margin * 5;
     $space_top: $wbu-margin * 4;
     $space_inner_top: $space_top * 0.5;
-    $wbu-h4-font-size: $wbu-h4-font-size * 1.2;    
+    // $wbu-h4-font-size: $wbu-h4-font-size * 1.2;    
 ';
     $string .= $confs['files'];
     $filename = $this->themeName . '.scss';

@@ -153,6 +153,12 @@ libraries:
     $color_background = !empty($entity->getColorBackground()['color']) ? $entity->getColorBackground()['color'] : '#192028';
     $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
     $confs = $this->getScssFromLibrairy($libray);
+    $wbu_h1_font_size = !empty($entity->getH1FontSize()['value']) ? $entity->getH1FontSize()['value'] : '3.4rem';
+    $wbu_h2_font_size = !empty($entity->getH2FontSize()['value']) ? $entity->getH2FontSize()['value'] : '2.4rem';
+    $text_font_size = !empty($entity->gettext_font_size()['value']) ? $entity->gettext_font_size()['value'] : '1.4rem';
+    $space_bottom = !empty($entity->getspace_bottom()['value']) ? $entity->getspace_bottom()['value'] : '5';
+    $space_top = !empty($entity->getspace_top()['value']) ? $entity->getspace_top()['value'] : '4';
+    $space_inner_top = !empty($entity->getspace_inner_top()['value']) ? $entity->getspace_inner_top()['value'] : '0.5';
     $string = '  
     @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
     ';
@@ -161,13 +167,12 @@ libraries:
     $wbu-color-secondary: ' . $color_secondaire . '; 
     $wbu-color-link-hover: ' . $color_link_hover . '; 
     $wbu-background: ' . $color_background . '; 
-    $wbu-h2-font-size: 3.4rem;
-    $wbu-color-link: $wbu-color-primary;
-    //$wbu-title-color: #3d3c3c;
-    $space_bottom: $wbu-margin * 5;
-    $space_top: $wbu-margin * 4;
-    $space_inner_top: $space_top * 0.5;
-    // $wbu-h4-font-size: $wbu-h4-font-size * 1.2;    
+    $wbu-h1-font-size: ' . $wbu_h1_font_size . ';
+    $wbu-h2-font-size: ' . $wbu_h2_font_size . ';
+    $space_bottom: $wbu-margin * ' . $space_bottom . ';
+    $space_top: $wbu-margin * ' . $space_top . ';
+    $space_inner_top: $space_top * ' . $space_inner_top . ';
+    $wbu-default-font-size: ' . $text_font_size . ';   
 ';
     $string .= $confs['files'];
     $filename = $this->themeName . '.scss';

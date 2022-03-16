@@ -176,12 +176,73 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     return $this->get('color_link_hover')->first()->getValue();
   }
   
+  /**
+   *
+   * @return mixed
+   */
   public function getColorBackground() {
     return $this->get('wbubackground')->first()->getValue();
   }
   
+  /**
+   *
+   * @return mixed
+   */
   public function getLirairy() {
-    return $this->get('lirairy')->first()->getValue();
+    if ($this->get('lirairy')->first())
+      return $this->get('lirairy')->first()->getValue();
+  }
+  
+  /**
+   * --
+   */
+  public function getH1FontSize() {
+    if ($this->get('h1_font_size')->first())
+      return $this->get('h1_font_size')->first()->getValue();
+  }
+  
+  /**
+   * --
+   */
+  public function getH2FontSize() {
+    if ($this->get('h2_font_size')->first())
+      return $this->get('h2_font_size')->first()->getValue();
+  }
+  
+  /**
+   *
+   * @return mixed
+   */
+  public function gettext_font_size() {
+    if ($this->get('text_font_size')->first())
+      return $this->get('text_font_size')->first()->getValue();
+  }
+  
+  /**
+   *
+   * @return mixed
+   */
+  public function getspace_bottom() {
+    if ($this->get('space_bottom')->first())
+      return $this->get('space_bottom')->first()->getValue();
+  }
+  
+  /**
+   *
+   * @return mixed
+   */
+  public function getspace_top() {
+    if ($this->get('space_top')->first())
+      return $this->get('space_top')->first()->getValue();
+  }
+  
+  /**
+   *
+   * @return mixed
+   */
+  public function getspace_inner_top() {
+    if ($this->get('space_inner_top')->first())
+      return $this->get('space_inner_top')->first()->getValue();
   }
   
   /**

@@ -3,7 +3,6 @@
 namespace Drupal\generate_style_theme\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Stephane888\Debug\debugLog;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ThemeInstaller;
 
@@ -57,7 +56,7 @@ class GenerateStyleThemeController extends ControllerBase {
       $themename,
       $listThemeVisible
     ];
-    debugLog::kintDebugDrupal($debug, 'installTheme', true);
+
     if (!empty($listThemeVisible[$themename])) {
       $listThemesInstalled = $listThemesInstalled = \Drupal::config("core.extension")->get('theme');
       if (empty($listThemesInstalled[$themename])) {

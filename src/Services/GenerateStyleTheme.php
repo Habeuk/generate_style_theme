@@ -5,7 +5,7 @@ namespace Drupal\generate_style_theme\Services;
 use Drupal\generate_style_theme\Services\Reposotories\GenerateFiles;
 use CaseConverter\CaseString;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
-use Stephane888\Debug\debugLog;
+
 
 class GenerateStyleTheme {
   protected $themeName;
@@ -131,7 +131,7 @@ class GenerateStyleTheme {
       $ExtLitThemes->reset();
       // dump($ExtLitThemes->getList());
       // dump($listThemesInstalled);
-      debugLog::kintDebugDrupal($ExtLitThemes->getList(), $domaineId, true);
+      
       
       /**
        * On installe le nouveau theme.

@@ -5,7 +5,6 @@ namespace Drupal\generate_style_theme\Services;
 use Drupal\Core\Field\PluginSettingsInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Stephane888\Debug\debugLog;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\node\Entity\node;
 use Drupal\generate_style_theme\Entity\ContentCreateAutomaticaly;
@@ -26,7 +25,7 @@ class CreateEntityFromWidget {
    * @param FieldItemListInterface $field
    */
   public function createEntity(PluginSettingsInterface $widget, ContentEntityInterface &$entity, FieldItemListInterface $field, ContentCreateAutomaticaly &$storageCreateAutomaticaly) {
-    debugLog::$max_depth = 4;
+    
     $values = $field->getValue();
     $settings = $field->getSettings();
     if ($settings['handler'] == 'default:block_content') {

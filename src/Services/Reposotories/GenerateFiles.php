@@ -2,8 +2,8 @@
 
 namespace Drupal\generate_style_theme\Services\Reposotories;
 
-use Stephane888\Debug\debugLog;
 use ScssPhp\ScssPhp\Compiler;
+use Stephane888\Debug\debugLog;
 
 trait GenerateFiles {
   
@@ -207,8 +207,7 @@ libraries:
       'result' => $result,
       'script' => $cmd
     ];
-    if ($debug['return_var'])
-      debugLog::kintDebugDrupal($debug, $name);
+    
     return $debug;
   }
   

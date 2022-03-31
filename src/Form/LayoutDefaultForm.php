@@ -5,7 +5,6 @@ namespace Drupal\generate_style_theme\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Stephane888\Debug\debugLog;
 use Drupal\layout_builder\SectionStorageInterface;
 use Drupal\Core\Plugin\Context\EntityContext;
 

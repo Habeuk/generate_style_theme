@@ -19,6 +19,23 @@ generate_style_theme.layout_entete_form:
     _title: 'LayoutEnteteForm'
   requirements:
     _role: 'administrator'
+    
+generate_style_theme.layout_entete_form_v2:
+  path: '/generate_style_theme/form/layout_entete_v2'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\LayoutEnteteFormV2'
+    _title: 'LayoutEnteteForm'
+  requirements:
+    _role: 'administrator'
+
+generate_style_theme.layout_merge_config:
+  path: '/generate_style_theme/restaure-layout/{section_storage}'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\LayoutMergeConfigForm'
+    _title: 'Permet de restaurer la structure des layouts'
+  requirements:
+    _role: 'administrator'
+    
 generate_style_theme.layout_footer_form:
   path: '/generate_style_theme/form/layout_footer'
   defaults:
@@ -42,6 +59,8 @@ generate_style_theme.layout_default_form:
     parameters:
       section_storage:
         layout_builder_tempstore: TRUE
+        
+        
 generate_style_theme.create_pages_site_form:
   path: '/generate_style_theme/form/create_pages_site'
   defaults:
@@ -49,3 +68,6 @@ generate_style_theme.create_pages_site_form:
     _title: 'CreatePagesSiteForm'
   requirements:
     _access: 'TRUE'
+    
+    
+

@@ -85,7 +85,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
    * -
    */
   public function getLogo() {
-    $fid = $this->get('logo')->first()->getValue();
+    if ($this->get('logo')->first())
+      $fid = $this->get('logo')->first()->getValue();
     if (!empty($fid)) {
       $file = File::load($fid["target_id"]);
       if ($file) {
@@ -165,15 +166,18 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
    *         "color" => "#7AE864"]
    */
   public function getColorPrimary() {
-    return $this->get('color_primary')->first()->getValue();
+    if ($this->get('color_primary')->first())
+      return $this->get('color_primary')->first()->getValue();
   }
   
   public function getColorSecondaire() {
-    return $this->get('color_secondaire')->first()->getValue();
+    if ($this->get('color_secondaire')->first())
+      return $this->get('color_secondaire')->first()->getValue();
   }
   
   public function getColorLinkHover() {
-    return $this->get('color_link_hover')->first()->getValue();
+    if ($this->get('color_link_hover')->first())
+      return $this->get('color_link_hover')->first()->getValue();
   }
   
   /**
@@ -181,7 +185,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
    * @return mixed
    */
   public function getColorBackground() {
-    return $this->get('wbubackground')->first()->getValue();
+    if ($this->get('wbubackground')->first())
+      return $this->get('wbubackground')->first()->getValue();
   }
   
   /**

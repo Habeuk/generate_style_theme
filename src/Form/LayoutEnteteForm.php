@@ -5,12 +5,18 @@ namespace Drupal\generate_style_theme\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Plugin\Context\EntityContext;
+use Drupal\Core\Form\SubformState;
+use Drupal\Core\Plugin\PluginWithFormsInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
+use Drupal\Core\Layout\LayoutInterface;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Class LayoutEnteteForm.
  */
 class LayoutEnteteForm extends FormBase {
-  protected static $LayoutBaseKey = 'core.entity_view_display.block_content.layout_entete_m1.default';
+  protected static $LayoutBaseKey = 'block_content.layout_entete_m1.default';
   protected static $LayoutSettingKey = 'third_party_settings.layout_builder.sections.0.layout_settings';
   protected static $plugin_id = 'formatage_models_header1';
   
@@ -22,10 +28,25 @@ class LayoutEnteteForm extends FormBase {
   protected $layoutManager;
   
   /**
+   * The section storage manager.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\layout_builder\SectionStorage\SectionStorageManager
    */
-  protected $ConfigFactory;
+  protected $sectionStorageManager;
+  
+  /**
+   * The section storage.
+   *
+   * @var \Drupal\layout_builder\Plugin\SectionStorage\DefaultsSectionStorage
+   */
+  protected $sectionStorage;
+  
+  /**
+   * The plugin being configured.
+   *
+   * @var \Drupal\Core\Layout\LayoutInterface|\Drupal\Core\Plugin\PluginFormInterface
+   */
+  protected $layout;
   
   /**
    *
@@ -42,7 +63,7 @@ class LayoutEnteteForm extends FormBase {
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
     $instance->layoutManager = $container->get('plugin.manager.core.layout');
-    $instance->ConfigFactory = $container->get('config.factory');
+    $instance->sectionStorageManager = $container->get('plugin.manager.layout_builder.section_storage');
     return $instance;
   }
   
@@ -51,34 +72,28 @@ class LayoutEnteteForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // $LayoutConfig = \Drupal::config(self::$LayoutBaseKey);
-    // dump($LayoutConfig->getRawData());
+    $entity = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load(self::$LayoutBaseKey);
+    $contexts = [];
+    $contexts['display'] = EntityContext::fromEntity($entity);
+    $this->sectionStorage = $this->sectionStorageManager->load('defaults', $contexts);
+    $this->layout = $this->sectionStorage->getSection(0)->getLayout();
+    //
+    $form['#tree'] = TRUE;
+    $form['layout_settings'] = [];
     /**
      *
-     * @var \Drupal\formatage_models\Plugin\Layout\Sections\Headers\FormatageModelsheader1 $pluginHeader
+     * @var \Drupal\formatage_models\Plugin\Layout\Sections\Headers\FormatageModelsheader1 $plugin
      */
-    $pluginHeader = $this->layoutManager->createInstance(self::$plugin_id);
-    // $pluginHeader->setContext($name, $context);
-    // v2lesroisdelareno_kksa
-    $currentSetting = $this->getLayoutCurrentConfig();
+    $plugin = $this->getPluginForm($this->layout);
+    // dump($plugin->getConfiguration());
+    // $plugin->setConfiguration($this->getLayoutCurrentConfig());
+    $plugin->setConfiguration(NestedArray::mergeDeep($plugin->defaultConfiguration(), $plugin->getConfiguration()));
+    $form['layout_settings'] = $plugin->buildConfigurationForm($form['layout_settings'], $form_state);
     
-    // dump($currentSetting);
-    $pluginHeader->setConfiguration($currentSetting);
-    // dump($currentSetting['v2lesroisdelareno_kksa']);
-    $form += $pluginHeader->buildConfigurationForm($form, $form_state);
-    // on supprime la marge-bottom
-    if (empty($form['css_class']['css']['#default_value'])) {
-      $form['css_class']['css']['#default_value'] = 'mb-0';
-    }
-    
-    $form['submit'] = [
+    $form['actions']['submit'] = [
       '#type' => 'submit',
-      '#attributes' => [
-        'class' => [
-          'mt-5'
-        ]
-      ],
-      '#value' => $this->t('Save')
+      '#value' => 'save',
+      '#button_type' => 'primary'
     ];
     return $form;
   }
@@ -124,16 +139,32 @@ class LayoutEnteteForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $defualtConfigs = $this->getLayoutCurrentConfig();
-    $currentConfig = $form_state->getValues();
-    $newConfig = [];
-    foreach ($currentConfig as $k => $value) {
-      if (isset($defualtConfigs[$k]))
-        $newConfig[$k] = $value;
+    $subform_state = SubformState::createForSubform($form['layout_settings'], $form, $form_state);
+    $this->getPluginForm($this->layout)->submitConfigurationForm($form['layout_settings'], $subform_state);
+    //
+    $configuration = $this->layout->getConfiguration();
+    
+    $this->sectionStorage->getSection(0)->setLayoutSettings($configuration);
+    $this->sectionStorage->save();
+  }
+  
+  /**
+   * Retrieves the plugin form for a given layout.
+   *
+   * @param \Drupal\Core\Layout\LayoutInterface $layout
+   *        The layout plugin.
+   *        
+   * @return \Drupal\Core\Plugin\PluginFormInterface The plugin form for the layout.
+   */
+  protected function getPluginForm(LayoutInterface $layout) {
+    if ($layout instanceof PluginWithFormsInterface) {
+      return $this->pluginFormFactory->createInstance($layout, 'configure');
     }
-    $LayoutConfig = $this->ConfigFactory->getEditable(self::$LayoutBaseKey);
-    $DomaineId = $this->getDomaineId();
-    $LayoutConfig->set(self::$LayoutSettingKey . '.' . $DomaineId, $newConfig)->save();
+    
+    if ($layout instanceof PluginFormInterface) {
+      return $layout;
+    }
+    throw new \InvalidArgumentException(sprintf('The "%s" layout does not provide a configuration form', $layout->getPluginId()));
   }
   
 }

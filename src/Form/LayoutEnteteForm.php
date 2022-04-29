@@ -85,9 +85,10 @@ class LayoutEnteteForm extends FormBase {
      * @var \Drupal\formatage_models\Plugin\Layout\Sections\Headers\FormatageModelsheader1 $plugin
      */
     $plugin = $this->getPluginForm($this->layout);
-    // dump($plugin->getConfiguration());
+    
     // $plugin->setConfiguration($this->getLayoutCurrentConfig());
     $plugin->setConfiguration(NestedArray::mergeDeep($plugin->defaultConfiguration(), $plugin->getConfiguration()));
+    // dump($plugin->getConfiguration());
     $form['layout_settings'] = $plugin->buildConfigurationForm($form['layout_settings'], $form_state);
     
     $form['actions']['submit'] = [

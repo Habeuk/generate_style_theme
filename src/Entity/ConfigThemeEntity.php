@@ -12,6 +12,7 @@ use Drupal\user\UserInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\file\Entity\File;
 use CaseConverter\CaseString;
+use Drupal\Component\Serialization\Json;
 
 /**
  * Defines the Config theme entity entity.
@@ -248,6 +249,29 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getspace_inner_top() {
     if ($this->get('space_inner_top')->first())
       return $this->get('space_inner_top')->first()->getValue();
+  }
+  
+  public function postSave($storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+    \Drupal::messenger()->addStatus(' Apply site config site_config ');
+    if (!$update) {
+      $site_config = $this->getsite_config();
+      if (!empty($site_config)) {
+        $siteConfValue = Json::decode($site_config);
+        /**
+         *
+         * @var \Drupal\wbumenudomain\Services\WbumenudomainSiteconfig $domain_site_config
+         */
+        $domain_site_config = \Drupal::service('wbumenudomain.site_config');
+        $domain_site_config->SetIdConfig($siteConfValue['edit-config']);
+        // page.front
+        $this->WbumenudomainConf->SaveValue('page.front', $siteConfValue['page.front']);
+      }
+    }
+  }
+  
+  public function getsite_config() {
+    return $this->get('site_config')->value;
   }
   
   /**

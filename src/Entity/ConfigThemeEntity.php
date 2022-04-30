@@ -256,16 +256,21 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     \Drupal::messenger()->addStatus(' Apply site config site_config ');
     if (!$update) {
       $site_config = $this->getsite_config();
+      
       if (!empty($site_config)) {
         $siteConfValue = Json::decode($site_config);
-        /**
-         *
-         * @var \Drupal\wbumenudomain\Services\WbumenudomainSiteconfig $domain_site_config
-         */
-        $domain_site_config = \Drupal::service('wbumenudomain.site_config');
-        $domain_site_config->SetIdConfig($siteConfValue['edit-config']);
-        // page.front
-        $domain_site_config->SaveValue('page.front', $siteConfValue['page.front']);
+        //
+        if (!empty($siteConfValue['edit-config'])) {
+          $editConfig = \Drupal::service('config.factory')->getEditable($siteConfValue['edit-config']);
+          $editConfig->set('page.front', $siteConfValue['page.front']);
+          $editConfig->set('page.403', $siteConfValue['page.403']);
+          $editConfig->set('page.404', $siteConfValue['page.404']);
+          $editConfig->set('name', $siteConfValue['name']);
+          $editConfig->save();
+        }
+        else {
+          \Drupal::messenger()->addWarning(' Imposible de mettre à jour le page home');
+        }
       }
     }
   }

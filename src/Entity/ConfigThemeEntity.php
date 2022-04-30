@@ -253,26 +253,25 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   
   public function postSave($storage, $update = TRUE) {
     parent::postSave($storage, $update);
-    \Drupal::messenger()->addStatus(' Apply site config site_config ');
-    if (!$update) {
-      $site_config = $this->getsite_config();
-      
-      if (!empty($site_config)) {
-        $siteConfValue = Json::decode($site_config);
-        //
-        if (!empty($siteConfValue['edit-config'])) {
-          $editConfig = \Drupal::service('config.factory')->getEditable($siteConfValue['edit-config']);
-          $editConfig->set('page.front', $siteConfValue['page.front']);
-          $editConfig->set('page.403', $siteConfValue['page.403']);
-          $editConfig->set('page.404', $siteConfValue['page.404']);
-          $editConfig->set('name', $siteConfValue['name']);
-          $editConfig->save();
-        }
-        else {
-          \Drupal::messenger()->addWarning(' Imposible de mettre à jour le page home');
-        }
-      }
-    }
+    // if (!$update) {
+    // $site_config = $this->getsite_config();
+    
+    // if (!empty($site_config)) {
+    // $siteConfValue = Json::decode($site_config);
+    // //
+    // if (!empty($siteConfValue['edit-config'])) {
+    // $editConfig = \Drupal::service('config.factory')->getEditable($siteConfValue['edit-config']);
+    // $editConfig->set('page.front', $siteConfValue['page.front']);
+    // $editConfig->set('page.403', $siteConfValue['page.403']);
+    // $editConfig->set('page.404', $siteConfValue['page.404']);
+    // $editConfig->set('name', $siteConfValue['name']);
+    // $editConfig->save();
+    // }
+    // else {
+    // \Drupal::messenger()->addWarning(' Imposible de mettre à jour le page home');
+    // }
+    // }
+    // }
   }
   
   public function getsite_config() {

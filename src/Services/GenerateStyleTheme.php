@@ -5,6 +5,7 @@ namespace Drupal\generate_style_theme\Services;
 use Drupal\generate_style_theme\Services\Reposotories\GenerateFiles;
 use CaseConverter\CaseString;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
+use Drupal\Component\Serialization\Json;
 
 class GenerateStyleTheme {
   protected $themeName;
@@ -93,6 +94,27 @@ class GenerateStyleTheme {
     $this->RunNpm();
     $this->SetCurrentThemeDefaultOfDomaine();
     $this->setLogoToTheme();
+    if ($createThme)
+      $this->setConfigTheme();
+  }
+  
+  protected function setConfigTheme() {
+    $site_config = $this->entity->getsite_config();
+    if (!empty($site_config)) {
+      $siteConfValue = Json::decode($site_config);
+      //
+      if (!empty($siteConfValue['edit-config'])) {
+        $editConfig = \Drupal::service('config.factory')->getEditable($siteConfValue['edit-config']);
+        $editConfig->set('page.front', $siteConfValue['page.front']);
+        $editConfig->set('page.403', $siteConfValue['page.403']);
+        $editConfig->set('page.404', $siteConfValue['page.404']);
+        $editConfig->set('name', $siteConfValue['name']);
+        $editConfig->save();
+      }
+      else {
+        \Drupal::messenger()->addWarning(' Imposible de mettre à jour le page home');
+      }
+    }
   }
   
   protected function setLogoToTheme() {

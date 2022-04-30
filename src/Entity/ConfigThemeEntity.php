@@ -265,7 +265,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
         $domain_site_config = \Drupal::service('wbumenudomain.site_config');
         $domain_site_config->SetIdConfig($siteConfValue['edit-config']);
         // page.front
-        $this->WbumenudomainConf->SaveValue('page.front', $siteConfValue['page.front']);
+        $domain_site_config->SaveValue('page.front', $siteConfValue['page.front']);
       }
     }
   }

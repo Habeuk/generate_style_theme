@@ -6,7 +6,6 @@ use Drupal\generate_style_theme\Services\Reposotories\GenerateFiles;
 use CaseConverter\CaseString;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
 
-
 class GenerateStyleTheme {
   protected $themeName;
   protected $themeDirectory;
@@ -92,21 +91,26 @@ class GenerateStyleTheme {
     $this->jsFiles();
     // $this->CopyWbuAtomiqueTheme();
     $this->RunNpm();
+    $this->SetCurrentThemeDefaultOfDomaine();
     $this->setLogoToTheme();
   }
   
   protected function setLogoToTheme() {
     $domaineId = $this->entity->getHostname();
-    // On ajoute le logo.
-    $keyDomain = 'domain.config.' . $domaineId . '.' . $domaineId . '.settings';
-    /**
-     *
-     * @var \Drupal\Core\Config\ConfigFactoryInterface $editConfigTheme
-     */
-    $editConfigTheme = \Drupal::service('config.factory')->getEditable($keyDomain);
-    $pathLogo = $this->entity->getLogo();
-    $editConfigTheme->set('logo.path', $pathLogo)->save();
-    $editConfigTheme->set('logo.use_default', 0)->save();
+    if ($domaineId) {
+      // On ajoute le logo.
+      $keyDomain = 'domain.config.' . $domaineId . '.' . $domaineId . '.settings';
+      /**
+       *
+       * @var \Drupal\Core\Config\ConfigFactoryInterface $editConfigTheme
+       */
+      $editConfigTheme = \Drupal::service('config.factory')->getEditable($keyDomain);
+      $pathLogo = $this->entity->getLogo();
+      if (!empty($pathLogo)) {
+        $editConfigTheme->set('logo.path', $pathLogo)->save();
+        $editConfigTheme->set('logo.use_default', 0)->save();
+      }
+    }
   }
   
   /**
@@ -132,20 +136,22 @@ class GenerateStyleTheme {
       // dump($ExtLitThemes->getList());
       // dump($listThemesInstalled);
       
-      
       /**
        * On installe le nouveau theme.
        */
       if (empty($listThemes[$domaineId])) {
+        \Drupal::messenger()->addStatus(' Theme installé : ' . $domaineId);
         /**
          *
          * @var \Drupal\generate_style_theme\Services\Themes\ActiveAsignService $ActiveAsignService
          */
         $ActiveAsignService = \Drupal::service('generate_style_theme.active_asign');
-        // $ActiveAsignService->ActiveThemeForDomaine([
-        // $domaineId => $domaineId
-        // ]);
-        return;
+        $ActiveAsignService->ActiveThemeForDomaine([
+          $domaineId => $domaineId
+        ]);
+      }
+      else {
+        \Drupal::messenger()->addStatus(' Theme deja installé : ' . $domaineId);
       }
       $key = 'domain.config.' . $domaineId . '.' . $baseConfig;
       $configs = \Drupal::config($key);

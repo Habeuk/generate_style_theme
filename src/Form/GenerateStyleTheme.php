@@ -46,6 +46,20 @@ class GenerateStyleTheme extends ConfigFormBase {
       '#title' => 'Generer css&js themes à partir du domaine',
       '#default_value' => $config->get('tab1.use_domain')
     ];
+    $form['save_multifile'] = [
+      '#type' => 'checkbox',
+      '#title' => "Genere plusieurs fichier en function de l'entité",
+      '#default_value' => $config->get('tab1.save_multifile')
+    ];
+    $form['build_mode'] = [
+      '#type' => 'select',
+      '#title' => 'Mode de creation de fichiers css et js',
+      '#options' => [
+        'ProdCMD' => 'Production (les fichiers sont zippées)',
+        'DevCMD' => 'Developpment '
+      ],
+      '#default_value' => $config->get('tab1.build_mode')
+    ];
     return parent::buildForm($form, $form_state);
   }
   
@@ -58,6 +72,8 @@ class GenerateStyleTheme extends ConfigFormBase {
     $config = $this->config(self::$key);
     $config->set('tab1.theme_base', $form_state->getValue('theme_base'));
     $config->set('tab1.use_domain', $form_state->getValue('use_domain'));
+    $config->set('tab1.save_multifile', $form_state->getValue('save_multifile'));
+    $config->set('tab1.build_mode', $form_state->getValue('build_mode'));
     $config->save();
   }
   

@@ -131,8 +131,7 @@ class GenerateStyleTheme {
     // $this->CopyWbuAtomiqueTheme();
     $this->RunNpm();
     $this->SetCurrentThemeDefaultOfDomaine();
-    if ($createThme)
-      $this->setConfigTheme();
+    $this->setConfigTheme();
     $this->setLogoToTheme();
   }
   

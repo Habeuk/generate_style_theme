@@ -71,12 +71,13 @@ libraries:
   
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
+    $build_mode = $this->generate_style_themeSettings['tab1']['build_mode'];
     $script = '';
     if (!empty($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], ".kksa") !== false) {
-      $script .= " npm --prefix " . $pathNpm . " run ProdCMD ";
+      $script .= " npm --prefix " . $pathNpm . " run " . $build_mode;
     }
     else {
-      $script .= " /homez.707/lesroig/tools/node15/bin/npm --prefix " . $pathNpm . " run ProdCMD ";
+      $script .= " /homez.707/lesroig/tools/node15/bin/npm --prefix " . $pathNpm . " run " . $build_mode;
     }
     $exc = $this->excuteCmd($script, 'RunNpm');
     if ($exc['return_var']) {
@@ -199,12 +200,32 @@ libraries:
   private function buildEntityImportScss() {
     $styleToImport = '';
     if ($this->configKeyThemeSettings) {
-      /**
-       *
-       * @var \Drupal\Core\Config\ConfigFactoryInterface $editConfigTheme
-       */
-      $editConfigTheme = $this->configFactory->getEditable($this->configKeyThemeSettings);
-      $editConfigTheme->get('layoutgenentitystyles');
+      
+      $editConfigTheme = \Drupal::config($this->configKeyThemeSettings);
+      $EntityImport = $editConfigTheme->get('layoutgenentitystyles.scss');
+      // dump($EntityImport);
+      // die();
+      if (!empty($EntityImport)) {
+        $libraries = [];
+        // on parcourt les entites
+        foreach ($EntityImport as $Entity) {
+          // On parcourt les types d'entites ou plugins.
+          if (is_array($Entity))
+            foreach ($Entity as $view_mode) {
+              // On parcourt les modes d'affichages.
+              if (is_array($view_mode))
+                foreach ($view_mode as $plugin) {
+                  // on parcourt les plugins.
+                  if (is_array($plugin))
+                    foreach ($plugin as $plugin_id => $library) {
+                      $libraries[$plugin_id] = implode("\n", $library);
+                      // dump($libraries);
+                    }
+                }
+            }
+        }
+        $styleToImport = implode("\n", $libraries);
+      }
     }
     return $styleToImport;
   }

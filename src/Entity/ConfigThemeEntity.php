@@ -300,49 +300,61 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'weight' => -3
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE);
     
-    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo ')->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo ')->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'image'
-    ])->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
+    ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
     
-    $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
-    ])->setDisplayConfigurable('view', TRUE);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
+      'color' => '#CE3B3B',
+      'name' => ''
+    ]);
     
-    $fields['color_secondaire'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur secondaire  ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['color_secondaire'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur secondaire  ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
-    ])->setDisplayConfigurable('view', TRUE);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
+      'color' => '#DD731D',
+      'name' => ''
+    ]);
     
-    $fields['color_link_hover'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur des liens ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['color_link_hover'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur des liens ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
-    ])->setDisplayConfigurable('view', TRUE);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
+      'color' => '#F88C12',
+      'name' => ''
+    ]);
     
-    $fields['wbubackground'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur d'arrière plan ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['wbubackground'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur d'arrière plan ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
-    ])->setDisplayConfigurable('view', TRUE);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
+      'color' => '#0F103E',
+      'name' => ''
+    ]);
     
-    $fields['h1_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['h1_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'string_textfield'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue('3.4rem');
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('3.4rem');
     
-    $fields['h2_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['h2_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'string_textfield'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue('2.4rem');
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('2.4rem');
     
-    $fields['text_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police par defaut ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['text_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police par defaut ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'string_textfield'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.4rem');
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.4rem');
     
-    $fields['space_bottom'] = BaseFieldDefinition::create('string')->setLabel(" Espace du bas entre les blocs ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['space_bottom'] = BaseFieldDefinition::create('string')->setLabel(" Espace du bas entre les blocs ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'number'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue(5);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(5);
     
-    $fields['space_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace du haut entre les blocs ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['space_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace du haut entre les blocs ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'number'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue(4);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(4);
     
-    $fields['space_inner_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace interne ")->setRequired(TRUE)->setDisplayConfigurable('form', [
+    $fields['space_inner_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace interne ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'number'
-    ])->setDisplayConfigurable('view', TRUE)->setDefaultValue(0.5);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(0.5);
     
     $fields['status']->setDescription(t(' A boolean indicating whether the Config theme entity is published. '))->setDisplayOptions('form', [
       'type' => 'boolean_checkbox',

@@ -3,4 +3,6 @@ langcode: 'en'
 tab1: 
   theme_base: 'theme_reference_wbu'
   use_domain: true
+  save_multifile: false
+  build_mode: ProdCMD
   

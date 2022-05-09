@@ -101,7 +101,9 @@ function generate_style_theme_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Pour ajouter les onglets de gestions dans les nodes.
+ * Pour Ajouter les onglets permettant l'edition d'un contenu affiché en mode default.
+ * NB:
+ * Cette logique doit etre limiter au node.
  *
  * @param array $variables
  */

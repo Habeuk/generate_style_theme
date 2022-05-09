@@ -3,22 +3,54 @@
 namespace Drupal\generate_style_theme\Services;
 
 use Drupal\generate_style_theme\Services\Reposotories\GenerateFiles;
-use CaseConverter\CaseString;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
 use Drupal\Component\Serialization\Json;
+use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
 
 class GenerateStyleTheme {
   protected $themeName;
   protected $themeDirectory;
   protected $themePath;
   protected $entity;
+  
   /**
-   * Chemin vers l'executable NPM.
+   * Nom du theme parent.
    *
-   * @var Object
-   * @deprecated
+   * @var string
    */
-  protected $npm;
+  protected $baseTheme;
+  /**
+   * Contient la configuation du module generate_style_theme.
+   */
+  protected $generate_style_themeSettings = [];
+  
+  /**
+   * Contient la cle du theme qui est encours de traitement.
+   * example : domain.config.arche5_lesroisdelareno_fr.system.theme si on utilise le module domain.
+   * Sinon,
+   * system.theme
+   */
+  protected $configKeyTheme = null;
+  /**
+   * Contient la cle des informations du site qui est encours de traitement.
+   * example : domain.config.arche5_lesroisdelareno_fr.system.site si on utilise le module domain.
+   * Sinon,
+   * system.site
+   */
+  protected $configKeySite = null;
+  
+  /**
+   * Contient la clée des paramettres du theme qui est encours de traitement.
+   * example : domain.config.arche5_lesroisdelareno_fr.arche5_lesroisdelareno_fr.settings si on utilise le module domain.
+   * Sinon,
+   * arche5_lesroisdelareno_fr.settings
+   */
+  protected $configKeyThemeSettings = null;
+  /**
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory = null;
   
   use GenerateFiles;
   
@@ -28,35 +60,41 @@ class GenerateStyleTheme {
    * @param ConfigThemeEntity $entity
    */
   function __construct($configs, ConfigThemeEntity $entity) {
-    if (!is_string($configs['themeName'])) {
-      Throw new \Exception("Le nom du theme n'est pas valide : " . $configs['themeName']);
-    }
-    $this->themeName = $configs['themeName'];
-    $this->themeDirectory = CaseString::camel($configs['themeName'])->camel();
+    $this->themeName = $entity->getHostname();
+    // $this->themeDirectory = $entity->getHostname();
     $this->themePath = $this->getPath();
     $this->entity = $entity;
-    // $this->createInstanceNpm();
+    $this->generate_style_themeSettings = $this->getConfiguration();
+    $this->baseTheme = $this->generate_style_themeSettings['tab1']['theme_base'];
+    $this->configFactory = \Drupal::service('config.factory');
+    $this->setDynamicConfig();
+  }
+  
+  private function getConfiguration() {
+    $config = \Drupal::config('generate_style_theme.settings')->getRawData();
+    $this->ValidConfig($config);
+    return $config;
   }
   
   /**
-   *
-   * @deprecated
+   * Definie une configuration variable.
    */
-  function createInstanceNpm() {
-    $ar = explode("/", DRUPAL_ROOT);
-    $pr = '';
-    for ($i = 0; $i < count($ar) - 1; $i++) {
-      if (!empty($ar[$i])) {
-        $pr .= "/" . $ar[$i];
-      }
-    }
-    $this->npm = $pr . '/node/bin/npm';
-    if (!file_exists($this->npm)) {
-      \Drupal::messenger()->addError(" Le module node n'est pas installé, veillez telecharger nodejs, decompresser et placer les fichiers dans le public/node ");
-    }
+  private function setDynamicConfig() {
+    $conf = GenerateStyleThemeConfig::getDynamicConfig($this->themeName, $this->generate_style_themeSettings);
+    $this->configKeyTheme = $conf['theme'];
+    $this->configKeyThemeSettings = $conf['settings'];
+    $this->configKeySite = $conf['site'];
+    
+    // if ($this->generate_style_themeSettings['tab1']['use_domain']) {
+    // if (\Drupal::moduleHandler()->moduleExists('domain')) {
+    // $this->configKeyTheme = 'domain.config.' . $this->themeName . '.system.theme';
+    // $this->configKeyThemeSettings = 'domain.config.' . $this->themeName . '.' . $this->themeName . '.settings';
+    // }
+    // }
   }
   
   /**
+   * \Drupal::config('generate_style_theme.settings')->getRawData();
    * Return le chemin vers le dossier parent du theme definit par defaut.
    * ( Logiquement il devrait pointer sur custom, pour que tous les themes soit disponible dans custom ).
    *
@@ -81,7 +119,7 @@ class GenerateStyleTheme {
   
   /**
    *
-   * @param boolean $createThme
+   * @param Boolean $createThme
    */
   function buildSubTheme($createThme = false) {
     $this->InfoYml();
@@ -93,18 +131,22 @@ class GenerateStyleTheme {
     // $this->CopyWbuAtomiqueTheme();
     $this->RunNpm();
     $this->SetCurrentThemeDefaultOfDomaine();
-    $this->setLogoToTheme();
     if ($createThme)
       $this->setConfigTheme();
+    $this->setLogoToTheme();
   }
   
+  /**
+   * --
+   */
   protected function setConfigTheme() {
     $site_config = $this->entity->getsite_config();
     if (!empty($site_config)) {
       $siteConfValue = Json::decode($site_config);
       //
       if (!empty($siteConfValue['edit-config'])) {
-        $editConfig = \Drupal::service('config.factory')->getEditable($siteConfValue['edit-config']);
+        // $editConfig = $this->configFactory->getEditable($siteConfValue['edit-config']);
+        $editConfig = $this->configFactory->getEditable($this->configKeySite);
         $editConfig->set('page.front', $siteConfValue['page.front']);
         $editConfig->set('page.403', $siteConfValue['page.403']);
         $editConfig->set('page.404', $siteConfValue['page.404']);
@@ -112,27 +154,36 @@ class GenerateStyleTheme {
         $editConfig->save();
       }
       else {
-        \Drupal::messenger()->addWarning(' Imposible de mettre à jour le page home');
+        \Drupal::messenger()->addWarning(' Imposible de mettre à jour la page home');
       }
     }
   }
   
   protected function setLogoToTheme() {
-    $domaineId = $this->entity->getHostname();
-    if ($domaineId) {
-      // On ajoute le logo.
-      $keyDomain = 'domain.config.' . $domaineId . '.' . $domaineId . '.settings';
+    if ($this->configKeyThemeSettings) {
       /**
        *
        * @var \Drupal\Core\Config\ConfigFactoryInterface $editConfigTheme
        */
-      $editConfigTheme = \Drupal::service('config.factory')->getEditable($keyDomain);
+      $editConfigTheme = $this->configFactory->getEditable($this->configKeyThemeSettings);
       $pathLogo = $this->entity->getLogo();
       if (!empty($pathLogo)) {
         $editConfigTheme->set('logo.path', $pathLogo)->save();
         $editConfigTheme->set('logo.use_default', 0)->save();
       }
     }
+  }
+  
+  /**
+   * Permet de valider la configuration du module.
+   *
+   * @deprecated doit etre supprimer un foix le module fonctionne sur lesroisdelareno et le storibon.
+   */
+  protected function ValidConfig(array $config) {
+    if (!empty($config['tab1']['theme_base']) && isset($config['tab1']['use_domain'])) {
+      return true;
+    }
+    throw new \LogicException("Certaines données de configuration sont inexistantes.");
   }
   
   /**
@@ -143,10 +194,7 @@ class GenerateStyleTheme {
    * example : system.site => domain.config.v2lesroisdelareno_kksa.system.site ( pour le domaine v2lesroisdelareno_kksa ).
    */
   protected function SetCurrentThemeDefaultOfDomaine() {
-    $baseConfig = 'system.theme';
-    
-    $domaineId = $this->entity->getHostname();
-    if ($domaineId) {
+    if ($this->themeName && $this->entity->SetThemeAsDefaut()) {
       $listThemes = \Drupal::service('theme_handler')->listInfo();
       // $listThemesInstalled = \Drupal::config("core.extension")->get('theme');
       // /**
@@ -161,33 +209,33 @@ class GenerateStyleTheme {
       /**
        * On installe le nouveau theme.
        */
-      if (empty($listThemes[$domaineId])) {
-        \Drupal::messenger()->addStatus(' Theme installé : ' . $domaineId);
+      if (empty($listThemes[$this->themeName])) {
+        \Drupal::messenger()->addStatus(' Theme installé : ' . $this->themeName);
         /**
          *
          * @var \Drupal\generate_style_theme\Services\Themes\ActiveAsignService $ActiveAsignService
          */
         $ActiveAsignService = \Drupal::service('generate_style_theme.active_asign');
         $ActiveAsignService->ActiveThemeForDomaine([
-          $domaineId => $domaineId
+          $this->themeName => $this->themeName
         ]);
       }
       else {
-        \Drupal::messenger()->addStatus(' Theme deja installé : ' . $domaineId);
+        \Drupal::messenger()->addStatus(' Theme deja installé : ' . $this->themeName);
       }
-      $key = 'domain.config.' . $domaineId . '.' . $baseConfig;
-      $configs = \Drupal::config($key);
+      
+      $configs = \Drupal::config($this->configKeyTheme);
       $defaultThemeName = $configs->get('default');
       
       // On definit le theme comme theme par defaut pour le nouveau theme.
-      if ($domaineId != $defaultThemeName) {
+      if ($this->themeName != $defaultThemeName) {
         /**
          *
          * @var \Drupal\Core\Config\ConfigFactoryInterface $editConfig
          */
-        $editConfig = \Drupal::service('config.factory')->getEditable($key);
-        $editConfig->set('default', $domaineId)->save();
-        \Drupal::messenger()->addStatus(' Theme definie par defaut : ' . $key);
+        $editConfig = $this->configFactory->getEditable($this->configKeyTheme);
+        $editConfig->set('default', $this->themeName)->save();
+        \Drupal::messenger()->addStatus(' Theme definie par defaut : ' . $this->configKeyTheme);
       }
     }
   }

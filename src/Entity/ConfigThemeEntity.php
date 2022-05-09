@@ -69,7 +69,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
     $values += [
-      'user_id' => \Drupal::currentUser()->id()
+      'user_id' => \Drupal::currentUser()->id(),
+      'settheme_as_defaut' => TRUE
     ];
   }
   
@@ -247,30 +248,28 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   }
   
   public function postSave($storage, $update = TRUE) {
+    // On doit nettoyer le nom d'hote, car il est utilisé comme nom du theme.
+    $themeName = str_replace([
+      ' ',
+      '-'
+    ], '_', strtolower($this->getHostname()));
+    $this->set('hostname', preg_replace('/[^a-z0-9\_]/', "", $themeName));
     parent::postSave($storage, $update);
-    // if (!$update) {
-    // $site_config = $this->getsite_config();
-    
-    // if (!empty($site_config)) {
-    // $siteConfValue = Json::decode($site_config);
-    // //
-    // if (!empty($siteConfValue['edit-config'])) {
-    // $editConfig = \Drupal::service('config.factory')->getEditable($siteConfValue['edit-config']);
-    // $editConfig->set('page.front', $siteConfValue['page.front']);
-    // $editConfig->set('page.403', $siteConfValue['page.403']);
-    // $editConfig->set('page.404', $siteConfValue['page.404']);
-    // $editConfig->set('name', $siteConfValue['name']);
-    // $editConfig->save();
-    // }
-    // else {
-    // \Drupal::messenger()->addWarning(' Imposible de mettre à jour le page home');
-    // }
-    // }
-    // }
   }
   
+  /**
+   * NB: application de ses informations se fait apres la creation du theme.
+   *
+   * @see \Drupal\generate_style_theme\Services\GenerateStyleTheme::setConfigTheme()
+   *
+   * @return Json
+   */
   public function getsite_config() {
     return $this->get('site_config')->value;
+  }
+  
+  public function SetThemeAsDefaut() {
+    return $this->get('settheme_as_defaut')->value;
   }
   
   /**
@@ -290,8 +289,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setConstraints([
       'UniqueField' => []
     ]);
-    $fields['lirairy'] = BaseFieldDefinition::create('list_string')->setLabel(t(' Selectionné un style pour ce domaine '))->setRequired(TRUE)->setDescription(t('Selectionner le nom de domaine'))->setSetting('allowed_values_function', [
-      '\Drupal\wbumenudomain\Wbumenudomain',
+    $fields['lirairy'] = BaseFieldDefinition::create('list_string')->setLabel(t(' Selectionné un style pour ce domaine '))->setRequired(False)->setDescription(t(' Selectionner le nom de domaine ( à supprimer plus tard ) '))->setSetting('allowed_values_function', [
+      '\Drupal\generate_style_theme\GenerateStyleTheme',
       'getLibrairiesCurrentTheme'
     ])->setDisplayOptions('view', [
       'label' => 'above'
@@ -349,7 +348,12 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'boolean_checkbox',
       'weight' => -3
     ]);
-    
+    $fields['settheme_as_defaut'] = BaseFieldDefinition::create('boolean')->setLabel(" Definir ce theme comme theme par defaut ")->setDisplayOptions('form', [
+      'type' => 'boolean_checkbox',
+      'weight' => -3
+    ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
+    // NB: application de ses informations se fait apres la creation du theme.
+    // @see Drupal\generate_style_theme\Services\GenerateStyleTheme::setConfigTheme()
     $fields['site_config'] = BaseFieldDefinition::create('wbumenudomaineditlink')->setLabel(t(' Information de configuration du domaine '))->setRequired(false)->setDisplayOptions('form', [
       'type' => 'wbumenudomainsiteconfig',
       'settings' => [],

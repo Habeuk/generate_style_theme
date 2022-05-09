@@ -1,12 +1,11 @@
 <?php
 
-namespace Drupal\wbumenudomain\Plugin\Field\FieldWidget;
+namespace Drupal\generate_style_theme\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\WidgetBase;
-use Drupal\wbumenudomain\Wbumenudomain;
-
+use Drupal\generate_style_theme\GenerateStyleTheme;
 
 /**
  * A widget bar.
@@ -41,7 +40,7 @@ class WbumenudomainHost extends WidgetBase {
     $element['value'] = $element + [
       '#type' => 'select',
       '#default_value' => $value,
-      '#options' => Wbumenudomain::getUnUseDomain($value, $entityTypeId),
+      '#options' => GenerateStyleTheme::getThemes($value, $entityTypeId),
       '#required' => true,
       "#empty_option" => t('- Selectionner un domaine -')
     ];

@@ -2,7 +2,6 @@
 
 namespace Drupal\generate_style_theme\Services\Reposotories;
 
-use ScssPhp\ScssPhp\Compiler;
 use Stephane888\Debug\debugLog;
 
 trait GenerateFiles {
@@ -13,9 +12,7 @@ type: theme
 description: " Theme Generate by generate_style_theme "
 core: 8.x
 core_version_requirement: ^8 || ^9
-base theme: lesroisdelareno
-logo: logo.png
-screenshot: lesroisdelareno.png
+base theme: ' . $this->baseTheme . '
 
 regions:
   top_header: "Top header"
@@ -133,7 +130,7 @@ libraries:
       throw new \Exception(' Impossible de lire le contenu des fichiers  ');
     }
     // on fait un lien symbolique avec node_modules.
-    $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('theme', "lesroisdelareno") . "/wbu-atomique-theme";
+    $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('theme', $this->baseTheme) . "/wbu-atomique-theme";
     $script .= ' && ln -s ' . $modulePath . '/node_modules   ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
     $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
   }
@@ -147,22 +144,42 @@ libraries:
      * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity
      */
     $entity = $this->entity;
+    
+    // On charge les mixins et les variables.
+    $string = '
+    @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
+    ';
+    // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
+    if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
+      $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
+      $confs = $this->getScssFromLibrairy($libray);
+      $string .= $confs['configs'] . $this->buildScssVar();
+      $string .= $confs['files'];
+    }
+    else {
+      $string .= $this->buildScssVar();
+      $string .= $this->buildEntityImportScss();
+    }
+    // cree le fichier.
+    $filename = $this->themeName . '.scss';
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
+    debugLog::$debug = false;
+    debugLog::logger($string, $filename, false, 'file', $path, true);
+  }
+  
+  private function buildScssVar() {
+    $entity = $this->entity;
     $color_primary = !empty($entity->getColorPrimary()['color']) ? $entity->getColorPrimary()['color'] : '#c69c6d';
     $color_secondaire = !empty($entity->getColorSecondaire()['color']) ? $entity->getColorSecondaire()['color'] : '#130f13';
     $color_link_hover = !empty($entity->getColorLinkHover()['color']) ? $entity->getColorLinkHover()['color'] : '#130f13';
     $color_background = !empty($entity->getColorBackground()['color']) ? $entity->getColorBackground()['color'] : '#192028';
-    $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
-    $confs = $this->getScssFromLibrairy($libray);
     $wbu_h1_font_size = !empty($entity->getH1FontSize()['value']) ? $entity->getH1FontSize()['value'] : '3.4rem';
     $wbu_h2_font_size = !empty($entity->getH2FontSize()['value']) ? $entity->getH2FontSize()['value'] : '2.4rem';
     $text_font_size = !empty($entity->gettext_font_size()['value']) ? $entity->gettext_font_size()['value'] : '1.4rem';
     $space_bottom = !empty($entity->getspace_bottom()['value']) ? $entity->getspace_bottom()['value'] : '5';
     $space_top = !empty($entity->getspace_top()['value']) ? $entity->getspace_top()['value'] : '4';
     $space_inner_top = !empty($entity->getspace_inner_top()['value']) ? $entity->getspace_inner_top()['value'] : '0.5';
-    $string = '  
-    @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
-    ';
-    $string .= $confs['configs'] . '
+    return '
     $wbu-color-primary: ' . $color_primary . '; 
     $wbu-color-secondary: ' . $color_secondaire . '; 
     $wbu-color-link-hover: ' . $color_link_hover . '; 
@@ -172,26 +189,24 @@ libraries:
     $space_bottom: $wbu-margin * ' . $space_bottom . ';
     $space_top: $wbu-margin * ' . $space_top . ';
     $space_inner_top: $space_top * ' . $space_inner_top . ';
-    $wbu-default-font-size: ' . $text_font_size . ';   
+    $wbu-default-font-size: ' . $text_font_size . '; 
 ';
-    $string .= $confs['files'];
-    $filename = $this->themeName . '.scss';
-    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
-    debugLog::$debug = false;
-    debugLog::logger($string, $filename, false, 'file', $path, true);
   }
   
   /**
-   * --
+   * Permet de recuperer les données de styles.
    */
-  function cssFiles() {
-    $parser = new Compiler();
-    $filenameScss = $this->themeName . '.scss';
-    $path = $this->themePath . '/' . $this->themeName . '/scss/';
-    $result = $parser->compile('@import "' . $path . $filenameScss . '";');
-    $pathCss = $this->themePath . '/' . $this->themeName . '/css';
-    debugLog::$debug = false;
-    debugLog::logger($result, 'style-auto.css', false, 'file', $pathCss, true);
+  private function buildEntityImportScss() {
+    $styleToImport = '';
+    if ($this->configKeyThemeSettings) {
+      /**
+       *
+       * @var \Drupal\Core\Config\ConfigFactoryInterface $editConfigTheme
+       */
+      $editConfigTheme = $this->configFactory->getEditable($this->configKeyThemeSettings);
+      $editConfigTheme->get('layoutgenentitystyles');
+    }
+    return $styleToImport;
   }
   
   private function excuteCmd($cmd, $name = "excuteCmd") {
@@ -207,7 +222,6 @@ libraries:
       'result' => $result,
       'script' => $cmd
     ];
-    
     return $debug;
   }
   

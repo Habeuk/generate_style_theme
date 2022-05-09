@@ -5,13 +5,16 @@ generate_style_theme.example:
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::build'
   requirements:
     _role: 'administrator'
+    
 generate_style_theme.installtheme:
   path: '/generate-style-theme/installtheme/{themename}/{domaine_id}'
   defaults:
     _title: 'Example'
+    domaine_id: null
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::installTheme'
   requirements:
     _role: 'administrator'
+    
 generate_style_theme.layout_entete_form:
   path: '/generate_style_theme/form/layout_entete'
   defaults:
@@ -66,6 +69,14 @@ generate_style_theme.create_pages_site_form:
   defaults:
     _form: '\Drupal\generate_style_theme\Form\CreatePagesSiteForm'
     _title: 'CreatePagesSiteForm'
+  requirements:
+    _access: 'TRUE'
+    
+generate_style_theme.config_tab1:
+  path: '/admin/config/generate_style_theme/default-base'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\GenerateStyleTheme'
+    _title: 'Configuration de base'
   requirements:
     _access: 'TRUE'
     

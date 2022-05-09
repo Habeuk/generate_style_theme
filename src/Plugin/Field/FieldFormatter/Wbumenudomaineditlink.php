@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\wbumenudomain\Plugin\Field\FieldFormatter;
+namespace Drupal\generate_style_theme\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;

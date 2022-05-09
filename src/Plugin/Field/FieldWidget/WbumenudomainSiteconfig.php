@@ -1,15 +1,15 @@
 <?php
 
-namespace Drupal\wbumenudomain\Plugin\Field\FieldWidget;
+namespace Drupal\generate_style_theme\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\WidgetBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\wbumenudomain\Services\WbumenudomainSiteconfig as WbumenudomainConf;
 use Stephane888\HtmlBootstrap\ThemeUtility;
 use Drupal\Component\Serialization\Json;
+use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
 
 /**
  *
@@ -26,7 +26,6 @@ use Drupal\Component\Serialization\Json;
  * )
  */
 class WbumenudomainSiteconfig extends WidgetBase {
-  protected $WbumenudomainConf;
   protected $ThemeUtility;
   
   /**
@@ -43,9 +42,9 @@ class WbumenudomainSiteconfig extends WidgetBase {
    * @param array $third_party_settings
    *        Any third party settings.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, WbumenudomainConf $WbumenudomainConf, ThemeUtility $ThemeUtility) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ThemeUtility $ThemeUtility) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->WbumenudomainConf = $WbumenudomainConf;
+    
     $this->ThemeUtility = $ThemeUtility;
   }
   
@@ -54,7 +53,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['third_party_settings'], $container->get('wbumenudomain.site_config'), $container->get('wbumenudomain.themeutility'));
+    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['third_party_settings'], $container->get('generate_style_theme.themeutility'));
   }
   
   /**
@@ -74,7 +73,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     // get value
     // dump($items[$delta]->value);
-    
+    // $value = isset($items[$delta]->value) ? $items[$delta]->value : '';
     // on recupere le domaine-id à partir du champs (via l'action ajax).
     $hostname = $form_state->getValue('hostname');
     if (!empty($hostname[0]['value'])) {
@@ -104,28 +103,43 @@ class WbumenudomainSiteconfig extends WidgetBase {
     $this->ThemeUtility->addContainerTree('container', $element['siteconf'], 'Configuration du site', true);
     $element['siteconf']['container']['#prefix'] = '<div id="wbumenudomain-siteconfig">';
     $element['siteconf']['container']['#suffix'] = '</div>';
-    $element['siteconf']['container']['#element_validate'][] = [
-      $this,
-      'validateElement'
-    ];
-    // $element['siteconf']['container']['#value_callback'][] = [
-    // static::class,
-    // 'ConfigSaveSubmit__'
+    // la MAJ ne se fait plus au niveau de la validation
+    // $element['siteconf']['container']['#element_validate'][] = [
+    // $this,
+    // 'validateElement'
     // ];
+    // On recupere les données de la configuration system.site. Pour toujours avoir la bonne valeur meme si ce dernier a été maj par un autre module.
+    /**
+     *
+     * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+     */
+    $configFactory = \Drupal::service('config.factory');
+    
     if (!empty($hostname)) {
-      $siteConf = $this->WbumenudomainConf->getValue('domain.config.' . $hostname . '.system.site');
-      // die();
-      $this->formSiteConfig($element['siteconf']['container'], $siteConf, 'domain.config.' . $hostname . '.system.site');
+      $config = \Drupal::config('generate_style_theme.settings')->getRawData();
+      $conf = GenerateStyleThemeConfig::getDynamicConfig($hostname, $config);
+      $siteConf = \Drupal::config($conf['site'])->getRawData();
     }
+    else {
+      $config = \Drupal::config('system.site')->getRawData();
+      $siteConf = $config;
+    }
+    $this->formSiteConfig($element['siteconf']['container'], $siteConf);
     
     // die();
     // $form_state->setRebuild();
     return $element;
   }
   
-  public function formSiteConfig(array &$form, array $siteConf = [], $id_config) {
+  /**
+   *
+   * @param array $form
+   * @param int $id_config
+   * @param array $siteConf
+   */
+  public function formSiteConfig(array &$form, array $siteConf = []) {
     // edit config
-    $this->ThemeUtility->addHiddenTree('edit-config', $form, $id_config);
+    // $this->ThemeUtility->addHiddenTree('edit-config', $form, $id_config);
     // name
     $name = isset($siteConf['name']) ? $siteConf['name'] : '';
     $this->ThemeUtility->addTextfieldTree('name', $form, 'Nom du site', $name);
@@ -146,29 +160,34 @@ class WbumenudomainSiteconfig extends WidgetBase {
     $this->ThemeUtility->addTextfieldTree('page.404', $form, "Page 404 par défaut ( page non trouvée )", $page_404);
   }
   
-  public function validateElement(array $element, FormStateInterface $form_state) {
-    // die();
-    $vals = $form_state->getUserInput();
-    
-    // name
-    if (!empty($vals['site_config'][0]['siteconf']['container'])) {
-      $siteConfValue = $vals['site_config'][0]['siteconf']['container'];
-      // idConf
-      $this->WbumenudomainConf->SetIdConfig($siteConfValue['edit-config']);
-      // name
-      $this->WbumenudomainConf->SaveValue('name', $siteConfValue['name']);
-      // slogan
-      $this->WbumenudomainConf->SaveValue('slogan', $siteConfValue['slogan']);
-      // mail
-      $this->WbumenudomainConf->SaveValue('mail', $siteConfValue['mail']);
-      // page.front
-      $this->WbumenudomainConf->SaveValue('page.front', $siteConfValue['page.front']);
-      // page.403
-      $this->WbumenudomainConf->SaveValue('page.403', $siteConfValue['page.403']);
-      // page.404
-      $this->WbumenudomainConf->SaveValue('page.404', $siteConfValue['page.404']);
-    }
-  }
+  /**
+   *
+   * @param array $element
+   * @param FormStateInterface $form_state
+   */
+  // public function validateElement(array $element, FormStateInterface $form_state) {
+  // // die();
+  // $vals = $form_state->getUserInput();
+  
+  // // name
+  // if (!empty($vals['site_config'][0]['siteconf']['container'])) {
+  // $siteConfValue = $vals['site_config'][0]['siteconf']['container'];
+  // // idConf
+  // $this->WbumenudomainConf->SetIdConfig($siteConfValue['edit-config']);
+  // // name
+  // $this->WbumenudomainConf->SaveValue('name', $siteConfValue['name']);
+  // // slogan
+  // $this->WbumenudomainConf->SaveValue('slogan', $siteConfValue['slogan']);
+  // // mail
+  // $this->WbumenudomainConf->SaveValue('mail', $siteConfValue['mail']);
+  // // page.front
+  // $this->WbumenudomainConf->SaveValue('page.front', $siteConfValue['page.front']);
+  // // page.403
+  // $this->WbumenudomainConf->SaveValue('page.403', $siteConfValue['page.403']);
+  // // page.404
+  // $this->WbumenudomainConf->SaveValue('page.404', $siteConfValue['page.404']);
+  // }
+  // }
   
   /**
    *

@@ -3,10 +3,8 @@
     "description": "generate subtheme",
     "type": "drupal-module-custom",
     "require": {
-        "joachim-n/case-converter": "^1.0",
         "drupal/colorapi": "^1.1",
-        "stephane888/wbumenudomain": "dev-1x",
-        "scssphp/scssphp": "^1.10"
+        "stephane888/layoutgenentitystyles": "^1.0 | dev-1x"
     },
     "license": "MIT",
     "authors": [

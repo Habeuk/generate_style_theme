@@ -5,7 +5,6 @@ namespace Drupal\generate_style_theme\Services;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 
-
 class FinnaliseTheme {
   
   static public function AfterFileThemeGenerate($form, FormStateInterface $form_state) {
@@ -20,11 +19,13 @@ class FinnaliseTheme {
        * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $Entity
        */
       $Entity = $configForm->getEntity();
-      
-      $url = Url::fromRoute('generate_style_theme.installtheme', [
-        'themename' => $Entity->getHostname(),
-        'domaine_id' => $Entity->getHostname()
-      ]);
+      $option = [
+        'themename' => $Entity->getHostname()
+      ];
+      if (\Drupal::moduleHandler()->moduleExists('domain')) {
+        $option['domaine_id'] = $Entity->getHostname();
+      }
+      $url = Url::fromRoute('generate_style_theme.installtheme', $option);
       $form_state->setRedirectUrl($url);
     }
   }

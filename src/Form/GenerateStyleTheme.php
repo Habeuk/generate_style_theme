@@ -60,6 +60,24 @@ class GenerateStyleTheme extends ConfigFormBase {
       ],
       '#default_value' => $config->get('tab1.build_mode')
     ];
+    $form['vendor_import'] = [
+      '#type' => 'details',
+      '#tree' => true,
+      '#open' => true,
+      '#title' => 'Styles vendor scss & js'
+    ];
+    $form['vendor_import']['scss'] = [
+      '#type' => 'textarea',
+      '#title' => 'Contient les imports scss par defaut',
+      '#default_value' => $config->get('tab1.vendor_import.scss'),
+      '#description' => " Les imports definit doivent commencer par @use, la configuration serra automatiquement appliquer. <br> 
+      Mais vous pourriez appliquer une configuration tant qu'elle ne conside avec celle par defaut "
+    ];
+    $form['vendor_import']['js'] = [
+      '#type' => 'textarea',
+      '#title' => 'Contient les imports js par defaut',
+      '#default_value' => $config->get('tab1.vendor_import.js')
+    ];
     return parent::buildForm($form, $form_state);
   }
   
@@ -74,6 +92,7 @@ class GenerateStyleTheme extends ConfigFormBase {
     $config->set('tab1.use_domain', $form_state->getValue('use_domain'));
     $config->set('tab1.save_multifile', $form_state->getValue('save_multifile'));
     $config->set('tab1.build_mode', $form_state->getValue('build_mode'));
+    $config->set('tab1.vendor_import', $form_state->getValue('vendor_import'));
     $config->save();
   }
   

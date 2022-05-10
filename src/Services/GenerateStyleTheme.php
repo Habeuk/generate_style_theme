@@ -52,6 +52,12 @@ class GenerateStyleTheme {
    */
   protected $configFactory = null;
   
+  /**
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+  
   use GenerateFiles;
   
   /**
@@ -67,6 +73,7 @@ class GenerateStyleTheme {
     $this->generate_style_themeSettings = $this->getConfiguration();
     $this->baseTheme = $this->generate_style_themeSettings['tab1']['theme_base'];
     $this->configFactory = \Drupal::service('config.factory');
+    $this->logger = \Drupal::logger('generate_style_theme');
     $this->setDynamicConfig();
   }
   
@@ -140,11 +147,10 @@ class GenerateStyleTheme {
    */
   protected function setConfigTheme() {
     $site_config = $this->entity->getsite_config();
+    
     if (!empty($site_config)) {
       $siteConfValue = Json::decode($site_config);
-      //
-      if (!empty($siteConfValue['edit-config'])) {
-        // $editConfig = $this->configFactory->getEditable($siteConfValue['edit-config']);
+      if (!empty($siteConfValue['page.front'])) {
         $editConfig = $this->configFactory->getEditable($this->configKeySite);
         $editConfig->set('page.front', $siteConfValue['page.front']);
         $editConfig->set('page.403', $siteConfValue['page.403']);

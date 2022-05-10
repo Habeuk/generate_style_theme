@@ -209,7 +209,6 @@ class WbumenudomainSiteconfig extends WidgetBase {
    * @see \Drupal\Core\Field\WidgetBase::massageFormValues()
    */
   public function massageFormValues($values, $form, $form_state) {
-    // dump($values);
     if (!empty($values['siteconf']['container'])) {
       return [
         'value' => Json::encode($values['siteconf']['container'])

@@ -26,8 +26,12 @@ regions:
     
 # Ajout des librairies
 libraries:
+  - ' . $this->themeName . '/vendor-style
   - ' . $this->themeName . '/global-style
-';
+# Supprimer les librairies du themes parent.
+libraries-override:
+  ' . $this->baseTheme . '/global-style: false';
+    
     $filename = $this->themeName . '.info.yml';
     $path = $this->themePath . '/' . $this->themeName;
     debugLog::$debug = false;
@@ -44,6 +48,13 @@ libraries:
       css/global-style.css: {}
   js:
     js/global-style.js: {}
+
+vendor-style:
+  css:
+    theme:
+      css/vendor-style.css: {}
+  js:
+    js/vendor-style.js: {}
 ';
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
@@ -55,15 +66,31 @@ libraries:
    * --
    */
   function jsFiles() {
+    $this->getGlobalStyle();
+    $this->getVendorStyle();
+  }
+  
+  /**
+   * On importe le fichier scss qui a été generé et les fichiers js qui sont dans la config du theme.
+   */
+  private function getGlobalStyle() {
     $string = '
-      // Surcharge la scss.
-      import "../scss/' . $this->themeName . '.scss";  
-      import "bootstrap/dist/js/bootstrap.min.js";
-      import "@stephane888/wbu-atomique/js/swiper/swiper-big-v3.js";
+      import "../scss/' . $this->themeName . '.scss";
     ';
-    $string .= 'var temps = ' . time() . ';';
-    $string .= ' console.log(temps); ';
     $filename = 'global-style.js';
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
+    debugLog::$debug = false;
+    debugLog::logger($string, $filename, false, 'file', $path, true);
+  }
+  
+  private function getVendorStyle() {
+    // import "@stephane888/wbu-atomique/js/swiper/swiper-big-v3.js";
+    $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['js'];
+    $string = $vendor_import . '
+      // On recupere le fichier scss generer precedament.
+      import "../scss/' . $this->themeName . '--vendor.scss";      
+    ';
+    $filename = 'vendor-style.js';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
@@ -82,6 +109,7 @@ libraries:
     $exc = $this->excuteCmd($script, 'RunNpm');
     if ($exc['return_var']) {
       \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");
+      $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
     }
     else {
       \Drupal::messenger()->addStatus(" Fichier du theme generer avec success, veuillez utiliser CTRL+F5 ");
@@ -140,6 +168,30 @@ libraries:
    * --
    */
   function scssFiles() {
+    $this->scssFilesGlobalStyle();
+    $this->scssFilesVendorStyle();
+  }
+  
+  private function scssFilesVendorStyle() {
+    $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
+    // On charge les mixins et les variables.
+    $string = '
+    @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
+    ';
+    $string .= $this->buildScssVar();
+    $string .= $vendor_import;
+    
+    // Cree le fichier.
+    $filename = $this->themeName . '--vendor.scss';
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
+    debugLog::$debug = false;
+    debugLog::logger($string, $filename, false, 'file', $path, true);
+  }
+  
+  /**
+   * --
+   */
+  private function scssFilesGlobalStyle() {
     /**
      *
      * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity
@@ -161,7 +213,7 @@ libraries:
       $string .= $this->buildScssVar();
       $string .= $this->buildEntityImportScss();
     }
-    // cree le fichier.
+    // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::$debug = false;

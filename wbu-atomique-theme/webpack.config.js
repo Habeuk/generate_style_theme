@@ -24,6 +24,7 @@ module.exports = {
   mode: env || "development", // On définit le mode en fonction de la valeur de NODE_ENV
   entry: {
     "global-style": "./src/js/global-style.js",
+    "vendor-style": "./src/js/vendor-style.js",
   },
   output: {
     path: path.resolve(__dirname, "../"),

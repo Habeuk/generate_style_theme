@@ -5,4 +5,9 @@ tab1:
   use_domain: true
   save_multifile: false
   build_mode: ProdCMD
+  vendor_import: 
+    scss: '@use "@stephane888/wbu-atomique/scss/bootstrap-all.scss";
+    @use "@stephane888/wbu-atomique/scss/atome/typography/_default.scss";
+    '
+    js: 'import "@stephane888/wbu-atomique/js/bootstrap/all.js";'
   

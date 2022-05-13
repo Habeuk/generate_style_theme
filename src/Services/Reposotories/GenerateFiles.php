@@ -107,12 +107,15 @@ vendor-style:
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $build_mode = $this->generate_style_themeSettings['tab1']['build_mode'];
     $script = '';
-    if (!empty($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], ".kksa") !== false) {
-      $script .= " npm --prefix " . $pathNpm . " run " . $build_mode;
-    }
-    else {
-      $script .= " /homez.707/lesroig/tools/node15/bin/npm --prefix " . $pathNpm . " run " . $build_mode;
-    }
+    // if (!empty($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'],
+    // ".kksa") !== false) {
+    // $script .= " npm --prefix " . $pathNpm . " run " . $build_mode;
+    // }
+    // else {
+    // $script .= " /homez.707/lesroig/tools/node15/bin/npm --prefix " .
+    // $pathNpm . " run " . $build_mode;
+    // }
+    $script .= " npm --prefix " . $pathNpm . " run " . $build_mode;
     $exc = $this->excuteCmd($script, 'RunNpm');
     if ($exc['return_var']) {
       \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");

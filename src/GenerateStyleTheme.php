@@ -52,9 +52,12 @@ class GenerateStyleTheme {
   }
   
   /**
-   * Permet de recuperer les clées de configuration en function des envirronements.
+   * Permet de recuperer les clées de configuration en function des
+   * envirronements.
    *
    * @param string $themeName
+   * @param array $ModuleConf
+   *        Configuration du module generate_style_theme.
    * @return string[]
    */
   public static function getDynamicConfig($themeName, array $ModuleConf = []) {
@@ -63,7 +66,7 @@ class GenerateStyleTheme {
       'settings' => $themeName . '.settings',
       'site' => 'system.site'
     ];
-    // override value if necessary.
+    // Override value if necessary.
     if (!empty($ModuleConf['tab1']['use_domain'])) {
       if (\Drupal::moduleHandler()->moduleExists('domain')) {
         $config = [

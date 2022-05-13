@@ -3,6 +3,8 @@
 namespace Drupal\generate_style_theme\Services\Reposotories;
 
 use Stephane888\Debug\debugLog;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 trait GenerateFiles {
   
@@ -34,7 +36,9 @@ libraries-override:
     
     $filename = $this->themeName . '.info.yml';
     $path = $this->themePath . '/' . $this->themeName;
+    
     debugLog::$debug = false;
+    
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
   
@@ -58,6 +62,7 @@ vendor-style:
 ';
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
+    
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
@@ -71,7 +76,8 @@ vendor-style:
   }
   
   /**
-   * On importe le fichier scss qui a été generé et les fichiers js qui sont dans la config du theme.
+   * On importe le fichier scss qui a été generé et les fichiers js qui sont
+   * dans la config du theme.
    */
   private function getGlobalStyle() {
     $string = '
@@ -79,6 +85,7 @@ vendor-style:
     ';
     $filename = 'global-style.js';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
+    
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
@@ -130,19 +137,22 @@ vendor-style:
   
   /**
    * Les liens symbolique ne marge pas.
-   * On va faire un lien, Car cela est plus facile à gerer et occupe moins d'espace.
+   * On va faire un lien, Car cela est plus facile à gerer et occupe moins
+   * d'espace.
    */
   function CopyWbuAtomiqueTheme() {
     // wbu-atomique-theme/src/js
     $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('module', "generate_style_theme") . "/wbu-atomique-theme";
-    // $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName;
+    // $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' .
+    // $this->themeName;
     // $script .= " && ";
     $script = null;
     $cmd = "ls " . $modulePath;
     $outputs = '';
     $return_var = '';
     exec($cmd . " 2>&1", $outputs, $return_var);
-    // On copie tous les fichiers present dans wbu-atomique-theme, sauf le dossier node_modules.
+    // On copie tous les fichiers present dans wbu-atomique-theme, sauf le
+    // dossier node_modules.
     if ($return_var === 0) {
       $script = ' mkdir ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
       foreach ($outputs as $output) {
@@ -203,16 +213,19 @@ vendor-style:
     @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
     ';
     // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
-    if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
-      $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
-      $confs = $this->getScssFromLibrairy($libray);
-      $string .= $confs['configs'] . $this->buildScssVar();
-      $string .= $confs['files'];
-    }
-    else {
-      $string .= $this->buildScssVar();
-      $string .= $this->buildEntityImportScss();
-    }
+    // if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
+    // $libray = !empty($entity->getLirairy()['value']) ?
+    // $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
+    // $confs = $this->getScssFromLibrairy($libray);
+    // $string .= $confs['configs'] . $this->buildScssVar();
+    // $string .= $confs['files'];
+    // }
+    // else {
+    // $string .= $this->buildScssVar();
+    // $string .= $this->buildEntityImportScss();
+    // }
+    $string .= $this->buildScssVar();
+    $string .= $this->buildEntityImportScss();
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
@@ -243,7 +256,7 @@ vendor-style:
     $space_top: $wbu-margin * ' . $space_top . ';
     $space_inner_top: $space_top * ' . $space_inner_top . ';
     $wbu-default-font-size: ' . $text_font_size . '; 
-';
+    ';
   }
   
   /**
@@ -252,10 +265,11 @@ vendor-style:
   private function buildEntityImportScss() {
     $styleToImport = '';
     if ($this->configKeyThemeSettings) {
-      
       $editConfigTheme = \Drupal::config($this->configKeyThemeSettings);
       $EntityImport = $editConfigTheme->get('layoutgenentitystyles.scss');
-      // dump($EntityImport);
+      // $defaultThemeName = \Drupal::config('system.theme')->get('default');
+      // dump(\Drupal::config($defaultThemeName . '.settings')->getRawData());
+      // dump($editConfigTheme->getRawData());
       // die();
       if (!empty($EntityImport)) {
         $libraries = [];
@@ -276,6 +290,8 @@ vendor-style:
                 }
             }
         }
+        // dump($libraries);
+        // die();
         $styleToImport = implode("\n", $libraries);
       }
     }

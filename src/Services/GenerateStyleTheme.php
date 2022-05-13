@@ -2,12 +2,13 @@
 
 namespace Drupal\generate_style_theme\Services;
 
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\generate_style_theme\Services\Reposotories\GenerateFiles;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
 use Drupal\Component\Serialization\Json;
 use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
 
-class GenerateStyleTheme {
+class GenerateStyleTheme extends ControllerBase {
   protected $themeName;
   protected $themeDirectory;
   protected $themePath;
@@ -26,14 +27,16 @@ class GenerateStyleTheme {
   
   /**
    * Contient la cle du theme qui est encours de traitement.
-   * example : domain.config.arche5_lesroisdelareno_fr.system.theme si on utilise le module domain.
+   * example : domain.config.arche5_lesroisdelareno_fr.system.theme si on
+   * utilise le module domain.
    * Sinon,
    * system.theme
    */
   protected $configKeyTheme = null;
   /**
    * Contient la cle des informations du site qui est encours de traitement.
-   * example : domain.config.arche5_lesroisdelareno_fr.system.site si on utilise le module domain.
+   * example : domain.config.arche5_lesroisdelareno_fr.system.site si on utilise
+   * le module domain.
    * Sinon,
    * system.site
    */
@@ -41,7 +44,9 @@ class GenerateStyleTheme {
   
   /**
    * Contient la clée des paramettres du theme qui est encours de traitement.
-   * example : domain.config.arche5_lesroisdelareno_fr.arche5_lesroisdelareno_fr.settings si on utilise le module domain.
+   * example :
+   * domain.config.arche5_lesroisdelareno_fr.arche5_lesroisdelareno_fr.settings
+   * si on utilise le module domain.
    * Sinon,
    * arche5_lesroisdelareno_fr.settings
    */
@@ -57,6 +62,7 @@ class GenerateStyleTheme {
    * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
+  protected $hasError = false;
   
   use GenerateFiles;
   
@@ -94,8 +100,10 @@ class GenerateStyleTheme {
     
     // if ($this->generate_style_themeSettings['tab1']['use_domain']) {
     // if (\Drupal::moduleHandler()->moduleExists('domain')) {
-    // $this->configKeyTheme = 'domain.config.' . $this->themeName . '.system.theme';
-    // $this->configKeyThemeSettings = 'domain.config.' . $this->themeName . '.' . $this->themeName . '.settings';
+    // $this->configKeyTheme = 'domain.config.' . $this->themeName .
+    // '.system.theme';
+    // $this->configKeyThemeSettings = 'domain.config.' . $this->themeName . '.'
+    // . $this->themeName . '.settings';
     // }
     // }
   }
@@ -103,7 +111,8 @@ class GenerateStyleTheme {
   /**
    * \Drupal::config('generate_style_theme.settings')->getRawData();
    * Return le chemin vers le dossier parent du theme definit par defaut.
-   * ( Logiquement il devrait pointer sur custom, pour que tous les themes soit disponible dans custom ).
+   * ( Logiquement il devrait pointer sur custom, pour que tous les themes soit
+   * disponible dans custom ).
    *
    * @throws \Exception
    * @return string
@@ -182,7 +191,8 @@ class GenerateStyleTheme {
   /**
    * Permet de valider la configuration du module.
    *
-   * @deprecated doit etre supprimer un foix le module fonctionne sur lesroisdelareno et le storibon.
+   * @deprecated doit etre supprimer un foix le module fonctionne sur
+   *             lesroisdelareno et le storibon.
    */
   protected function ValidConfig(array $config) {
     if (!empty($config['tab1']['theme_base']) && isset($config['tab1']['use_domain'])) {
@@ -192,11 +202,17 @@ class GenerateStyleTheme {
   }
   
   /**
-   * Permet de definir le theme selectionner comme theme par defaut pour le domaine choisie et applique quelques paramettre de configurations.
+   * Permet de definir le theme selectionner comme theme par defaut pour le
+   * domaine choisie et applique quelques paramettre de configurations.
    * Cette configuration est etroitement lier au module domain.
-   * Dans le module domaine, il ya déjà une logique de surchage de la configuration qui est mis en place. voir sous module domain_config et domain_config_ui
-   * Les partterns suivant peuvent etre utiliser : domain.config.DOMAIN_MACHINE_NAME.LANGCODE.item.name, domain.config.DOMAIN_MACHINE_NAME.item.name
-   * example : system.site => domain.config.v2lesroisdelareno_kksa.system.site ( pour le domaine v2lesroisdelareno_kksa ).
+   * Dans le module domaine, il ya déjà une logique de surchage de la
+   * configuration qui est mis en place. voir sous module domain_config et
+   * domain_config_ui
+   * Les partterns suivant peuvent etre utiliser :
+   * domain.config.DOMAIN_MACHINE_NAME.LANGCODE.item.name,
+   * domain.config.DOMAIN_MACHINE_NAME.item.name
+   * example : system.site => domain.config.v2lesroisdelareno_kksa.system.site (
+   * pour le domaine v2lesroisdelareno_kksa ).
    */
   protected function SetCurrentThemeDefaultOfDomaine() {
     if ($this->themeName && $this->entity->SetThemeAsDefaut()) {

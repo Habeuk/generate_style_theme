@@ -228,7 +228,19 @@ vendor-style:
     // $string .= $this->buildEntityImportScss();
     // }
     $string .= $this->buildScssVar();
-    $string .= $this->buildEntityImportScss();
+    $styleImport = $this->buildEntityImportScss();
+    if (!empty($styleImport)) {
+      $string .= $styleImport;
+    }
+    else {
+      // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
+      if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
+        $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
+        $confs = $this->getScssFromLibrairy($libray);
+        $string .= $confs['configs'] . $this->buildScssVar();
+        $string .= $confs['files'];
+      }
+    }
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';

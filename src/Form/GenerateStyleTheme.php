@@ -44,6 +44,7 @@ class GenerateStyleTheme extends ConfigFormBase {
     $form['use_domain'] = [
       '#type' => 'checkbox',
       '#title' => 'Generer css&js themes à partir du domaine',
+      '#description' => " Vous devez egalement activer 'enable domain config'",
       '#default_value' => $config->get('tab1.use_domain')
     ];
     $form['save_multifile'] = [

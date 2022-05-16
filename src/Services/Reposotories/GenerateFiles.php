@@ -33,12 +33,9 @@ libraries:
 # Supprimer les librairies du themes parent.
 libraries-override:
   ' . $this->baseTheme . '/global-style: false';
-    
     $filename = $this->themeName . '.info.yml';
     $path = $this->themePath . '/' . $this->themeName;
-    
     debugLog::$debug = false;
-    
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
   
@@ -62,7 +59,6 @@ vendor-style:
 ';
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
-    
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }

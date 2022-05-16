@@ -6,7 +6,7 @@
         "drupal/colorapi": "^1.1",
         "stephane888/layoutgenentitystyles": "^1.0 | dev-1x",
         "stephane888/debug": "^1.1 | dev-1x",
-        "stephane888/theme_reference_wbu": "^1.0 | dev-1x",  
+        "stephane888/theme_reference_wbu": "^1.0 | dev-1x"
     },
     "license": "MIT",
     "authors": [

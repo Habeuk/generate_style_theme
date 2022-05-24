@@ -76,7 +76,8 @@ class GenerateStyleThemeController extends ControllerBase {
           // 'etape_suivante2' => [
           // '#type' => 'link',
           // '#title' => 'Etape suivante : Ajouter du contenu',
-          // '#url' => \Drupal\Core\Url::fromRoute('generate_style_theme.create_pages_site_form')
+          // '#url' =>
+          // \Drupal\Core\Url::fromRoute('generate_style_theme.create_pages_site_form')
           // ]
         ];
         if ($domaine_id && \Drupal::moduleHandler()->moduleExists('domain')) {
@@ -85,12 +86,14 @@ class GenerateStyleThemeController extends ControllerBase {
            * @var \Drupal\domain\Entity\Domain $Domain
            */
           $Domain = \Drupal::entityTypeManager()->getStorage('domain')->load($domaine_id);
-          $uri = $Domain->getScheme() . $Domain->getHostname();
-          $build['etape_suivante'] = [
-            '#type' => 'link',
-            '#title' => 'voir le theme',
-            '#url' => \Drupal\Core\Url::fromUri($uri, $options)
-          ];
+          if ($Domain) {
+            $uri = $Domain->getScheme() . $Domain->getHostname();
+            $build['etape_suivante'] = [
+              '#type' => 'link',
+              '#title' => 'voir le theme',
+              '#url' => \Drupal\Core\Url::fromUri($uri, $options)
+            ];
+          }
         }
         return $build;
       }

@@ -55,7 +55,10 @@ use Drupal\Component\Serialization\Json;
  *     "delete-form" = "/admin/structure/config_theme_entity/{config_theme_entity}/delete",
  *     "collection" = "/admin/structure/config_theme_entity",
  *   },
- *   field_ui_base_route = "config_theme_entity.settings"
+ *   field_ui_base_route = "config_theme_entity.settings",
+ *   constraints = {
+ *     "ValidateThemeCreate" = {}
+ *   }
  * )
  */
 class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityInterface {
@@ -248,13 +251,20 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   }
   
   public function postSave($storage, $update = TRUE) {
+    // \Drupal::messenger()->addStatus('postSave');
+    parent::postSave($storage, $update);
+  }
+  
+  public function preSave($storage) {
+    // \Drupal::messenger()->addStatus('preSave');
     // On doit nettoyer le nom d'hote, car il est utilisé comme nom du theme.
     $themeName = str_replace([
       ' ',
-      '-'
+      '-',
+      '.'
     ], '_', strtolower($this->getHostname()));
     $this->set('hostname', preg_replace('/[^a-z0-9\_]/', "", $themeName));
-    parent::postSave($storage, $update);
+    parent::preSave($storage);
   }
   
   /**
@@ -286,9 +296,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'wbumenudomainhost',
       'settings' => [],
       'weight' => -3
-    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setConstraints([
-      'UniqueField' => []
-    ]);
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->addConstraint('UniqueField');
     $fields['lirairy'] = BaseFieldDefinition::create('list_string')->setLabel(t(' Selectionné un style pour ce domaine '))->setRequired(False)->setDescription(t(' Selectionner le nom de domaine ( à supprimer plus tard ) '))->setSetting('allowed_values_function', [
       '\Drupal\generate_style_theme\GenerateStyleTheme',
       'getLibrairiesCurrentTheme'
@@ -300,7 +308,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'weight' => -3
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE);
     
-    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo ')->setRequired(TRUE)->setDisplayOptions('form', [
+    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo ')->setDisplayOptions('form', [
       'type' => 'image'
     ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
     
@@ -365,7 +373,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'weight' => -3
     ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
     // NB: application de ses informations se fait apres la creation du theme.
-    // @see Drupal\generate_style_theme\Services\GenerateStyleTheme::setConfigTheme()
+    // @see
+    // Drupal\generate_style_theme\Services\GenerateStyleTheme::setConfigTheme()
     $fields['site_config'] = BaseFieldDefinition::create('wbumenudomaineditlink')->setLabel(t(' Information de configuration du domaine '))->setRequired(false)->setDisplayOptions('form', [
       'type' => 'wbumenudomainsiteconfig',
       'settings' => [],

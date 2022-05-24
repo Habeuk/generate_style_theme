@@ -138,17 +138,23 @@ class GenerateStyleTheme extends ControllerBase {
    * @param Boolean $createThme
    */
   function buildSubTheme($createThme = false) {
-    $this->InfoYml();
-    $this->LibrairiesYml();
-    if ($createThme)
-      $this->CopyWbuAtomiqueTheme();
-    $this->scssFiles();
-    $this->jsFiles();
-    // $this->CopyWbuAtomiqueTheme();
-    $this->RunNpm();
-    $this->SetCurrentThemeDefaultOfDomaine();
-    $this->setConfigTheme();
-    $this->setLogoToTheme();
+    try {
+      $this->InfoYml();
+      $this->LibrairiesYml();
+      if ($createThme)
+        $this->CopyWbuAtomiqueTheme();
+      $this->scssFiles();
+      $this->jsFiles();
+      // $this->CopyWbuAtomiqueTheme();
+      $this->RunNpm();
+      $this->SetCurrentThemeDefaultOfDomaine();
+      $this->setConfigTheme();
+      $this->setLogoToTheme();
+      $this->entity->validate();
+    }
+    catch (\Exception $e) {
+      $this->logger->warning($e->getMessage());
+    }
   }
   
   /**

@@ -76,9 +76,8 @@ vendor-style:
    * dans la config du theme.
    */
   private function getGlobalStyle() {
-    $string = '
-      import "../scss/' . $this->themeName . '.scss";
-    ';
+    $string = 'import "../scss/' . $this->themeName . '.scss";';
+    $string .= $this->buildEntityImportStyle('js');
     $filename = 'global-style.js';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
     
@@ -224,7 +223,7 @@ vendor-style:
     // $string .= $this->buildEntityImportScss();
     // }
     $string .= $this->buildScssVar();
-    $styleImport = $this->buildEntityImportScss();
+    $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
       $string .= $styleImport;
     }
@@ -273,38 +272,38 @@ vendor-style:
   /**
    * Permet de recuperer les données de styles.
    */
-  private function buildEntityImportScss() {
+  private function buildEntityImportStyle(string $type = 'scss') {
     $styleToImport = '';
     if ($this->configKeyThemeSettings) {
       $editConfigTheme = \Drupal::config($this->configKeyThemeSettings);
-      $EntityImport = $editConfigTheme->get('layoutgenentitystyles.scss');
-      // $defaultThemeName = \Drupal::config('system.theme')->get('default');
-      // dump(\Drupal::config($defaultThemeName . '.settings')->getRawData());
-      // dump($editConfigTheme->getRawData());
-      // die();
-      if (!empty($EntityImport)) {
-        $libraries = [];
-        // on parcourt les entites
-        foreach ($EntityImport as $Entity) {
-          // On parcourt les types d'entites ou plugins.
-          if (is_array($Entity))
-            foreach ($Entity as $view_mode) {
-              // On parcourt les modes d'affichages.
-              if (is_array($view_mode))
-                foreach ($view_mode as $plugin) {
-                  // on parcourt les plugins.
-                  if (is_array($plugin))
-                    foreach ($plugin as $plugin_id => $library) {
-                      $libraries[$plugin_id] = implode("\n", $library);
-                      // dump($libraries);
-                    }
-                }
-            }
-        }
-        // dump($libraries);
-        // die();
-        $styleToImport = implode("\n", $libraries);
+      $EntityImport = $editConfigTheme->get('layoutgenentitystyles.' . $type);
+      $styleToImport = $this->buildEntityImport($EntityImport);
+    }
+    return $styleToImport;
+  }
+  
+  private function buildEntityImport(array $EntityImport) {
+    $styleToImport = '';
+    if (!empty($EntityImport)) {
+      $libraries = [];
+      // on parcourt les entites
+      foreach ($EntityImport as $Entity) {
+        // On parcourt les types d'entites ou plugins.
+        if (is_array($Entity))
+          foreach ($Entity as $view_mode) {
+            // On parcourt les modes d'affichages.
+            if (is_array($view_mode))
+              foreach ($view_mode as $plugin) {
+                // on parcourt les plugins.
+                if (is_array($plugin))
+                  foreach ($plugin as $plugin_id => $library) {
+                    $libraries[$plugin_id] = implode("\n", $library);
+                    // dump($libraries);
+                  }
+              }
+          }
       }
+      $styleToImport = implode("\n", $libraries);
     }
     return $styleToImport;
   }

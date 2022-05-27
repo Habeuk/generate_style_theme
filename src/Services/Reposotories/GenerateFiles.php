@@ -80,7 +80,6 @@ vendor-style:
     $string .= $this->buildEntityImportStyle('js');
     $filename = 'global-style.js';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
-    
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
@@ -283,6 +282,8 @@ vendor-style:
   }
   
   private function buildEntityImport(array $EntityImport) {
+    // dump($EntityImport);
+    // die();
     $styleToImport = '';
     if (!empty($EntityImport)) {
       $libraries = [];

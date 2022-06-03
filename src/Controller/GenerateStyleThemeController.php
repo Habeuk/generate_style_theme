@@ -5,7 +5,10 @@ namespace Drupal\generate_style_theme\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ThemeInstaller;
-use Drupal\generate_style_theme\GenerateStyleTheme;
+use Drupal\generate_style_theme\Services\GenerateStyleTheme;
+use Drupal\Component\Serialization\Json;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
 
 /**
  * Returns responses for Generate style theme routes.
@@ -40,6 +43,26 @@ class GenerateStyleThemeController extends ControllerBase {
       '#markup' => $this->t('It works!')
     ];
     return $build;
+  }
+  
+  /**
+   * --
+   */
+  public function UpdateStyleTheme($hostname) {
+    $entities = $this->entityTypeManager()->getStorage('config_theme_entity')->loadByProperties([
+      'hostname' => $hostname
+    ]);
+    if (!empty($entities)) {
+      /**
+       *
+       * @var ConfigThemeEntity $entity
+       */
+      $entity = reset($entities);
+      $GenerateStyleTheme = new GenerateStyleTheme($entity);
+      $GenerateStyleTheme->buildSubTheme(false, true);
+      return $this->reponse($entity->toArray());
+    }
+    return $this->reponse('', 400, 'hostname non trouvée : ' . $hostname);
   }
   
   /**
@@ -112,6 +135,23 @@ class GenerateStyleThemeController extends ControllerBase {
       '#markup' => $this->t('Theme => ' . $themename)
     ];
     return $build;
+  }
+  
+  /**
+   *
+   * @param array|string $configs
+   * @param number $code
+   * @param string $message
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  protected function reponse($configs, $code = null, $message = null) {
+    if (!is_string($configs))
+      $configs = Json::encode($configs);
+    $reponse = new JsonResponse();
+    if ($code)
+      $reponse->setStatusCode($code, $message);
+    $reponse->setContent($configs);
+    return $reponse;
   }
   
 }

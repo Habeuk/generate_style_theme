@@ -89,14 +89,15 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
    * -
    */
   public function getLogo() {
-    if ($this->get('logo')->first())
-      $fid = $this->get('logo')->first()->getValue();
+    $fid = $this->get('logo')->target_id;
     if (!empty($fid)) {
-      $file = File::load($fid["target_id"]);
+      $file = File::load($fid);
       if ($file) {
         return ImageStyle::load('medium')->buildUri($file->getFileUri());
       }
     }
+    //
+    return null;
   }
   
   /**
@@ -297,6 +298,10 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'settings' => [],
       'weight' => -3
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->addConstraint('UniqueField');
+    /**
+     *
+     * @delete before 2x
+     */
     $fields['lirairy'] = BaseFieldDefinition::create('list_string')->setLabel(t(' Selectionné un style pour ce domaine '))->setRequired(False)->setDescription(t(' Selectionner le nom de domaine ( à supprimer plus tard ) '))->setSetting('allowed_values_function', [
       '\Drupal\generate_style_theme\GenerateStyleTheme',
       'getLibrairiesCurrentTheme'
@@ -308,8 +313,11 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'weight' => -3
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE);
     
-    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo ')->setDisplayOptions('form', [
-      'type' => 'image'
+    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo .. ')->setSetting('preview_image_style', 'medium')->setDisplayOptions('form', [
+      'type' => 'image_image',
+      'settings' => [
+        'preview_image_style' => 'medium'
+      ]
     ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
     
     $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [
@@ -369,6 +377,11 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'weight' => -3
     ]);
     $fields['settheme_as_defaut'] = BaseFieldDefinition::create('boolean')->setLabel(" Definir ce theme comme theme par defaut ")->setDisplayOptions('form', [
+      'type' => 'boolean_checkbox',
+      'weight' => -3
+    ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
+    
+    $fields['run_npm'] = BaseFieldDefinition::create('boolean')->setLabel(" Generate files style ? ")->setDisplayOptions('form', [
       'type' => 'boolean_checkbox',
       'weight' => -3
     ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);

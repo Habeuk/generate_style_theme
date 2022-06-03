@@ -33,8 +33,15 @@ class GenerateStyleTheme {
    * @param string $entityTypeId
    */
   public static function getThemes($value, $entityTypeId) {
-    if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
-      return \Drupal\wbumenudomain\Wbumenudomain::getUnUseDomain($value, $entityTypeId);
+    $config = \Drupal::config('generate_style_theme.settings')->getRawData();
+    // dump($config);
+    if ($config['tab1']['use_domain']) {
+      if (\Drupal::moduleHandler()->moduleExists('domain')) {
+        return GenerateStyleThemeDomain::getUnUseDomain($value, $entityTypeId);
+      }
+      else {
+        \Drupal::messenger()->addWarning(' Vous devez installer le module domain_content ');
+      }
     }
     else {
       // lors de la mofication on renvoit la valeur.

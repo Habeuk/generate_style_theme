@@ -80,5 +80,12 @@ generate_style_theme.config_tab1:
   requirements:
     _access: 'TRUE'
     
+generate_style_theme.updatestyletheme:
+  path: '/generate-style-theme/update-style-theme/{hostname}'
+  defaults:
+    _title: 'Example'
+    _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::UpdateStyleTheme'
+  requirements:
+    _role: 'administrator'
     
 

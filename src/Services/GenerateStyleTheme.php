@@ -71,7 +71,7 @@ class GenerateStyleTheme extends ControllerBase {
    * @param Array $configs
    * @param ConfigThemeEntity $entity
    */
-  function __construct($configs, ConfigThemeEntity $entity) {
+  function __construct(ConfigThemeEntity $entity) {
     $this->themeName = $entity->getHostname();
     // $this->themeDirectory = $entity->getHostname();
     $this->themePath = $this->getPath();
@@ -137,7 +137,7 @@ class GenerateStyleTheme extends ControllerBase {
    *
    * @param Boolean $createThme
    */
-  function buildSubTheme($createThme = false) {
+  function buildSubTheme($createThme = false, $run_npm = false) {
     try {
       $this->InfoYml();
       $this->LibrairiesYml();
@@ -145,8 +145,8 @@ class GenerateStyleTheme extends ControllerBase {
         $this->CopyWbuAtomiqueTheme();
       $this->scssFiles();
       $this->jsFiles();
-      // $this->CopyWbuAtomiqueTheme();
-      $this->RunNpm();
+      if ($this->entity->get('run_npm')->value || $run_npm)
+        $this->RunNpm();
       $this->SetCurrentThemeDefaultOfDomaine();
       $this->setConfigTheme();
       $this->setLogoToTheme();

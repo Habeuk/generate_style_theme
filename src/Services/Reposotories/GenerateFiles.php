@@ -276,14 +276,13 @@ vendor-style:
     if ($this->configKeyThemeSettings) {
       $editConfigTheme = \Drupal::config($this->configKeyThemeSettings);
       $EntityImport = $editConfigTheme->get('layoutgenentitystyles.' . $type);
-      $styleToImport = $this->buildEntityImport($EntityImport);
+      if (is_array($EntityImport))
+        $styleToImport = $this->buildEntityImport($EntityImport);
     }
     return $styleToImport;
   }
   
   private function buildEntityImport(array $EntityImport) {
-    // dump($EntityImport);
-    // die();
     $styleToImport = '';
     if (!empty($EntityImport)) {
       $libraries = [];

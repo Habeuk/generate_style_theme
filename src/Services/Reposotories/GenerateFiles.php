@@ -244,16 +244,16 @@ vendor-style:
   
   private function buildScssVar() {
     $entity = $this->entity;
-    $color_primary = !empty($entity->getColorPrimary()['color']) ? $entity->getColorPrimary()['color'] : '#c69c6d';
-    $color_secondaire = !empty($entity->getColorSecondaire()['color']) ? $entity->getColorSecondaire()['color'] : '#130f13';
-    $color_link_hover = !empty($entity->getColorLinkHover()['color']) ? $entity->getColorLinkHover()['color'] : '#130f13';
-    $color_background = !empty($entity->getColorBackground()['color']) ? $entity->getColorBackground()['color'] : '#192028';
-    $wbu_h1_font_size = !empty($entity->getH1FontSize()['value']) ? $entity->getH1FontSize()['value'] : '3.4rem';
-    $wbu_h2_font_size = !empty($entity->getH2FontSize()['value']) ? $entity->getH2FontSize()['value'] : '2.4rem';
-    $text_font_size = !empty($entity->gettext_font_size()['value']) ? $entity->gettext_font_size()['value'] : '1.4rem';
-    $space_bottom = !empty($entity->getspace_bottom()['value']) ? $entity->getspace_bottom()['value'] : '5';
-    $space_top = !empty($entity->getspace_top()['value']) ? $entity->getspace_top()['value'] : '4';
-    $space_inner_top = !empty($entity->getspace_inner_top()['value']) ? $entity->getspace_inner_top()['value'] : '0.5';
+    $color_primary = isset($entity->getColorPrimary()['color']) ? $entity->getColorPrimary()['color'] : '#c69c6d';
+    $color_secondaire = isset($entity->getColorSecondaire()['color']) ? $entity->getColorSecondaire()['color'] : '#130f13';
+    $color_link_hover = isset($entity->getColorLinkHover()['color']) ? $entity->getColorLinkHover()['color'] : '#130f13';
+    $color_background = isset($entity->getColorBackground()['color']) ? $entity->getColorBackground()['color'] : '#192028';
+    $wbu_h1_font_size = isset($entity->getH1FontSize()['value']) ? $entity->getH1FontSize()['value'] : '3.4rem';
+    $wbu_h2_font_size = isset($entity->getH2FontSize()['value']) ? $entity->getH2FontSize()['value'] : '2.4rem';
+    $text_font_size = isset($entity->gettext_font_size()['value']) ? $entity->gettext_font_size()['value'] : '1.4rem';
+    $space_bottom = isset($entity->getspace_bottom()['value']) ? $entity->getspace_bottom()['value'] : '5';
+    $space_top = isset($entity->getspace_top()['value']) ? $entity->getspace_top()['value'] : '4';
+    $space_inner_top = isset($entity->getspace_inner_top()['value']) ? $entity->getspace_inner_top()['value'] : '0.5';
     return '
     $wbu-color-primary: ' . $color_primary . '; 
     $wbu-color-secondary: ' . $color_secondaire . '; 
@@ -282,11 +282,16 @@ vendor-style:
     return $styleToImport;
   }
   
+  /**
+   *
+   * @param array $EntityImport
+   * @return string
+   */
   private function buildEntityImport(array $EntityImport) {
     $styleToImport = '';
     if (!empty($EntityImport)) {
       $libraries = [];
-      // on parcourt les entites
+      // On parcourt les entites
       foreach ($EntityImport as $Entity) {
         // On parcourt les types d'entites ou plugins.
         if (is_array($Entity))
@@ -294,7 +299,7 @@ vendor-style:
             // On parcourt les modes d'affichages.
             if (is_array($view_mode))
               foreach ($view_mode as $plugin) {
-                // on parcourt les plugins.
+                // On parcourt les plugins.
                 if (is_array($plugin))
                   foreach ($plugin as $plugin_id => $library) {
                     $libraries[$plugin_id] = implode("\n", $library);

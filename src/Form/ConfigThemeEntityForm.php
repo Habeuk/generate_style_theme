@@ -38,7 +38,6 @@ class ConfigThemeEntityForm extends ContentEntityForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     /* @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity */
     $form = parent::buildForm($form, $form_state);
-    
     return $form;
   }
   

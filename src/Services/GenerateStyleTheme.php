@@ -150,7 +150,7 @@ class GenerateStyleTheme extends ControllerBase {
       $this->SetCurrentThemeDefaultOfDomaine();
       $this->setConfigTheme();
       $this->setLogoToTheme();
-      $this->entity->validate();
+      // $this->entity->validate();
     }
     catch (\Exception $e) {
       $this->logger->warning($e->getMessage());

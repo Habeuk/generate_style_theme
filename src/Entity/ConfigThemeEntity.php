@@ -93,6 +93,11 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if (!empty($fid)) {
       $file = File::load($fid);
       if ($file) {
+        // permet de generer le fichier image, car on remarque que le fichier ne
+        // se genere via theme_get_setting('logo.url');
+        $img2 = ImageStyle::load('medium')->buildUrl($file->getFileUri());
+        file_get_contents($img2);
+        // return path to save in theme.settings.logo.url
         return ImageStyle::load('medium')->buildUri($file->getFileUri());
       }
     }

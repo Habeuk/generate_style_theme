@@ -128,6 +128,10 @@ class GenerateStyleTheme extends ControllerBase {
         if ($path_of_module[$i])
           $path .= "/" . $path_of_module[$i];
       }
+      // on corrige le chemain s'il n'est pas valide.
+      if (str_contains($path, "/core/themes")) {
+        $path = str_replace("/core/themes", "/themes/custom", $path);
+      }
       return $path;
     }
     throw new \Exception(" Impossible de determiner le chemin vers le dossier du theme. ");

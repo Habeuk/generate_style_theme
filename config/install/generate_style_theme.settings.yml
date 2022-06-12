@@ -2,7 +2,7 @@ storage_auto: 'content_create_automaticaly'
 langcode: 'en'
 tab1: 
   theme_base: 'theme_reference_wbu'
-  use_domain: true
+  use_domain: false
   save_multifile: false
   build_mode: ProdCMD
   vendor_import: 

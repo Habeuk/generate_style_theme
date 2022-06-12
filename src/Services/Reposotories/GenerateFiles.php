@@ -168,7 +168,10 @@ vendor-style:
     // on fait un lien symbolique avec node_modules.
     $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('theme', $this->baseTheme) . "/wbu-atomique-theme";
     $script .= ' && ln -s ' . $modulePath . '/node_modules   ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
-    $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
+    $exc = $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
+    if ($exc['return_var']) {
+      $this->logger->warning('Error de copie des fichiers : <br>' . implode("<br>", $exc['output']));
+    }
   }
   
   /**

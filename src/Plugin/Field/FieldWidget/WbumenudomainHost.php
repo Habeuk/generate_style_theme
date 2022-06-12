@@ -37,10 +37,13 @@ class WbumenudomainHost extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $entityTypeId = $items->getEntity()->getEntityTypeId();
     $value = isset($items[$delta]->value) ? $items[$delta]->value : '';
+    $themes = GenerateStyleTheme::getThemes($value, $entityTypeId);
+    if (!$themes)
+      $themes = [];
     $element['value'] = $element + [
       '#type' => 'select',
       '#default_value' => $value,
-      '#options' => GenerateStyleTheme::getThemes($value, $entityTypeId),
+      '#options' => $themes,
       '#required' => true,
       "#empty_option" => t('- Selectionner un domaine -')
     ];

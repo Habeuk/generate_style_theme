@@ -40,7 +40,7 @@ class GenerateStyleTheme {
         return GenerateStyleThemeDomain::getUnUseDomain($value, $entityTypeId);
       }
       else {
-        \Drupal::messenger()->addWarning(' Vous devez installer le module domain_content ');
+        \Drupal::messenger()->addWarning(' Vous devez installer le module "domain_content" ');
       }
     }
     else {

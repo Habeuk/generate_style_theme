@@ -86,6 +86,6 @@ generate_style_theme.updatestyletheme:
     _title: 'Example'
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::UpdateStyleTheme'
   requirements:
-    _role: 'administrator'
+    _access: 'TRUE'
     
 

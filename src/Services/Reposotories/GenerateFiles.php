@@ -280,12 +280,12 @@ vendor-style:
     $wbu-color-secondary: ' . $color_secondaire . '; 
     $wbu-color-link-hover: ' . $color_link_hover . '; 
     $wbu-background: ' . $color_background . '; 
-$wbu-h1-font-size: ' . $wbu_h1_font_size . ';
-$wbu-h2-font-size: ' . $wbu_h2_font_size . ';
-$wbu-h3-font-size: ' . $wbu_h3_font_size . ';
-$wbu-h4-font-size: ' . $wbu_h4_font_size . ';
-$wbu-h5-font-size: ' . $wbu_h5_font_size . ';
-$wbu-h6-font-size: ' . $wbu_h6_font_size . ';
+    $wbu-h1-font-size: ' . $wbu_h1_font_size . ';
+    $wbu-h2-font-size: ' . $wbu_h2_font_size . ';
+    $wbu-h3-font-size: ' . $wbu_h3_font_size . ';
+    $wbu-h4-font-size: ' . $wbu_h4_font_size . ';
+    $wbu-h5-font-size: ' . $wbu_h5_font_size . ';
+    $wbu-h6-font-size: ' . $wbu_h6_font_size . ';
     $space_bottom: $wbu-margin * ' . $space_bottom . ';
     $space_top: $wbu-margin * ' . $space_top . ';
     $space_inner_top: $space_top * ' . $space_inner_top . ';

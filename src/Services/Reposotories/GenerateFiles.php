@@ -246,6 +246,11 @@ vendor-style:
   }
   
   private function buildScssVar() {
+    $string = '';
+    /**
+     *
+     * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity
+     */
     $entity = $this->entity;
     $color_primary = isset($entity->getColorPrimary()['color']) ? $entity->getColorPrimary()['color'] : '#c69c6d';
     $color_secondaire = isset($entity->getColorSecondaire()['color']) ? $entity->getColorSecondaire()['color'] : '#130f13';
@@ -253,22 +258,39 @@ vendor-style:
     $color_background = isset($entity->getColorBackground()['color']) ? $entity->getColorBackground()['color'] : '#192028';
     $wbu_h1_font_size = isset($entity->getH1FontSize()['value']) ? $entity->getH1FontSize()['value'] : '3.4rem';
     $wbu_h2_font_size = isset($entity->getH2FontSize()['value']) ? $entity->getH2FontSize()['value'] : '2.4rem';
+    $wbu_h3_font_size = !empty($entity->getH3FontSize()) ? $entity->getH3FontSize() : '1.8rem';
+    $wbu_h4_font_size = !empty($entity->getH4FontSize()) ? $entity->getH4FontSize() : '1.6rem';
+    $wbu_h5_font_size = !empty($entity->getH5FontSize()) ? $entity->getH5FontSize() : '1.4rem';
+    $wbu_h6_font_size = !empty($entity->getH6FontSize()) ? $entity->getH6FontSize() : '1.4rem';
     $text_font_size = isset($entity->gettext_font_size()['value']) ? $entity->gettext_font_size()['value'] : '1.4rem';
     $space_bottom = isset($entity->getspace_bottom()['value']) ? $entity->getspace_bottom()['value'] : '5';
     $space_top = isset($entity->getspace_top()['value']) ? $entity->getspace_top()['value'] : '4';
     $space_inner_top = isset($entity->getspace_inner_top()['value']) ? $entity->getspace_inner_top()['value'] : '0.5';
+    if (!empty($entity->getwbu_titre_big())) {
+      $string .= '$wbu_titre_big: ' . $entity->getwbu_titre_big() . ';';
+    }
+    if (!empty($entity->getwbu_titre_suppra())) {
+      $string .= '$wbu_titre_suppra: ' . $entity->getwbu_titre_suppra() . ';';
+    }
+    if (!empty($entity->getwbu_titre_biggest())) {
+      $string .= '$wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
+    }
     return '
     $wbu-color-primary: ' . $color_primary . '; 
     $wbu-color-secondary: ' . $color_secondaire . '; 
     $wbu-color-link-hover: ' . $color_link_hover . '; 
     $wbu-background: ' . $color_background . '; 
-    $wbu-h1-font-size: ' . $wbu_h1_font_size . ';
-    $wbu-h2-font-size: ' . $wbu_h2_font_size . ';
+$wbu-h1-font-size: ' . $wbu_h1_font_size . ';
+$wbu-h2-font-size: ' . $wbu_h2_font_size . ';
+$wbu-h3-font-size: ' . $wbu_h3_font_size . ';
+$wbu-h4-font-size: ' . $wbu_h4_font_size . ';
+$wbu-h5-font-size: ' . $wbu_h5_font_size . ';
+$wbu-h6-font-size: ' . $wbu_h6_font_size . ';
     $space_bottom: $wbu-margin * ' . $space_bottom . ';
     $space_top: $wbu-margin * ' . $space_top . ';
     $space_inner_top: $space_top * ' . $space_inner_top . ';
     $wbu-default-font-size: ' . $text_font_size . '; 
-    ';
+    ' . $string;
   }
   
   /**

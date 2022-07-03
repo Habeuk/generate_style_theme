@@ -197,11 +197,33 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   
   /**
    *
+   * @remove to 2x
+   * @deprecated
    * @return mixed
    */
   public function getLirairy() {
-    if ($this->get('lirairy')->first())
-      return $this->get('lirairy')->first()->getValue();
+    return $this->get('lirairy')->value;
+  }
+  
+  /**
+   * --
+   */
+  public function getwbu_titre_suppra() {
+    return $this->get('wbu_titre_suppra')->value;
+  }
+  
+  /**
+   * --
+   */
+  public function getwbu_titre_biggest() {
+    return $this->get('wbu_titre_biggest')->value;
+  }
+  
+  /**
+   * --
+   */
+  public function getwbu_titre_big() {
+    return $this->get('wbu_titre_big')->value;
   }
   
   /**
@@ -218,6 +240,34 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getH2FontSize() {
     if ($this->get('h2_font_size')->first())
       return $this->get('h2_font_size')->first()->getValue();
+  }
+  
+  /**
+   * --
+   */
+  public function getH3FontSize() {
+    return $this->get('h3_font_size')->value;
+  }
+  
+  /**
+   * --
+   */
+  public function getH4FontSize() {
+    return $this->get('h4_font_size')->value;
+  }
+  
+  /**
+   * --
+   */
+  public function getH5FontSize() {
+    return $this->get('h5_font_size')->value;
+  }
+  
+  /**
+   * --
+   */
+  public function getH6FontSize() {
+    return $this->get('h6_font_size')->value;
   }
   
   /**
@@ -352,28 +402,55 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'color' => '#0F103E',
       'name' => ''
     ]);
+    $fields['wbu_titre_suppra'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (wbu-titre-suppra) ")->setDisplayOptions('form', [
+      'type' => 'string_textfield'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('6.4rem');
     
-    $fields['h1_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre ")->setRequired(TRUE)->setDisplayOptions('form', [
+    $fields['wbu_titre_biggest'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (wbu-titre-biggest) ")->setDisplayOptions('form', [
+      'type' => 'string_textfield'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('5.4rem');
+    
+    $fields['wbu_titre_big'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (wbu-titre-big) ")->setDisplayOptions('form', [
+      'type' => 'string_textfield'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('4.4rem');
+    
+    $fields['h1_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (h1) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('3.4rem');
     
-    $fields['h2_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre ")->setRequired(TRUE)->setDisplayOptions('form', [
+    $fields['h2_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h2) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('2.4rem');
     
-    $fields['text_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police par defaut ")->setRequired(TRUE)->setDisplayOptions('form', [
+    $fields['h3_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h3) ")->setDisplayOptions('form', [
+      'type' => 'string_textfield'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.8rem');
+    
+    $fields['h4_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h4) ")->setDisplayOptions('form', [
+      'type' => 'string_textfield'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.6rem');
+    
+    $fields['h5_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h5) ")->setDisplayOptions('form', [
+      'type' => 'string_textfield'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.6rem');
+    
+    $fields['h6_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h6) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.4rem');
     
-    $fields['space_bottom'] = BaseFieldDefinition::create('string')->setLabel(" Espace du bas entre les blocs ")->setRequired(TRUE)->setDisplayOptions('form', [
+    $fields['text_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police par defaut ")->setDisplayOptions('form', [
+      'type' => 'string_textfield'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.4rem');
+    
+    $fields['space_bottom'] = BaseFieldDefinition::create('string')->setLabel(" Espace du bas entre les blocs ")->setDisplayOptions('form', [
       'type' => 'number'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(5);
     
-    $fields['space_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace du haut entre les blocs ")->setRequired(TRUE)->setDisplayOptions('form', [
+    $fields['space_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace du haut entre les blocs ")->setDisplayOptions('form', [
       'type' => 'number'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(4);
     
-    $fields['space_inner_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace interne ")->setRequired(TRUE)->setDisplayOptions('form', [
+    $fields['space_inner_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace interne ")->setDisplayOptions('form', [
       'type' => 'number'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(0.5);
     

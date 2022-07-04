@@ -185,10 +185,11 @@ vendor-style:
   private function scssFilesVendorStyle() {
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
     // On charge les mixins et les variables.
-    $string = '
+    $string = '';
+    $string .= $this->buildScssVar();
+    $string .= '
     @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
     ';
-    $string .= $this->buildScssVar();
     $string .= $vendor_import;
     
     // Cree le fichier.
@@ -209,9 +210,7 @@ vendor-style:
     $entity = $this->entity;
     
     // On charge les mixins et les variables.
-    $string = '
-    @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
-    ';
+    $string = '';
     // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
     // if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
     // $libray = !empty($entity->getLirairy()['value']) ?
@@ -225,6 +224,9 @@ vendor-style:
     // $string .= $this->buildEntityImportScss();
     // }
     $string .= $this->buildScssVar();
+    $string .= '
+    @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
+    ';
     $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
       $string .= $styleImport;
@@ -275,17 +277,23 @@ vendor-style:
     if (!empty($entity->getwbu_titre_biggest())) {
       $string .= '$wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
+    
     return '
+    @use "@stephane888/wbu-atomique/scss/_variables.scss" as *;
     $wbu-color-primary: ' . $color_primary . '; 
     $wbu-color-secondary: ' . $color_secondaire . '; 
     $wbu-color-link-hover: ' . $color_link_hover . '; 
     $wbu-background: ' . $color_background . '; 
     $wbu-h1-font-size: ' . $wbu_h1_font_size . ';
+    $wbu-h1-font-size-md: $wbu-h1-font-size * 0.8;
+    $wbu-h1-font-size-sm: $wbu-h1-font-size * 0.7;
     $wbu-h2-font-size: ' . $wbu_h2_font_size . ';
+    $wbu-h2-font-size-sm: $wbu-h2-font-size * 0.8;
     $wbu-h3-font-size: ' . $wbu_h3_font_size . ';
+    $wbu-h3-font-size-sm: $wbu-h3-font-size * 0.8;
     $wbu-h4-font-size: ' . $wbu_h4_font_size . ';
     $wbu-h5-font-size: ' . $wbu_h5_font_size . ';
-    $wbu-h6-font-size: ' . $wbu_h6_font_size . ';
+    $wbu-h6-font-size: ' . $wbu_h6_font_size . ';    
     $space_bottom: $wbu-margin * ' . $space_bottom . ';
     $space_top: $wbu-margin * ' . $space_top . ';
     $space_inner_top: $space_top * ' . $space_inner_top . ';

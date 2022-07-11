@@ -52,6 +52,7 @@ class GenerateStyleThemeController extends ControllerBase {
     $entities = $this->entityTypeManager()->getStorage('config_theme_entity')->loadByProperties([
       'hostname' => $hostname
     ]);
+    //
     if (!empty($entities)) {
       /**
        *

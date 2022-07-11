@@ -116,7 +116,7 @@ vendor-style:
       $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
     }
     else {
-      \Drupal::messenger()->addStatus(" Fichier du theme generer avec success, veuillez utiliser CTRL+F5 ");
+      //\Drupal::messenger()->addStatus(" Fichier du theme generer avec success, veuillez utiliser CTRL+F5 ");
     }
   }
   

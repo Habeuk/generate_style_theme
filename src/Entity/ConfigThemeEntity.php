@@ -77,6 +77,66 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     ];
   }
   
+  public static function preDelete(EntityStorageInterface $storage, array $entities) {
+    parent::preDelete($storage, $entities);
+    $entity = reset($entities);
+    // Array entity to delete.
+    $entitiesIdDelete = [
+      'block_content',
+      'menu',
+      'block',
+      'node',
+      'domain_ovh_entity',
+      'site_internet_entity'
+    ];
+    if ($entity && $entity->id()) {
+      $domainId = $entity->getHostname();
+      $entityTypeManager = \Drupal::entityTypeManager();
+      foreach ($entitiesIdDelete as $entity_type_id) {
+        switch ($entity_type_id) {
+          case 'block_content':
+          case 'node':
+          case 'site_internet_entity':
+            $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
+            $query->condition('field_domain_access', $domainId);
+            $ids = $query->execute();
+            if ($ids) {
+              $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+              foreach ($entitiesDelete as $entityDelete) {
+                $entityDelete->delete();
+              }
+            }
+            break;
+          case 'menu':
+          case 'block':
+            $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
+            $query->condition('id', $domainId, 'CONTAINS');
+            $ids = $query->execute();
+            if ($ids) {
+              $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+              foreach ($entitiesDelete as $entityDelete) {
+                $entityDelete->delete();
+              }
+            }
+          case 'domain_ovh_entity':
+            $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
+            $query->condition('domain_id_drupal', $domainId);
+            $ids = $query->execute();
+            if ($ids) {
+              $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+              foreach ($entitiesDelete as $entityDelete) {
+                $entityDelete->delete();
+              }
+            }
+            break;
+          default:
+            ;
+            break;
+        }
+      }
+    }
+  }
+  
   /**
    *
    * {@inheritdoc}

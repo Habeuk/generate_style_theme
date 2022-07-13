@@ -116,7 +116,8 @@ vendor-style:
       $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
     }
     else {
-      //\Drupal::messenger()->addStatus(" Fichier du theme generer avec success, veuillez utiliser CTRL+F5 ");
+      // \Drupal::messenger()->addStatus(" Fichier du theme generer avec
+      // success, veuillez utiliser CTRL+F5 ");
     }
   }
   
@@ -230,6 +231,7 @@ vendor-style:
     $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
       $string .= $styleImport;
+      $string .= '@use "./custom.scss";';
     }
     else {
       // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
@@ -243,8 +245,13 @@ vendor-style:
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
+    
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
+    // on cree un fichier pour le style custom, le fichier n'existe pas;
+    if (!file_exists($path . '/custom.scss')) {
+      debugLog::logger("", "custom.scss", false, 'file', $path, true);
+    }
   }
   
   private function buildScssVar() {
@@ -282,7 +289,9 @@ vendor-style:
     @use "@stephane888/wbu-atomique/scss/_variables.scss" as *;
     $wbu-color-primary: ' . $color_primary . '; 
     $wbu-color-secondary: ' . $color_secondaire . '; 
-    $wbu-color-link-hover: ' . $color_link_hover . '; 
+    $wbu-color-thirdly: ' . $color_link_hover . '; 
+    // supprimer de wbu-atomique
+    //$wbu-color-link-hover: ' . $color_link_hover . ';
     $wbu-background: ' . $color_background . '; 
     $wbu-h1-font-size: ' . $wbu_h1_font_size . ';
     $wbu-h1-font-size-md: $wbu-h1-font-size * 0.8;

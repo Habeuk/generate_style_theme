@@ -305,7 +305,8 @@ vendor-style:
     $wbu-h6-font-size: ' . $wbu_h6_font_size . ';    
     $space_bottom: $wbu-margin * ' . $space_bottom . ';
     $space_top: $wbu-margin * ' . $space_top . ';
-    $space_inner_top: $space_top * ' . $space_inner_top . ';
+    //$space_inner_top: $space_top * ' . $space_inner_top . ';
+    $space_inner_top: $space_top * 0.5;
     $wbu-default-font-size: ' . $text_font_size . '; 
     ' . $string;
   }

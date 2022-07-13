@@ -100,6 +100,15 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($entity && $entity->id()) {
       $domainId = $entity->getHostname();
       $entityTypeManager = \Drupal::entityTypeManager();
+      
+      /**
+       * On retire les enregistrements sur le serveurs ( vhost ).
+       *
+       * @var \Drupal\ovh_api_rest\Services\ManageRegisterDomain $ManageRegisterDomain
+       */
+      $ManageRegisterDomain = \Drupal::service('ovh_api_rest.manage');
+      $ManageRegisterDomain->removeDomain($domainId);
+      //
       foreach ($entitiesIdDelete as $entity_type_id) {
         switch ($entity_type_id) {
           case 'block_content':
@@ -168,14 +177,6 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       catch (\Exception $e) {
         \Drupal::messenger()->addWarning(" Le theme n'a pas pu etre desintallé : " . $domainId);
       }
-      
-      /**
-       * On retire les enregistrements sur le serveurs ( vhost ).
-       *
-       * @var \Drupal\ovh_api_rest\Services\ManageRegisterDomain $ManageRegisterDomain
-       */
-      $ManageRegisterDomain = \Drupal::service('ovh_api_rest.manage');
-      $ManageRegisterDomain->removeDomain($entity->id());
     /**
      * Suppresion du dossier du theme.
      */

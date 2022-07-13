@@ -39,7 +39,7 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
       $ids = $query->execute();
       $form['block_content'] = [
         '#type' => 'details',
-        '#title' => 'Les blocs qui seront supprimés : ' . count($ids),
+        '#title' => 'Les block_content qui seront supprimés : ' . count($ids),
         '#open' => false
       ];
       if (!empty($ids)) {
@@ -121,6 +121,38 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
           ];
         }
       }
+      
+      // Suppression des domain.
+      $entity_type_id = 'domain';
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      // $query->condition('status', 1);
+      $query->condition('id', $domainId, '=');
+      $ids = $query->execute();
+      $form['domain'] = [
+        '#type' => 'details',
+        '#title' => 'Les domain qui seront supprimés : ' . count($ids),
+        '#open' => false
+      ];
+      if ($ids) {
+        $entities = $this->entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+        foreach ($entities as $domain) {
+          /**
+           *
+           * @var Block $menu
+           */
+          $form['domain']['html'][] = [
+            '#type' => 'html_tag',
+            '#tag' => 'div',
+            '#value' => $domain->label() . ' : ' . $domain->id()
+          ];
+          $form['domain']['id'][] = [
+            '#type' => 'textfield',
+            '#default_value' => $domain->id(),
+            '#disabled' => true
+          ];
+        }
+      }
+      
       // Suppression des nodes.
       $entity_type_id = 'node';
       $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();

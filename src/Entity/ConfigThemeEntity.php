@@ -79,16 +79,24 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   
   public static function preDelete(EntityStorageInterface $storage, array $entities) {
     parent::preDelete($storage, $entities);
+    /**
+     *
+     * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity
+     */
     $entity = reset($entities);
     // Array entity to delete.
     $entitiesIdDelete = [
       'block_content',
+      'node',
+      'site_internet_entity',
       'menu',
       'block',
-      'node',
       'domain_ovh_entity',
-      'site_internet_entity'
+      'domain'
     ];
+    /**
+     * On supprime le contenu en relation avec ce theme.
+     */
     if ($entity && $entity->id()) {
       $domainId = $entity->getHostname();
       $entityTypeManager = \Drupal::entityTypeManager();
@@ -100,7 +108,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
             $query->condition('field_domain_access', $domainId);
             $ids = $query->execute();
-            if ($ids) {
+            if (!empty($ids)) {
               $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
               foreach ($entitiesDelete as $entityDelete) {
                 $entityDelete->delete();
@@ -112,7 +120,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
             $query->condition('id', $domainId, 'CONTAINS');
             $ids = $query->execute();
-            if ($ids) {
+            if (!empty($ids)) {
               $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
               foreach ($entitiesDelete as $entityDelete) {
                 $entityDelete->delete();
@@ -122,7 +130,18 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
             $query->condition('domain_id_drupal', $domainId);
             $ids = $query->execute();
-            if ($ids) {
+            if (!empty($ids)) {
+              $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+              foreach ($entitiesDelete as $entityDelete) {
+                $entityDelete->delete();
+              }
+            }
+            break;
+          case 'domain':
+            $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
+            $query->condition('id', $domainId, '=');
+            $ids = $query->execute();
+            if (!empty($ids)) {
               $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
               foreach ($entitiesDelete as $entityDelete) {
                 $entityDelete->delete();
@@ -134,6 +153,32 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             break;
         }
       }
+      /**
+       * On desinstalle le theme.
+       *
+       * @var \Drupal\Core\Extension\ThemeInstaller $ThemeInstaller
+       */
+      try {
+        $ThemeInstaller = \Drupal::service('theme_installer');
+        $theme_list = [
+          $domainId => $domainId
+        ];
+        $ThemeInstaller->uninstall($theme_list);
+      }
+      catch (\Exception $e) {
+        \Drupal::messenger()->addWarning(" Le theme n'a pas pu etre desintallé : " . $domainId);
+      }
+      
+      /**
+       * On retire les enregistrements sur le serveurs ( vhost ).
+       *
+       * @var \Drupal\ovh_api_rest\Services\ManageRegisterDomain $ManageRegisterDomain
+       */
+      $ManageRegisterDomain = \Drupal::service('ovh_api_rest.manage');
+      $ManageRegisterDomain->removeDomain($entity->id());
+    /**
+     * Suppresion du dossier du theme.
+     */
     }
   }
   

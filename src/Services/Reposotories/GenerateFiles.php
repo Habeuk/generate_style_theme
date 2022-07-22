@@ -76,10 +76,17 @@ vendor-style:
    * dans la config du theme.
    */
   private function getGlobalStyle() {
-    $string = 'import "../scss/' . $this->themeName . '.scss";';
-    $string .= $this->buildEntityImportStyle('js');
+    $string = $this->buildEntityImportStyle('js') . "\n";
+    $string .= 'import "../scss/' . $this->themeName . '.scss";';
+    $string .= "\n";
     $filename = 'global-style.js';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
+    // on cree un fichier pour le style custom, le fichier n'existe pas;
+    if (!file_exists($path . '/custom.js')) {
+      debugLog::logger("", "custom.js", false, 'file', $path, true);
+    }
+    $string .= 'import "./custom.js";';
+    //
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
@@ -345,7 +352,8 @@ vendor-style:
                 // On parcourt les plugins.
                 if (is_array($plugin))
                   foreach ($plugin as $plugin_id => $library) {
-                    $libraries[$plugin_id] = implode("\n", $library);
+                    if (!empty($library))
+                      $libraries[$plugin_id] = implode("\n", $library);
                     // dump($libraries);
                   }
               }

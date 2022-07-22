@@ -35,7 +35,7 @@ class GenerateStyleTheme extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config(self::$key);
-    $form = parent::buildForm($form, $form_state);
+    // $form = parent::buildForm($form, $form_state);
     $form['theme_base'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Theme de base'),

@@ -46,6 +46,7 @@ generate_style_theme.layout_footer_form:
     _title: 'LayoutEnteteForm'
   requirements:
     _role: 'administrator'
+    
 generate_style_theme.layout_default_form:
   path: '/generate_style_theme/form/layout_default'
   defaults:
@@ -78,7 +79,7 @@ generate_style_theme.config_tab1:
     _form: '\Drupal\generate_style_theme\Form\GenerateStyleTheme'
     _title: 'Configuration de base'
   requirements:
-    _access: 'TRUE'
+    _permission: 'administer config theme entity entities'
     
 generate_style_theme.updatestyletheme:
   path: '/generate-style-theme/update-style-theme/{hostname}'
@@ -89,3 +90,11 @@ generate_style_theme.updatestyletheme:
     _access: 'TRUE'
     
 
+    
+generate_style_theme.managecustom.styles:
+  path: '/admin/config/generate_style_theme/manage-custom-styles'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\GenerateStyleThemeStyles'
+    _title: 'Configuration des styles'
+  requirements:
+    _access: 'TRUE'

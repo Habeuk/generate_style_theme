@@ -241,7 +241,8 @@ class GenerateStyleTheme extends ControllerBase {
        * On installe le nouveau theme.
        */
       if (empty($listThemes[$this->themeName])) {
-        //\Drupal::messenger()->addStatus(' Theme installé : ' . $this->themeName);
+        // \Drupal::messenger()->addStatus(' Theme installé : ' .
+        // $this->themeName);
         /**
          *
          * @var \Drupal\generate_style_theme\Services\Themes\ActiveAsignService $ActiveAsignService
@@ -252,7 +253,8 @@ class GenerateStyleTheme extends ControllerBase {
         ]);
       }
       else {
-        //\Drupal::messenger()->addStatus(' Theme deja installé : ' . $this->themeName);
+        // \Drupal::messenger()->addStatus(' Theme deja installé : ' .
+        // $this->themeName);
       }
       
       $configs = \Drupal::config($this->configKeyTheme);
@@ -266,7 +268,8 @@ class GenerateStyleTheme extends ControllerBase {
          */
         $editConfig = $this->configFactory->getEditable($this->configKeyTheme);
         $editConfig->set('default', $this->themeName)->save();
-        //\Drupal::messenger()->addStatus(' Theme definie par defaut : ' . $this->configKeyTheme);
+        // \Drupal::messenger()->addStatus(' Theme definie par defaut : ' .
+        // $this->configKeyTheme);
       }
     }
   }

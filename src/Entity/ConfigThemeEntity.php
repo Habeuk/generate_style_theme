@@ -454,6 +454,31 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     // Add the published field.
     $fields += static::publishedBaseFieldDefinitions($entity_type);
     //
+    // $fields['user_id'] =
+    // BaseFieldDefinition::create('entity_reference')->setLabel(t('Authored
+    // by'))->setDescription(t('The user ID of author of the Domain buy
+    // entity.'))->setRevisionable(TRUE)->setSetting('target_type',
+    // 'user')->setSetting('handler', 'default')->setDisplayOptions('view', [
+    // 'label' => 'hidden',
+    // 'type' => 'author',
+    // 'weight' => 0
+    // ])->setDisplayOptions('form', [
+    // 'type' => 'entity_reference_autocomplete',
+    // 'weight' => 5,
+    // 'settings' => [
+    // 'match_operator' => 'CONTAINS',
+    // 'size' => '60',
+    // 'autocomplete_type' => 'tags',
+    // 'placeholder' => ''
+    // ]
+    // ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view',
+    // TRUE);
+    // $fields['user_id'] = BaseFieldDefinition::create('string')->setLabel("
+    // Espace interne 2 ")->setDisplayOptions('form', [
+    // 'type' => 'number'
+    // ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view',
+    // TRUE)->setDefaultValue(0);
+    //
     $fields['hostname'] = BaseFieldDefinition::create('wbumenudomaineditlink')->setLabel(t(' Hostname ou nom de domaine '))->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'wbumenudomainhost',
       'settings' => [],

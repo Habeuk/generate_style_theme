@@ -25,16 +25,24 @@ class ConfigThemeEntityAccessControlHandler extends EntityAccessControlHandler {
       case 'view':
         
         if (!$entity->isPublished()) {
-          if ($account->id() == $entity->getOwnerId()) {
-            return AccessResult::allowed();
-          }
           return AccessResult::allowedIfHasPermission($account, 'view unpublished config theme entity entities');
         }
         
         return AccessResult::allowedIfHasPermission($account, 'view published config theme entity entities');
       
       case 'update':
-        
+        //
+        // if ($account->id() == $entity->getOwnerId()) {
+        // return AccessResult::allowed();
+        // }
+        if ($account->hasPermission('edit config theme entity entities')) {
+          return AccessResult::allowed();
+        }
+        else {
+          // On definit une condition juste le temps de passer en prod. ( car le
+          // champs user_id vient d'étre ajouter ).
+          return AccessResult::allowed();
+        }
         return AccessResult::allowedIfHasPermission($account, 'edit config theme entity entities');
       
       case 'delete':

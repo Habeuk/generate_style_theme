@@ -25,7 +25,6 @@ class Wbumenudomaineditlink extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
-    
     foreach ($items as $delta => $item) {
       $elements[$delta] = [
         // We create a render array to produce the desired markup,

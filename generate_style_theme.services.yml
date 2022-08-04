@@ -23,3 +23,7 @@ services:
     
   generate_style_theme.themeutility:
     class: Stephane888\HtmlBootstrap\ThemeUtility
+    
+  generate_style_theme.manage_file_custom_style:
+    class: Drupal\generate_style_theme\Services\ManageFileCustomStyle
+    arguments: ['@extension.path.resolver']

@@ -98,3 +98,11 @@ generate_style_theme.managecustom.styles:
     _title: 'Configuration des styles'
   requirements:
     _access: 'TRUE'
+    
+generate_style_theme.set_default_style:
+  path: '/generate_style_theme/set_default_style/{id}'
+  defaults:
+    _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::setDefaultStyle'
+    _title: 'Set default style'
+  requirements:
+    _access: 'TRUE'

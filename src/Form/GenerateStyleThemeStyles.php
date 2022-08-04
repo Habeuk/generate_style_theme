@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Stephane888\Debug\Repositories\ConfigDrupal;
 use Stephane888\Debug\debugLog;
-use Drupal\Core\Extension\ExtensionPathResolver;
+use Drupal\generate_style_theme\Services\ManageFileCustomStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
@@ -23,13 +23,13 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
   
   /**
    *
-   * @var ExtensionPathResolver
+   * @var ManageFileCustomStyle
    */
-  protected $ExtensionPathResolver;
+  protected $ManageFileCustomStyle;
   
-  function __construct(ConfigFactoryInterface $config_factory, ExtensionPathResolver $ExtensionPathResolver) {
+  function __construct(ConfigFactoryInterface $config_factory, ManageFileCustomStyle $ManageFileCustomStyle) {
     parent::__construct($config_factory);
-    $this->ExtensionPathResolver = $ExtensionPathResolver;
+    $this->ManageFileCustomStyle = $ManageFileCustomStyle;
   }
   
   /**
@@ -37,7 +37,7 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('config.factory'), $container->get('extension.path.resolver'));
+    return new static($container->get('config.factory'), $container->get('generate_style_theme.manage_file_custom_style'));
   }
   
   /**
@@ -63,40 +63,19 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $pathScss = $this->getPath() . '/scss/custom.scss';
-    $pathJs = $this->getPath() . '/js/custom.js';
-    //
-    if (!file_exists($pathScss)) {
-      debugLog::logger("", "custom.scss", false, 'file', $this->getPath() . '/scss', true);
-    }
-    if (!file_exists($pathJs)) {
-      debugLog::logger("", "custom.js", false, 'file', $this->getPath() . '/js', true);
-    }
     //
     $form['file_scss'] = [
       '#type' => 'textarea',
       '#title' => $this->t(' Custom scss '),
-      '#default_value' => file_get_contents($pathScss)
+      '#default_value' => $this->ManageFileCustomStyle->getScss()
     ];
     $form['file_js'] = [
       '#type' => 'textarea',
       '#title' => $this->t(' Custom js '),
-      '#default_value' => file_get_contents($pathJs)
+      '#default_value' => $this->ManageFileCustomStyle->getJs()
     ];
     //
     return parent::buildForm($form, $form_state);
-  }
-  
-  /**
-   *
-   * @return string
-   */
-  protected function getPath() {
-    if (!$this->path) {
-      $conf = ConfigDrupal::config('system.theme');
-      $this->path = DRUPAL_ROOT . '/' . $this->ExtensionPathResolver->getPath('theme', $conf['default']) . '/wbu-atomique-theme/src';
-    }
-    return $this->path;
   }
   
   /**
@@ -106,8 +85,8 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $file_scss = $form_state->getValue('file_scss');
     $file_js = $form_state->getValue('file_js');
-    debugLog::logger($file_scss, "custom.scss", false, 'file', $this->getPath() . '/scss', true);
-    debugLog::logger($file_js, "custom.js", false, 'file', $this->getPath() . '/js', true);
+    $this->ManageFileCustomStyle->saveJs($file_js);
+    $this->ManageFileCustomStyle->saveScss($file_scss);
   }
   
 }

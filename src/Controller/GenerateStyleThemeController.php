@@ -9,6 +9,8 @@ use Drupal\generate_style_theme\Services\GenerateStyleTheme;
 use Drupal\Component\Serialization\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
+use Stephane888\Debug\Utility as UtilityError;
+use Drupal\generate_style_theme\Services\ManageFileCustomStyle;
 
 /**
  * Returns responses for Generate style theme routes.
@@ -22,8 +24,15 @@ class GenerateStyleThemeController extends ControllerBase {
    */
   protected $themeInstaller;
   
-  public function __construct(ThemeInstaller $themeInstaller) {
+  /**
+   *
+   * @var ManageFileCustomStyle
+   */
+  protected $ManageFileCustomStyle;
+  
+  public function __construct(ThemeInstaller $themeInstaller, ManageFileCustomStyle $ManageFileCustomStyle) {
     $this->themeInstaller = $themeInstaller;
+    $this->ManageFileCustomStyle = $ManageFileCustomStyle;
   }
   
   /**
@@ -31,7 +40,36 @@ class GenerateStyleThemeController extends ControllerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('theme_installer'));
+    return new static($container->get('theme_installer'), $container->get('generate_style_theme.manage_file_custom_style'));
+  }
+  
+  public function setDefaultStyle($id) {
+    /**
+     * C'est le contenu model.
+     * Dans ce contenu model, seul quelques sont necessaire.
+     * [ layout_paragraphs ]
+     *
+     * @var \Drupal\creation_site_virtuel\Entity\SiteTypeDatas $entityModel
+     */
+    $entityModel = $this->entityTypeManager()->getStorage("site_type_datas")->load($id);
+    if ($entityModel) {
+      try {
+        $style_scss = $entityModel->get('style_scss')->value;
+        $style_js = $entityModel->get('style_js')->value;
+        $this->ManageFileCustomStyle->saveJs($style_js);
+        $this->ManageFileCustomStyle->saveScss($style_scss);
+        return $this->reponse('');
+      }
+      catch (\Exception $e) {
+        $errors = UtilityError::errorAll($e);
+        $this->getLogger('generate_style_theme')->critical($e->getMessage() . '<br>' . implode("<br>", $errors));
+        return $this->reponse($errors, 400, $e->getMessage());
+      }
+    }
+    else {
+      $this->getLogger('generate_style_theme')->critical(" Le contenu model n'existe plus : " . $id);
+      return $this->reponse([], 400, "Le contenu model n'existe plus : " . $id);
+    }
   }
   
   /**

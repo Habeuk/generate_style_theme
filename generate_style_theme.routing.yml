@@ -100,7 +100,7 @@ generate_style_theme.managecustom.styles:
     _access: 'TRUE'
     
 generate_style_theme.set_default_style:
-  path: '/generate_style_theme/set_default_style/{id}'
+  path: '/generate_style_theme/set_default_style/{id}/{theme_name}'
   defaults:
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::setDefaultStyle'
     _title: 'Set default style'

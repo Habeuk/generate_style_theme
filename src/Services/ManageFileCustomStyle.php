@@ -17,6 +17,7 @@ class ManageFileCustomStyle extends ControllerBase {
   protected $path;
   protected $pathScss;
   protected $pathJs;
+  public $theme_name;
   
   /**
    *
@@ -34,8 +35,11 @@ class ManageFileCustomStyle extends ControllerBase {
    */
   protected function getPath() {
     if (!$this->path) {
-      $conf = ConfigDrupal::config('system.theme');
-      $this->path = DRUPAL_ROOT . '/' . $this->ExtensionPathResolver->getPath('theme', $conf['default']) . '/wbu-atomique-theme/src';
+      if (!$this->theme_name) {
+        $conf = ConfigDrupal::config('system.theme');
+        $this->theme_name = $conf['default'];
+      }
+      $this->path = DRUPAL_ROOT . '/' . $this->ExtensionPathResolver->getPath('theme', $this->theme_name) . '/wbu-atomique-theme/src';
     }
     return $this->path;
   }

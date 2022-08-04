@@ -241,7 +241,7 @@ vendor-style:
       $string .= '@use "./custom.scss";';
     }
     else {
-      // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
+      // Ce modele est gardé pour etre compatible avec le site lesroisdelareno.
       if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
         $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
         $confs = $this->getScssFromLibrairy($libray);

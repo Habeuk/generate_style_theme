@@ -95,9 +95,10 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'domain'
     ];
     /**
+     * @ à faire : le module devrait supprimer les fichiers du theme.
      * On supprime le contenu en relation avec ce theme.
      */
-    if ($entity && $entity->id()) {
+    if ($entity && $entity->id() && \Drupal::moduleHandler()->moduleExists('ovh_api_rest')) {
       $domainId = $entity->getHostname();
       $entityTypeManager = \Drupal::entityTypeManager();
       

@@ -59,6 +59,7 @@ class GenerateStyleThemeController extends ControllerBase {
         $style_js = $entityModel->get('style_js')->value;
         $this->ManageFileCustomStyle->saveJs($style_js);
         $this->ManageFileCustomStyle->saveScss($style_scss);
+        \Stephane888\Debug\debugLog::kintDebugDrupal($entityModel->get('style_scss')->value, 'setDefaultStyle', true);
         return $this->reponse('');
       }
       catch (\Exception $e) {

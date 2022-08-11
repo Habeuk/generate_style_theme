@@ -67,6 +67,12 @@ function generate_style_theme_form_config_theme_entity_form_alter(&$form, FormSt
   ];
 }
 
+/**
+ *
+ * @param unknown $form
+ * @param FormStateInterface $form_state
+ * @return []
+ */
 function _generate_style_theme_siteconfig_alter($form, FormStateInterface $form_state) {
   return $form['site_config']['widget'][0]['siteconf']['container'];
 }
@@ -157,5 +163,7 @@ function generate_style_theme_preprocess_node(&$variables) {
     ];
   }
 }
+
+
 
 

@@ -1,52 +1,52 @@
 
 # Style de theme menu items definition
-entity.style_theme_entity.collection:
-  title: 'Style de theme'
-  route_name: entity.style_theme_entity.collection
-  description: 'List Style de theme (bundles)'
-  parent: create_pages_site_form.admin.structure.settings
-  weight: 99
+#entity.style_theme_entity.collection:
+#  title: 'Style de theme'
+#  route_name: entity.style_theme_entity.collection
+#  description: 'List Style de theme (bundles)'
+#  parent: create_pages_site_form.admin.structure.settings
+#  weight: 99
 
 # Config theme entity menu items definition
 entity.config_theme_entity.collection:
   title: ' Creation/MAJ du styles des themes '
   route_name: entity.config_theme_entity.collection
   description: 'List Config theme entity entities'
-  parent: create_pages_site_form.admin.structure.settings
-  weight: 100
-
-config_theme_entity.admin.structure.settings:
-  title: 'Configiguration des champs de theme'
-  description: 'Configure Config theme entity entities'
-  route_name: config_theme_entity.settings
-  parent: create_pages_site_form.admin.structure.settings
-
-create_pages_site_form.admin.structure.settings:
-  title: 'Ajouter un nouveau domaine'
-  description: 'Configure Config theme entity entities'
-  route_name: generate_style_theme.create_pages_site_form
   parent: system.admin_structure
+  weight: 0
+
+#config_theme_entity.admin.structure.settings:
+#  title: 'Configiguration des champs de theme'
+#  description: 'Configure Config theme entity entities'
+#  route_name: config_theme_entity.settings
+#  parent: create_pages_site_form.admin.structure.settings
+
+#create_pages_site_form.admin.structure.settings:
+#  title: 'Ajouter un nouveau domaine'
+#  description: 'Configure Config theme entity entities'
+#  route_name: generate_style_theme.create_pages_site_form
+#  parent: system.admin_structure
 
 
-generate_style_theme.layout_entete_form:
-  title: "Mettre à jour l'entete'"
-  description: 'Layout edition'
-  route_name: generate_style_theme.layout_entete_form
-  parent: create_pages_site_form.admin.structure.settings
+#generate_style_theme.layout_entete_form:
+#  title: "Mettre à jour l'entete'"
+#  description: 'Layout edition'
+#  route_name: generate_style_theme.layout_entete_form
+#  parent: create_pages_site_form.admin.structure.settings
 
-generate_style_theme.layout_footer_form:
-  title: "Mettre à jour le footer'"
-  description: 'Layout edition'
-  route_name: generate_style_theme.layout_footer_form
-  parent: create_pages_site_form.admin.structure.settings
+#generate_style_theme.layout_footer_form:
+#  title: "Mettre à jour le footer'"
+#  description: 'Layout edition'
+#  route_name: generate_style_theme.layout_footer_form
+#  parent: create_pages_site_form.admin.structure.settings
   
 # Contenu creer automatiquement menu items definition
-entity.content_create_automaticaly.collection:
-  title: 'Contenu creer automatiquement'
-  route_name: entity.content_create_automaticaly.collection
-  description: 'List Contenu creer automatiquement (bundles)'
-  parent: create_pages_site_form.admin.structure.settings
-  weight: 99
+#entity.content_create_automaticaly.collection:
+#  title: 'Contenu creer automatiquement'
+#  route_name: entity.content_create_automaticaly.collection
+#  description: 'List Contenu creer automatiquement (bundles)'
+#  parent: create_pages_site_form.admin.structure.settings
+#  weight: 99
 
 # Menu de configuration;
 create_pages_site_form.config.settings:

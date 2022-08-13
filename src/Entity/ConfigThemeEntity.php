@@ -203,14 +203,16 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
         // se genere via theme_get_setting('logo.url');
         $url = ImageStyle::load('medium')->buildUrl($file->getFileUri());
         try {
-          $ch = curl_init();
-          curl_setopt($ch, CURLOPT_HEADER, 0);
-          curl_setopt($ch, CURLOPT_VERBOSE, 0);
-          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-          // curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/50.0 (compatible;)");
-          curl_setopt($ch, CURLOPT_URL, urlencode($url));
-          curl_exec($ch);
-          curl_close($ch);
+          // $ch = curl_init();
+          // curl_setopt($ch, CURLOPT_HEADER, 0);
+          // curl_setopt($ch, CURLOPT_VERBOSE, 0);
+          // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          // // curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/50.0
+          // (compatible;)");
+          // curl_setopt($ch, CURLOPT_URL, urlencode($url));
+          // curl_exec($ch);
+          // curl_close($ch);
+          file_get_contents($url);
         }
         catch (\Exception $e) {
           \Drupal::logger('generate_style_theme')->warning(" generate_style_theme : Le lien du logo n'est pas toujours bien generé ");

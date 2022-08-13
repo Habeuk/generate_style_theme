@@ -159,7 +159,6 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             }
             break;
           default:
-            ;
             break;
         }
       }
@@ -202,9 +201,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       if ($file) {
         // Permet de generer le fichier image, car on remarque que le fichier ne
         // se genere via theme_get_setting('logo.url');
-        $img2 = ImageStyle::load('medium')->buildUrl($file->getFileUri());
+        $url = ImageStyle::load('medium')->buildUrl($file->getFileUri());
         try {
-          $url = $img2;
           $ch = curl_init();
           curl_setopt($ch, CURLOPT_HEADER, 0);
           curl_setopt($ch, CURLOPT_VERBOSE, 0);
@@ -215,7 +213,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
           curl_close($ch);
         }
         catch (\Exception $e) {
-          \Drupal::logger('generate_style_theme')->warning("generate_style_theme : Le lien du logo n'est pas toujours bien generé");
+          \Drupal::logger('generate_style_theme')->warning(" generate_style_theme : Le lien du logo n'est pas toujours bien generé ");
         }
         
         // return path to save in theme.settings.logo.url

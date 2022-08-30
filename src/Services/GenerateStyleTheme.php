@@ -164,6 +164,17 @@ class GenerateStyleTheme extends ControllerBase {
   /**
    * --
    */
+  function deleteSubTheme() {
+    if (!empty($this->themePath) && !empty($this->themeName)) {
+      $path = $this->themePath . '/' . $this->themeName;
+      $script = " sudo rm -rf " . $path;
+      $this->excuteCmd($script);
+    }
+  }
+  
+  /**
+   * --
+   */
   protected function setConfigTheme() {
     $site_config = $this->entity->getsite_config();
     

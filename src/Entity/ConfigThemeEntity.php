@@ -13,6 +13,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\file\Entity\File;
 use Drupal\Component\Serialization\Json;
 use Drupal\generate_style_theme\Services\GenerateStyleTheme;
+use Drupal\Core\Database\Connection;
 
 /**
  * Defines the Config theme entity entity.
@@ -180,15 +181,24 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
           \Drupal::messenger()->addWarning(" Le theme n'a pas pu etre desintallé : " . $domainId);
           \Drupal::logger('generate_style_theme')->warning(" Le theme n'a pas pu etre desintallé : " . $domainId);
         }
+        // Suppression de tous les renseignements en BD au niveau de la table
+        // config.
+        /**
+         * Connection $Connection
+         */
+        $Connection = \Drupal::database();
+        /**
+         * \Drupal\Core\Database\Query\Delete $query;
+         */
+        $query = $Connection->delete("config");
+        $query->condition("name", "%$domainId%", "LIKE");
+        $query->execute();
       }
       /**
        * Suppresion du dossier du theme.
        */
       $GenerateStyleTheme = new GenerateStyleTheme($entity);
       $GenerateStyleTheme->deleteSubTheme();
-    /**
-     * Suppresssion des données liées à l'import/export.
-     */
     }
   }
 
@@ -226,7 +236,6 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
         catch (\Exception $e) {
           \Drupal::logger('generate_style_theme')->warning(" generate_style_theme : Le lien du logo n'est pas toujours bien generé ");
         }
-
         // return path to save in theme.settings.logo.url
         return ImageStyle::load('medium')->buildUri($file->getFileUri());
       }

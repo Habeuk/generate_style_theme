@@ -12,14 +12,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ingroup generate_style_theme
  */
 class ConfigThemeEntityForm extends ContentEntityForm {
-  
+
   /**
    * The current user account.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected $account;
-  
+
   /**
    *
    * {@inheritdoc}
@@ -30,7 +30,7 @@ class ConfigThemeEntityForm extends ContentEntityForm {
     $instance->account = $container->get('current_user');
     return $instance;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -40,23 +40,23 @@ class ConfigThemeEntityForm extends ContentEntityForm {
     $form = parent::buildForm($form, $form_state);
     return $form;
   }
-  
+
   /**
    *
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
-    
+
     $status = parent::save($form, $form_state);
-    
+
     switch ($status) {
       case SAVED_NEW:
         $this->messenger()->addMessage($this->t(' Created the %label Config theme entity. ', [
           '%label' => $entity->label()
         ]));
         break;
-      
+
       default:
         $this->messenger()->addMessage($this->t('Saved the %label Config theme entity.', [
           '%label' => $entity->label()
@@ -66,5 +66,5 @@ class ConfigThemeEntityForm extends ContentEntityForm {
       'config_theme_entity' => $entity->id()
     ]);
   }
-  
+
 }

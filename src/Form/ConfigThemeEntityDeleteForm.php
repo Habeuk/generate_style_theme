@@ -276,6 +276,39 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
           ];
         }
       }
+      // Suppression des site_type_datas.
+      $entity_type_id = 'commerce_product';
+      $field_access = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      // $query->condition('status', 1);
+      $query->condition($field_access, $domainId);
+      $ids = $query->execute();
+      $form['commerce_product'] = [
+        '#type' => 'details',
+        '#title' => ' Les commerce_product qui seront supprimés : ' . count($ids),
+        '#open' => false
+      ];
+      //
+      if ($ids) {
+        $entities = $this->entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+        //
+        foreach ($entities as $commerce_product) {
+          /**
+           *
+           * @var DomainOvhEntity $DomainOvhEntity
+           */
+          $form['commerce_product']['html'][] = [
+            '#type' => 'html_tag',
+            '#tag' => 'div',
+            '#value' => $commerce_product->bundle() . ' -> ' . $commerce_product->label()
+          ];
+          $form['commerce_product']['id'][] = [
+            '#type' => 'textfield',
+            '#default_value' => $commerce_product->id(),
+            '#disabled' => true
+          ];
+        }
+      }
     }
     return $form;
   }

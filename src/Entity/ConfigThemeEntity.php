@@ -92,6 +92,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
         'block_content',
         'node',
         'site_internet_entity',
+        'commerce_product',
         'menu',
         'block',
         'domain_ovh_entity',
@@ -112,19 +113,22 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
          */
         $ManageRegisterDomain = \Drupal::service('ovh_api_rest.manage');
         $ManageRegisterDomain->removeDomain($domainId);
+        $field_access = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
         //
         foreach ($entitiesIdDelete as $entity_type_id) {
           switch ($entity_type_id) {
             case 'block_content':
             case 'node':
             case 'site_internet_entity':
+            case 'commerce_product':
               $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
-              $query->condition('field_domain_access', $domainId);
+              $query->condition($field_access, $domainId);
               $ids = $query->execute();
               if (!empty($ids)) {
                 $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
                 foreach ($entitiesDelete as $entityDelete) {
-                  $entityDelete->delete();
+                  if ($entityDelete)
+                    $entityDelete->delete();
                 }
               }
               break;

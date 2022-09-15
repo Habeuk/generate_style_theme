@@ -129,9 +129,28 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
               }
               break;
             case 'menu':
+              $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
+              $query->condition('id', $domainId, 'CONTAINS');
+              $ids = $query->execute();
+              if (!empty($ids)) {
+                $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+                foreach ($entitiesDelete as $entityDelete) {
+                  $entityDelete->delete();
+                }
+              }
             case 'block':
               $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
               $query->condition('id', $domainId, 'CONTAINS');
+              $ids = $query->execute();
+              if (!empty($ids)) {
+                $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
+                foreach ($entitiesDelete as $entityDelete) {
+                  $entityDelete->delete();
+                }
+              }
+              // on supprime aussi les elements portant le meme theme.
+              $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
+              $query->condition('theme', $domainId);
               $ids = $query->execute();
               if (!empty($ids)) {
                 $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);

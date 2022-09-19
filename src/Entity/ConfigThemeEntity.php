@@ -93,7 +93,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
         'node',
         'site_internet_entity',
         'commerce_product',
-        'menu',
+        'menu', // menu run before delete domain_ovh_entity.
         'block',
         'domain_ovh_entity',
         'domain'
@@ -134,7 +134,18 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
               break;
             case 'menu':
               $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
-              $query->condition('id', $domainId, 'CONTAINS');
+              // $query->condition('id', $domainId, 'CONTAINS');
+              $domain_ovh_entities = $entityTypeManager->getStorage('domain_ovh_entity')->loadByProperties([
+                'domain_id_drupal' => $domainId
+              ]);
+              $orGroup = $query->orConditionGroup();
+              $orGroup->condition('id', $domainId, 'CONTAINS');
+              if (!empty($domain_ovh_entities)) {
+                $domain_ovh_entity = reset($domain_ovh_entities);
+                // suppresion du menu principal
+                $orGroup->condition('id', $domain_ovh_entity->getsubDomain() . '_main');
+              }
+              $query->condition($orGroup);
               $ids = $query->execute();
               if (!empty($ids)) {
                 $entitiesDelete = $entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);

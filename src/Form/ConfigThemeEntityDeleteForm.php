@@ -63,9 +63,29 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
       }
       // Suppression de menus.
       $entity_type_id = 'menu';
+      $domain_ovh_entities = $this->entityTypeManager->getStorage('domain_ovh_entity')->loadByProperties([
+        'domain_id_drupal' => $domainId
+      ]);
+      $domain_ovh_entity = null;
+      if (!empty($domain_ovh_entities)) {
+        /**
+         *
+         * @var \Drupal\ovh_api_rest\Entity\DomainOvhEntity $domain_ovh_entity
+         */
+        $domain_ovh_entity = reset($domain_ovh_entities);
+      }
+
       $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
       // $query->condition('status', 1);
-      $query->condition('id', $domainId, 'CONTAINS');
+      $orGroup = $query->orConditionGroup();
+      $orGroup->condition('id', $domainId, 'CONTAINS');
+      if ($domain_ovh_entity) {
+        // suppresion du menu principal
+        $orGroup->condition('id', $domain_ovh_entity->getsubDomain() . '_main');
+        //
+      }
+
+      $query->condition($orGroup);
       $ids = $query->execute();
       $form['menu'] = [
         '#type' => 'details',

@@ -7,13 +7,14 @@ use Drupal\generate_style_theme\Services\Reposotories\GenerateFiles;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
 use Drupal\Component\Serialization\Json;
 use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
+use Drupal\Core\File\FileSystem;
 
 class GenerateStyleTheme extends ControllerBase {
   protected $themeName;
   protected $themeDirectory;
   protected $themePath;
   protected $entity;
-  
+
   /**
    * Nom du theme parent.
    *
@@ -24,7 +25,7 @@ class GenerateStyleTheme extends ControllerBase {
    * Contient la configuation du module generate_style_theme.
    */
   protected $generate_style_themeSettings = [];
-  
+
   /**
    * Contient la cle du theme qui est encours de traitement.
    * example : domain.config.arche5_lesroisdelareno_fr.system.theme si on
@@ -41,7 +42,7 @@ class GenerateStyleTheme extends ControllerBase {
    * system.site
    */
   protected $configKeySite = null;
-  
+
   /**
    * Contient la clée des paramettres du theme qui est encours de traitement.
    * example :
@@ -56,16 +57,22 @@ class GenerateStyleTheme extends ControllerBase {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory = null;
-  
+
   /**
    *
    * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
   protected $hasError = false;
-  
+
+  /**
+   *
+   * @var FileSystem
+   */
+  protected $FileSystem;
+
   use GenerateFiles;
-  
+
   /**
    *
    * @param Array $configs
@@ -82,13 +89,13 @@ class GenerateStyleTheme extends ControllerBase {
     $this->logger = \Drupal::logger('generate_style_theme');
     $this->setDynamicConfig();
   }
-  
+
   private function getConfiguration() {
     $config = \Drupal::config('generate_style_theme.settings')->getRawData();
     $this->ValidConfig($config);
     return $config;
   }
-  
+
   /**
    * Definie une configuration variable.
    */
@@ -97,7 +104,7 @@ class GenerateStyleTheme extends ControllerBase {
     $this->configKeyTheme = $conf['theme'];
     $this->configKeyThemeSettings = $conf['settings'];
     $this->configKeySite = $conf['site'];
-    
+    $this->FileSystem = \Drupal::getContainer()->get('file_system');
     // if ($this->generate_style_themeSettings['tab1']['use_domain']) {
     // if (\Drupal::moduleHandler()->moduleExists('domain')) {
     // $this->configKeyTheme = 'domain.config.' . $this->themeName .
@@ -107,7 +114,7 @@ class GenerateStyleTheme extends ControllerBase {
     // }
     // }
   }
-  
+
   /**
    * \Drupal::config('generate_style_theme.settings')->getRawData();
    * Return le chemin vers le dossier parent du theme definit par defaut.
@@ -136,7 +143,7 @@ class GenerateStyleTheme extends ControllerBase {
     }
     throw new \Exception(" Impossible de determiner le chemin vers le dossier du theme. ");
   }
-  
+
   /**
    *
    * @param Boolean $createThme
@@ -160,7 +167,7 @@ class GenerateStyleTheme extends ControllerBase {
       $this->logger->warning($e->getMessage());
     }
   }
-  
+
   /**
    * --
    */
@@ -171,13 +178,13 @@ class GenerateStyleTheme extends ControllerBase {
       $this->excuteCmd($script);
     }
   }
-  
+
   /**
    * --
    */
   protected function setConfigTheme() {
     $site_config = $this->entity->getsite_config();
-    
+
     if (!empty($site_config)) {
       $siteConfValue = Json::decode($site_config);
       if (!empty($siteConfValue['page.front'])) {
@@ -193,7 +200,7 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
-  
+
   protected function setLogoToTheme() {
     if ($this->configKeyThemeSettings) {
       /**
@@ -208,7 +215,7 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
-  
+
   /**
    * Permet de valider la configuration du module.
    *
@@ -221,7 +228,7 @@ class GenerateStyleTheme extends ControllerBase {
     }
     throw new \LogicException("Certaines données de configuration sont inexistantes.");
   }
-  
+
   /**
    * Permet de definir le theme selectionner comme theme par defaut pour le
    * domaine choisie et applique quelques paramettre de configurations.
@@ -247,7 +254,7 @@ class GenerateStyleTheme extends ControllerBase {
       $ExtLitThemes->reset();
       // dump($ExtLitThemes->getList());
       // dump($listThemesInstalled);
-      
+
       /**
        * On installe le nouveau theme.
        */
@@ -267,10 +274,10 @@ class GenerateStyleTheme extends ControllerBase {
         // \Drupal::messenger()->addStatus(' Theme deja installé : ' .
         // $this->themeName);
       }
-      
+
       $configs = \Drupal::config($this->configKeyTheme);
       $defaultThemeName = $configs->get('default');
-      
+
       // On definit le theme comme theme par defaut pour le nouveau theme.
       if ($this->themeName != $defaultThemeName) {
         /**
@@ -284,5 +291,5 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
-  
+
 }

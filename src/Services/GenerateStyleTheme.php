@@ -244,6 +244,7 @@ class GenerateStyleTheme extends ControllerBase {
    */
   protected function SetCurrentThemeDefaultOfDomaine() {
     if ($this->themeName && $this->entity->SetThemeAsDefaut()) {
+
       $listThemes = \Drupal::service('theme_handler')->listInfo();
       // $listThemesInstalled = \Drupal::config("core.extension")->get('theme');
       // /**

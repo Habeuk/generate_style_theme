@@ -156,7 +156,10 @@ class GenerateStyleTheme extends ControllerBase {
         $this->CopyWbuAtomiqueTheme();
       $this->scssFiles();
       $this->jsFiles();
-      if ($this->entity->get('run_npm')->value || $run_npm)
+      //
+      if ($run_npm)
+        $this->RunNpm();
+      elseif ($this->entity->get('run_npm')->value)
         $this->RunNpm();
       $this->SetCurrentThemeDefaultOfDomaine();
       $this->setConfigTheme();

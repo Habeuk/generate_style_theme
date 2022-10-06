@@ -106,3 +106,16 @@ generate_style_theme.set_default_style:
     _title: 'Set default style'
   requirements:
     _access: 'TRUE'
+    
+generate_style_theme.layout_paragraph:
+  path: '/generate_style_theme/form/layout-paragraph'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\LayoutParagraph'
+    _title: 'LayoutEnteteForm'
+  requirements:
+    _role: 'administrator'
+    
+
+    
+    
+    

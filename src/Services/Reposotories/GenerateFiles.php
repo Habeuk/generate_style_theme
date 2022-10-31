@@ -202,6 +202,14 @@ vendor-style:
     }
   }
 
+  function DeleteFilesNpm() {
+    $script = ' rm -rf ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
+    $exc = $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
+    if ($exc['return_var']) {
+      $this->logger->warning('Error lors de la suppression de /wbu-atomique-theme : <br>' . implode("<br>", $exc['output']));
+    }
+  }
+
   /**
    * --
    */

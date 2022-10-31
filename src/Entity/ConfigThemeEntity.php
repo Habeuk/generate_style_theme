@@ -664,6 +664,11 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'boolean_checkbox',
       'weight' => -3
     ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
+
+    $fields['force_regenerate_npm_files'] = BaseFieldDefinition::create('boolean')->setLabel(" Force à regener les fichiers npm ")->setDisplayOptions('form', [
+      'type' => 'boolean_checkbox',
+      'weight' => -3
+    ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true)->setDefaultValue(false)->setDescription(" Utile dans les cas de figure ou on a pas pu generer les fichiers ");
     // NB: application de ses informations se fait apres la creation du theme.
     // @see
     // Drupal\generate_style_theme\Services\GenerateStyleTheme::setConfigTheme()

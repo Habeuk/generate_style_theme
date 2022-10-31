@@ -152,7 +152,7 @@ class GenerateStyleTheme extends ControllerBase {
     try {
       $this->InfoYml();
       $this->LibrairiesYml();
-      if ($createThme)
+      if ($createThme || $this->entity->get('force_regenerate_npm_files')->value)
         $this->CopyWbuAtomiqueTheme();
       $this->scssFiles();
       $this->jsFiles();

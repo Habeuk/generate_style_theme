@@ -493,6 +493,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       '.'
     ], '_', strtolower($this->getHostname()));
     $this->set('hostname', preg_replace('/[^a-z0-9\_]/', "", $themeName));
+    $this->setOwnerId(\Drupal::currentUser()->id());
     parent::preSave($storage);
   }
 
@@ -521,31 +522,21 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     // Add the published field.
     $fields += static::publishedBaseFieldDefinitions($entity_type);
     //
-    // $fields['user_id'] =
-    // BaseFieldDefinition::create('entity_reference')->setLabel(t('Authored
-    // by'))->setDescription(t('The user ID of author of the Domain buy
-    // entity.'))->setRevisionable(TRUE)->setSetting('target_type',
-    // 'user')->setSetting('handler', 'default')->setDisplayOptions('view', [
-    // 'label' => 'hidden',
-    // 'type' => 'author',
-    // 'weight' => 0
-    // ])->setDisplayOptions('form', [
-    // 'type' => 'entity_reference_autocomplete',
-    // 'weight' => 5,
-    // 'settings' => [
-    // 'match_operator' => 'CONTAINS',
-    // 'size' => '60',
-    // 'autocomplete_type' => 'tags',
-    // 'placeholder' => ''
-    // ]
-    // ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view',
-    // TRUE);
-    //
-    // $fields['user_id'] = BaseFieldDefinition::create('string')->setLabel("
-    // Espace interne 2 ")->setDisplayOptions('form', [
-    // 'type' => 'number'
-    // ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view',
-    // TRUE)->setDefaultValue(0);
+    $fields['user_id'] = BaseFieldDefinition::create('entity_reference')->setLabel(t('Authored by'))->setDescription(t('The user ID of author of theme. '))->setRevisionable(TRUE)->setSetting('target_type', 'user')->setSetting('handler', 'default')->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'type' => 'author',
+      'weight' => 100
+    ])->setDisplayOptions('form', [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 5,
+      'settings' => [
+        'match_operator' => 'CONTAINS',
+        'size' => '60',
+        'autocomplete_type' => 'tags',
+        'placeholder' => ''
+      ]
+    ])->setDisplayConfigurable('form', false)->setDisplayConfigurable('view', TRUE);
+
     //
     /**
      *

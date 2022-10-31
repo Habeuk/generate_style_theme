@@ -5,7 +5,6 @@ namespace Drupal\generate_style_theme\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\wbumenudomain\Entity\Wbumenudomain;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
@@ -26,33 +25,33 @@ class CreatePagesSiteForm extends FormBase {
   protected static $field_domain_admin = 'field_domain_admin';
   protected static $storage_auto = 'content_create_automaticaly';
   protected static $key = 'hp___---__#';
-  
+
   /**
    * Drupal\domain_config_ui\Config\ConfigFactory definition.
    *
    * @var \Drupal\domain_config_ui\Config\ConfigFactory
    */
   protected $configFactory;
-  
+
   /**
    * Drupal\Core\Entity\EntityTypeManagerInterface definition.
    *
    * @var EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-  
+
   /**
    *
    * @var \Drupal\Core\Database\Connection
    */
   protected $Connection;
-  
+
   /**
    *
    * @var FormWbumenudomain
    */
   protected $FormWbumenudomain;
-  
+
   /**
    *
    * @var FormEntity
@@ -63,7 +62,7 @@ class CreatePagesSiteForm extends FormBase {
    * @var boolean
    */
   protected static $demo = false;
-  
+
   /**
    *
    * {@inheritdoc}
@@ -77,10 +76,9 @@ class CreatePagesSiteForm extends FormBase {
     $instance->CreateEntityFromWidget = $container->get('generate_style_theme.createentiyfromwidget');
     $instance->FormWbumenudomain = $container->get('generate_style_theme.create_auto_contents.wbumenudomain');
     $instance->FormEntity = $container->get('generate_style_theme.create_auto_contents.entity');
-    
     return $instance;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -88,7 +86,7 @@ class CreatePagesSiteForm extends FormBase {
   public function getFormId() {
     return 'create_pages_site_form';
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -116,14 +114,14 @@ class CreatePagesSiteForm extends FormBase {
       $form_state->set('page_num', 1);
       $this->FormWbumenudomain->buildFormWbumenudomain($form, $form_state);
     }
-    
+
     // Group submit handlers in an actions element with a key of "actions" so
     // that it gets styled correctly, and so that other modules may add actions
     // to the form. This is not required, but is convention.
     $form['actions'] = [
       '#type' => 'actions'
     ];
-    
+
     $form['actions']['next'] = [
       '#type' => 'submit',
       '#button_type' => 'primary',
@@ -135,7 +133,7 @@ class CreatePagesSiteForm extends FormBase {
     ];
     return $form;
   }
-  
+
   /**
    *
    * @param array $form
@@ -144,7 +142,8 @@ class CreatePagesSiteForm extends FormBase {
    */
   protected function buildFormPrestataire(array &$form, FormStateInterface $form_state, $datas = []) {
     /**
-     * Si l'utilisateur revient sur cette etape, on recupere son precedant choix.
+     * Si l'utilisateur revient sur cette etape, on recupere son precedant
+     * choix.
      */
     if ($form_state->has('new_contents') && $form_state->get([
       'new_contents',
@@ -175,7 +174,7 @@ class CreatePagesSiteForm extends FormBase {
     $form_display->buildForm($entity, $form, $form_state);
     $form_state->set('form_display_node', $form_display);
   }
-  
+
   /**
    *
    * @param array $form
@@ -227,7 +226,7 @@ class CreatePagesSiteForm extends FormBase {
         ]
       ]
     ];
-    
+
     $form['description1'] = [
       '#type' => 'html_tag',
       '#tag' => 'h6',
@@ -260,7 +259,7 @@ class CreatePagesSiteForm extends FormBase {
       '#weight' => -15
     ];
   }
-  
+
   /**
    * Provides custom submission handler for page 1.
    * NB: cette fonction s'execute apres la validation.
@@ -275,22 +274,27 @@ class CreatePagesSiteForm extends FormBase {
     //
     $this->CreateInstanceHomePage($form_state);
     $this->FormEntity->createInstancePageItemsMenu($form_state);
-    // On doit recuperer les données dans le formulaire utiliser et les mettres dans l'entité avant d'effectuer la validation.
+    // On doit recuperer les données dans le formulaire utiliser et les mettres
+    // dans l'entité avant d'effectuer la validation.
     $this->temporySavePrestataireNode($form, $form_state);
     //
     $n = $form_state->get('page_num');
     // dump('last page : ', $n);
     $form_state->set('page_num', $n + 1)->setRebuild(TRUE);
   }
-  
+
   /**
    * Creer l'intances de la page d'accueil.
-   * On a opté de mettre tous les contenus dans 'new_contents' mais la page d'accueil est particuliere, car elle peut etre modifier par l'utilisateur.
-   * Donc, on va fixe sont id avec une valeur non valide pour les champs machine_name(afin d'eviter les conflits avec les type de contenu).
+   * On a opté de mettre tous les contenus dans 'new_contents' mais la page
+   * d'accueil est particuliere, car elle peut etre modifier par l'utilisateur.
+   * Donc, on va fixe sont id avec une valeur non valide pour les champs
+   * machine_name(afin d'eviter les conflits avec les type de contenu).
    * on fixe: hp___---__#
-   * On va egalement remettre 'new_contents' à [] si le model de page d'accueil est modifié.
+   * On va egalement remettre 'new_contents' à [] si le model de page d'accueil
+   * est modifié.
    *
-   * Apres l'exection de cette fonction, on a l'instance de la page d'accueil qui est crée et les instances de pages lies au menu.
+   * Apres l'exection de cette fonction, on a l'instance de la page d'accueil
+   * qui est crée et les instances de pages lies au menu.
    *
    * @param FormStateInterface $form_state
    */
@@ -300,7 +304,7 @@ class CreatePagesSiteForm extends FormBase {
      * @var Wbumenudomain $entity_wbumenudomain
      */
     $entity_wbumenudomain = $form_state->get('entity_wbumenudomain');
-    
+
     // Creation de l'instance de la page d'accueil.
     $homePageContentType = $entity_wbumenudomain->getContentTypeHomePage();
     if (!empty($homePageContentType)) {
@@ -321,8 +325,9 @@ class CreatePagesSiteForm extends FormBase {
           return;
         }
       }
-      
-      // Une page doit etre unique, on se rassure qu'elle n'existe pas deja pour le domaine.
+
+      // Une page doit etre unique, on se rassure qu'elle n'existe pas deja pour
+      // le domaine.
       $query = " SELECT nid from {node_field_data} as fd ";
       $query .= " inner join {node__field_domain_access} as fda ON fda.entity_id = fd.nid ";
       $query .= " where fd.type ='" . $homePageContentType . "' and fda.field_domain_access_target_id = '" . $entity_wbumenudomain->getHostname() . "' ";
@@ -333,8 +338,9 @@ class CreatePagesSiteForm extends FormBase {
         ]);
         return;
       }
-      
-      // Soit c'est la premiere fois que l'utilisateur execute next, soit ce dernier à modifier la page d'accueil.
+
+      // Soit c'est la premiere fois que l'utilisateur execute next, soit ce
+      // dernier à modifier la page d'accueil.
       $contents = [];
       $contents[self::$key] = $this->createNode([
         'type' => $homePageContentType,
@@ -359,7 +365,7 @@ class CreatePagesSiteForm extends FormBase {
       $form_state->set('new_contents', $contents);
     }
   }
-  
+
   /**
    * Builds the second step form (next page).
    *
@@ -367,7 +373,7 @@ class CreatePagesSiteForm extends FormBase {
    *        An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *        The current state of the form.
-   *        
+   *
    * @return array The render array defining the elements of the form.
    */
   public function CreatePagesNextPage(array &$form, FormStateInterface $form_state) {
@@ -399,7 +405,7 @@ class CreatePagesSiteForm extends FormBase {
     }
     return $form;
   }
-  
+
   /**
    * Provides custom submission handler for 'Back' button (page 2).
    *
@@ -414,7 +420,7 @@ class CreatePagesSiteForm extends FormBase {
       $n = $n - 1;
     $form_state->set('page_num', $n)->setRebuild(TRUE);
   }
-  
+
   /**
    * NB: elle s'execute à chaque submit.
    * (bouton trigger, #ajax, add_more).
@@ -436,7 +442,7 @@ class CreatePagesSiteForm extends FormBase {
     $this->validation($form_state);
     parent::validateForm($form, $form_state);
   }
-  
+
   private function validation(FormStateInterface $form_state) {
     $contents = $form_state->get('new_contents');
     if (!$contents)
@@ -452,7 +458,7 @@ class CreatePagesSiteForm extends FormBase {
       }
     }
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -472,7 +478,7 @@ class CreatePagesSiteForm extends FormBase {
     }
     else
       $this->FormWbumenudomain->submitForm($form, $form_state);
-    
+
     /**
      * Creation du node prestataures.
      *
@@ -483,11 +489,12 @@ class CreatePagesSiteForm extends FormBase {
     // dump($entity_node->toArray());
     // else
     // $entity_node->save();
-    
+
     // Enregistre en masse les nodes.
     $this->FormEntity->submitForm($form, $form_state);
     // /**
-    // * Creation des pages (page d'accuiel et des pages selectionnées au niveau du menu.
+    // * Creation des pages (page d'accuiel et des pages selectionnées au niveau
+    // du menu.
     // * NB: cest
     // *
     // * @var Array $contents
@@ -512,7 +519,7 @@ class CreatePagesSiteForm extends FormBase {
     // Creation de l'utilisateur.
     if (!self::$demo)
       $this->createUserByDomain($entity_wbumenudomain, $form_state);
-    
+
     // Redirection vers la page de creation de theme.
     $contents = $form_state->get('new_contents');
     /**
@@ -534,9 +541,10 @@ class CreatePagesSiteForm extends FormBase {
       $form_state->setRedirectUrl($url);
     }
   }
-  
+
   /**
-   * Permet de creer un utilisateur avec les droits necessaire pour pouvoir manager le domaine encours.
+   * Permet de creer un utilisateur avec les droits necessaire pour pouvoir
+   * manager le domaine encours.
    *
    * @param FormStateInterface $form_state
    */
@@ -552,7 +560,7 @@ class CreatePagesSiteForm extends FormBase {
       'mail' => empty($email) ? 'auto' . rand(1, 999) . $random->name() . '@example.com' : $email,
       'notify' => false
     ]);
-    
+
     /**
      * On donne les access par rapport au domaine.
      */
@@ -593,11 +601,11 @@ class CreatePagesSiteForm extends FormBase {
     $message .= ' Password : ' . $password;
     \Drupal::messenger()->addMessage($message);
   }
-  
+
   private function createNode(array $values) {
     return Node::create($values);
   }
-  
+
   /**
    * On enregistre l'instance de node prestataire.
    *
@@ -636,5 +644,5 @@ class CreatePagesSiteForm extends FormBase {
       ], $entity_node);
     }
   }
-  
+
 }

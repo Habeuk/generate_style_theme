@@ -19,12 +19,12 @@ plugins.push(
   })
 );
 
+console.log("devMode", devMode);
 module.exports = {
   plugins,
   mode: env || "development", // On définit le mode en fonction de la valeur de NODE_ENV
   entry: {
-    "global-style": "./src/js/global-style.js",
-    "vendor-style": "./src/js/vendor-style.js",
+    "page-default": "./src/js/page-default.js",
   },
   output: {
     path: path.resolve(__dirname, "../"),
@@ -44,7 +44,7 @@ module.exports = {
           },
         },
       },
-      // Règles de compilations pour les fichiers .css
+      //règles de compilations pour les fichiers .css
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
@@ -92,7 +92,7 @@ module.exports = {
       },
       //règles de compilations pour les images
       {
-        test: /\.(gif|png|jpe?g)$/i,
+        test: /\.(gif|png|eot|jpe?g)$/i,
         use: [
           {
             // Using file-loader for these files

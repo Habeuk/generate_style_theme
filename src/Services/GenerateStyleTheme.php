@@ -203,6 +203,11 @@ class GenerateStyleTheme extends ControllerBase {
         $editConfig->set('page.403', $siteConfValue['page.403']);
         $editConfig->set('page.404', $siteConfValue['page.404']);
         $editConfig->set('name', $siteConfValue['name']);
+        // si un utilisateur n'est pas explicement definit, on utilise celui de
+        // l'utilisateur connecter.
+        if (empty($siteConfValue['mail'])) {
+          $editConfig->set('mail', \Drupal::currentUser()->getEmail());
+        }
         $editConfig->save();
       }
       else {

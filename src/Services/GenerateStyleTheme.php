@@ -208,6 +208,9 @@ class GenerateStyleTheme extends ControllerBase {
         if (empty($siteConfValue['mail'])) {
           $editConfig->set('mail', \Drupal::currentUser()->getEmail());
         }
+        else
+          $editConfig->set('mail', $siteConfValue['mail']);
+        //
         $editConfig->save();
       }
       else {

@@ -14,7 +14,10 @@ trait GenerateFiles {
    * @var FileSystem
    */
   protected $FileSystem;
-
+  
+  /**
+   * --
+   */
   function InfoYml() {
     $string = 'name: ' . $this->themeName . '
 type: theme
@@ -45,7 +48,7 @@ libraries-override:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * --
    */
@@ -69,7 +72,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * --
    */
@@ -77,7 +80,7 @@ vendor-style:
     $this->getGlobalStyle();
     $this->getVendorStyle();
   }
-
+  
   /**
    * On importe le fichier scss qui a été generé et les fichiers js qui sont
    * dans la config du theme.
@@ -103,7 +106,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   private function getVendorStyle() {
     // import "@stephane888/wbu-atomique/js/swiper/swiper-big-v3.js";
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['js'];
@@ -123,7 +126,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $build_mode = $this->generate_style_themeSettings['tab1']['build_mode'];
@@ -147,7 +150,7 @@ vendor-style:
       // success, veuillez utiliser CTRL+F5 ");
     }
   }
-
+  
   /**
    * On copie les fichiers.
    *
@@ -159,7 +162,7 @@ vendor-style:
     $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName;
     $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
   }
-
+  
   /**
    * Les liens symbolique ne marge pas.
    * On va faire un lien, Car cela est plus facile à gerer et occupe moins
@@ -201,7 +204,10 @@ vendor-style:
       $this->logger->warning('Error de copie des fichiers : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
+  /**
+   * --
+   */
   function DeleteFilesNpm() {
     $script = ' rm -rf ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $exc = $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
@@ -209,7 +215,7 @@ vendor-style:
       $this->logger->warning('Error lors de la suppression de /wbu-atomique-theme : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
   /**
    * --
    */
@@ -217,7 +223,7 @@ vendor-style:
     $this->scssFilesGlobalStyle();
     $this->scssFilesVendorStyle();
   }
-
+  
   private function scssFilesVendorStyle() {
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
     // On charge les mixins et les variables.
@@ -227,14 +233,14 @@ vendor-style:
     @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
     ';
     $string .= $vendor_import;
-
+    
     // Cree le fichier.
     $filename = $this->themeName . '--vendor.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * --
    */
@@ -244,7 +250,7 @@ vendor-style:
      * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity
      */
     $entity = $this->entity;
-
+    
     // On charge les mixins et les variables.
     $string = '';
     // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
@@ -260,9 +266,7 @@ vendor-style:
     // $string .= $this->buildEntityImportScss();
     // }
     $string .= $this->buildScssVar();
-    $string .= '
-    @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
-    ';
+    $string .= ' @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *; ';
     $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
       $string .= $styleImport;
@@ -280,7 +284,7 @@ vendor-style:
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
-
+    
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
     // on cree un fichier pour le style custom, le fichier n'existe pas;
@@ -288,7 +292,7 @@ vendor-style:
       debugLog::logger("", "custom.scss", false, 'file', $path, true);
     }
   }
-
+  
   private function buildScssVar() {
     $string = '';
     /**
@@ -319,7 +323,7 @@ vendor-style:
     if (!empty($entity->getwbu_titre_biggest())) {
       $string .= '$wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
-
+    
     return '
     @use "@stephane888/wbu-atomique/scss/_variables.scss" as *;
     $wbu-color-primary: ' . $color_primary . ';
@@ -345,7 +349,7 @@ vendor-style:
     $wbu-default-font-size: ' . $text_font_size . ';
     ' . $string;
   }
-
+  
   /**
    * Permet de recuperer les données de styles.
    */
@@ -359,7 +363,7 @@ vendor-style:
     }
     return $styleToImport;
   }
-
+  
   /**
    *
    * @param array $EntityImport
@@ -391,7 +395,7 @@ vendor-style:
     }
     return $styleToImport;
   }
-
+  
   private function excuteCmd($cmd, $name = "excuteCmd") {
     ob_start();
     $return_var = '';
@@ -407,7 +411,7 @@ vendor-style:
     ];
     return $debug;
   }
-
+  
   protected function getScssFromLibrairy($libray) {
     if ($libray == 'lesroisdelareno/prestataires_m8')
       return [
@@ -485,5 +489,5 @@ vendor-style:
     else
       throw new \Exception(" Fichier de style scss non definit ");
   }
-
+  
 }

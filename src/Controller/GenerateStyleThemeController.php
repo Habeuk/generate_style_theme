@@ -43,7 +43,16 @@ class GenerateStyleThemeController extends ControllerBase {
     return new static($container->get('theme_installer'), $container->get('generate_style_theme.manage_file_custom_style'));
   }
   
-  public function setDefaultStyle($id, $theme_name) {
+  /**
+   * Permet de recuperer les styles definit dans une entity et de les renvoyés
+   * vers le themes.
+   *
+   * @param integer $id
+   * @param string $theme_name
+   * @param string $entity_type_id
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function setDefaultStyle($id, $theme_name, $entity_type_id = 'site_type_datas') {
     /**
      * C'est le contenu model.
      * Dans ce contenu model, seul quelques sont necessaire.
@@ -51,7 +60,7 @@ class GenerateStyleThemeController extends ControllerBase {
      *
      * @var \Drupal\creation_site_virtuel\Entity\SiteTypeDatas $entityModel
      */
-    $entityModel = $this->entityTypeManager()->getStorage("site_type_datas")->load($id);
+    $entityModel = $this->entityTypeManager()->getStorage($entity_type_id)->load($id);
     if ($entityModel) {
       try {
         $this->ManageFileCustomStyle->theme_name = $theme_name;
@@ -59,7 +68,8 @@ class GenerateStyleThemeController extends ControllerBase {
         $style_js = $entityModel->get('style_js')->value;
         $this->ManageFileCustomStyle->saveJs($style_js);
         $this->ManageFileCustomStyle->saveScss($style_scss);
-        \Stephane888\Debug\debugLog::kintDebugDrupal($entityModel->get('style_scss')->value, 'setDefaultStyle', true);
+        // \Stephane888\Debug\debugLog::kintDebugDrupal($entityModel->get('style_scss')->value,
+        // 'setDefaultStyle', true);
         return $this->reponse('');
       }
       catch (\Exception $e) {

@@ -44,10 +44,20 @@ class ManageFileCustomStyle extends ControllerBase {
     return $this->path;
   }
   
+  /**
+   * Ecrase le contenu scss existant
+   *
+   * @param string $string
+   */
   public function saveScss($string) {
     debugLog::logger($string, "custom.scss", false, 'file', $this->getPath() . '/scss', true);
   }
   
+  /**
+   * Ecrase le contenu js existant
+   *
+   * @param string $string
+   */
   public function saveJs($string) {
     debugLog::logger($string, "custom.js", false, 'file', $this->getPath() . '/js', true);
   }

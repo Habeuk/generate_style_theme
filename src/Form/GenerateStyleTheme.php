@@ -61,6 +61,12 @@ class GenerateStyleTheme extends ConfigFormBase {
       ],
       '#default_value' => $config->get('tab1.build_mode')
     ];
+    $form['pwd_npm'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Chemin vers la commande npm'),
+      '#default_value' => $config->get('tab1.pwd_npm'),
+      '#description' => " Utiliser la commande 'which npm' afin de determiner le chemin "
+    ];
     $form['vendor_import'] = [
       '#type' => 'details',
       '#tree' => true,
@@ -94,6 +100,7 @@ class GenerateStyleTheme extends ConfigFormBase {
     $config->set('tab1.save_multifile', $form_state->getValue('save_multifile'));
     $config->set('tab1.build_mode', $form_state->getValue('build_mode'));
     $config->set('tab1.vendor_import', $form_state->getValue('vendor_import'));
+    $config->set('tab1.pwd_npm', $form_state->getValue('pwd_npm'));
     $config->save();
   }
   

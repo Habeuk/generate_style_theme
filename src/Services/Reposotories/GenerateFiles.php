@@ -130,7 +130,11 @@ vendor-style:
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $build_mode = $this->generate_style_themeSettings['tab1']['build_mode'];
-    $script = '';
+    \Stephane888\Debug\debugLog::symfonyDebug($this->generate_style_themeSettings, 'RunNpm', true);
+    $npm = 'npm';
+    if (!empty($this->generate_style_themeSettings['tab1']['pwd_npm']))
+      $npm = $this->generate_style_themeSettings['tab1']['pwd_npm'];
+    $script = ' ';
     // if (!empty($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'],
     // ".kksa") !== false) {
     // $script .= " npm --prefix " . $pathNpm . " run " . $build_mode;
@@ -139,7 +143,8 @@ vendor-style:
     // $script .= " /homez.707/lesroig/tools/node15/bin/npm --prefix " .
     // $pathNpm . " run " . $build_mode;
     // }
-    $script .= " npm --prefix " . $pathNpm . " run " . $build_mode;
+    $script .= $npm . " --prefix " . $pathNpm . " run " . $build_mode;
+    dump($script);
     $exc = $this->excuteCmd($script, 'RunNpm');
     if ($exc['return_var']) {
       \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");

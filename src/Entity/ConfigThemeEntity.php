@@ -66,7 +66,7 @@ use Drupal\Core\Database\Connection;
 class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityInterface {
   use EntityChangedTrait;
   use EntityPublishedTrait;
-
+  
   /**
    *
    * {@inheritdoc}
@@ -78,7 +78,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'settheme_as_defaut' => TRUE
     ];
   }
-
+  
   public static function preDelete(EntityStorageInterface $storage, array $entities) {
     parent::preDelete($storage, $entities);
     foreach ($entities as $entity) {
@@ -105,7 +105,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       if ($entity && $entity->id() && \Drupal::moduleHandler()->moduleExists('ovh_api_rest')) {
         $domainId = $entity->getHostname();
         $entityTypeManager = \Drupal::entityTypeManager();
-
+        
         /**
          * On retire les enregistrements sur le serveurs ( vhost ).
          *
@@ -121,6 +121,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             case 'node':
             case 'site_internet_entity':
             case 'commerce_product':
+            case 'blocks_contents':
               $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
               $query->condition($field_access, $domainId);
               $ids = $query->execute();
@@ -235,7 +236,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       $GenerateStyleTheme->deleteSubTheme();
     }
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -243,7 +244,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getHostname() {
     return $this->get('hostname')->value;
   }
-
+  
   /**
    * -
    */
@@ -277,7 +278,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     //
     return null;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -286,7 +287,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     $this->set('hostname', $name);
     return $this;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -294,7 +295,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getCreatedTime() {
     return $this->get('created')->value;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -303,7 +304,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     $this->set('created', $timestamp);
     return $this;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -311,7 +312,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getOwner() {
     return $this->get('user_id')->entity;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -319,7 +320,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getOwnerId() {
     return $this->get('user_id')->target_id;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -328,7 +329,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     $this->set('user_id', $uid);
     return $this;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -337,7 +338,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     $this->set('user_id', $account->id());
     return $this;
   }
-
+  
   /**
    * Retourne la premiere ocurence trouvé.
    *
@@ -348,17 +349,17 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('color_primary')->first())
       return $this->get('color_primary')->first()->getValue();
   }
-
+  
   public function getColorSecondaire() {
     if ($this->get('color_secondaire')->first())
       return $this->get('color_secondaire')->first()->getValue();
   }
-
+  
   public function getColorLinkHover() {
     if ($this->get('color_link_hover')->first())
       return $this->get('color_link_hover')->first()->getValue();
   }
-
+  
   /**
    *
    * @return mixed
@@ -367,7 +368,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('wbubackground')->first())
       return $this->get('wbubackground')->first()->getValue();
   }
-
+  
   /**
    *
    * @remove to 2x
@@ -377,28 +378,28 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getLirairy() {
     return $this->get('lirairy')->value;
   }
-
+  
   /**
    * --
    */
   public function getwbu_titre_suppra() {
     return $this->get('wbu_titre_suppra')->value;
   }
-
+  
   /**
    * --
    */
   public function getwbu_titre_biggest() {
     return $this->get('wbu_titre_biggest')->value;
   }
-
+  
   /**
    * --
    */
   public function getwbu_titre_big() {
     return $this->get('wbu_titre_big')->value;
   }
-
+  
   /**
    * --
    */
@@ -406,7 +407,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('h1_font_size')->first())
       return $this->get('h1_font_size')->first()->getValue();
   }
-
+  
   /**
    * --
    */
@@ -414,35 +415,35 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('h2_font_size')->first())
       return $this->get('h2_font_size')->first()->getValue();
   }
-
+  
   /**
    * --
    */
   public function getH3FontSize() {
     return $this->get('h3_font_size')->value;
   }
-
+  
   /**
    * --
    */
   public function getH4FontSize() {
     return $this->get('h4_font_size')->value;
   }
-
+  
   /**
    * --
    */
   public function getH5FontSize() {
     return $this->get('h5_font_size')->value;
   }
-
+  
   /**
    * --
    */
   public function getH6FontSize() {
     return $this->get('h6_font_size')->value;
   }
-
+  
   /**
    *
    * @return mixed
@@ -451,7 +452,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('text_font_size')->first())
       return $this->get('text_font_size')->first()->getValue();
   }
-
+  
   /**
    *
    * @return mixed
@@ -460,7 +461,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('space_bottom')->first())
       return $this->get('space_bottom')->first()->getValue();
   }
-
+  
   /**
    *
    * @return mixed
@@ -469,7 +470,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('space_top')->first())
       return $this->get('space_top')->first()->getValue();
   }
-
+  
   /**
    *
    * @return mixed
@@ -478,12 +479,12 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     if ($this->get('space_inner_top')->first())
       return $this->get('space_inner_top')->first()->getValue();
   }
-
+  
   public function postSave($storage, $update = TRUE) {
     // \Drupal::messenger()->addStatus('postSave');
     parent::postSave($storage, $update);
   }
-
+  
   public function preSave($storage) {
     // \Drupal::messenger()->addStatus('preSave');
     // On doit nettoyer le nom d'hote, car il est utilisé comme nom du theme.
@@ -496,7 +497,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     $this->setOwnerId(\Drupal::currentUser()->id());
     parent::preSave($storage);
   }
-
+  
   /**
    * NB: application de ses informations se fait apres la creation du theme.
    *
@@ -507,18 +508,18 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   public function getsite_config() {
     return $this->get('site_config')->value;
   }
-
+  
   public function SetThemeAsDefaut() {
     return $this->get('settheme_as_defaut')->value;
   }
-
+  
   /**
    *
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
-
+    
     // Add the published field.
     $fields += static::publishedBaseFieldDefinitions($entity_type);
     //
@@ -536,7 +537,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
         'placeholder' => ''
       ]
     ])->setDisplayConfigurable('form', false)->setDisplayConfigurable('view', TRUE);
-
+    
     //
     /**
      *
@@ -564,35 +565,35 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'settings' => [],
       'weight' => -3
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE);
-
+    
     $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo .. ')->setSetting('preview_image_style', 'medium')->setDisplayOptions('form', [
       'type' => 'image_image',
       'settings' => [
         'preview_image_style' => 'medium'
       ]
     ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
-
+    
     $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#CE3B3B',
       'name' => ''
     ]);
-
+    
     $fields['color_secondaire'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur secondaire  ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#DD731D',
       'name' => ''
     ]);
-
+    
     $fields['color_link_hover'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur des liens ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#F88C12',
       'name' => ''
     ]);
-
+    
     $fields['wbubackground'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur d'arrière plan ")->setRequired(TRUE)->setDisplayOptions('form', [
       'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
@@ -602,55 +603,55 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     $fields['wbu_titre_suppra'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (wbu-titre-suppra) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('6.4rem');
-
+    
     $fields['wbu_titre_biggest'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (wbu-titre-biggest) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('5.4rem');
-
+    
     $fields['wbu_titre_big'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (wbu-titre-big) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('4.4rem');
-
+    
     $fields['h1_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (h1) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('3.4rem');
-
+    
     $fields['h2_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h2) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('2.4rem');
-
+    
     $fields['h3_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h3) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.8rem');
-
+    
     $fields['h4_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h4) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.6rem');
-
+    
     $fields['h5_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h5) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.6rem');
-
+    
     $fields['h6_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de sous titre (h6) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.4rem');
-
+    
     $fields['text_font_size'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police par defaut ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue('1.4rem');
-
+    
     $fields['space_bottom'] = BaseFieldDefinition::create('string')->setLabel(" Espace du bas entre les blocs ")->setDisplayOptions('form', [
       'type' => 'number'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(5);
-
+    
     $fields['space_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace du haut entre les blocs ")->setDisplayOptions('form', [
       'type' => 'number'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(4);
-
+    
     $fields['space_inner_top'] = BaseFieldDefinition::create('string')->setLabel(" Espace interne ")->setDisplayOptions('form', [
       'type' => 'number'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue(0.5);
-
+    
     $fields['status']->setDescription(t(' A boolean indicating whether the Config theme entity is published. '))->setDisplayOptions('form', [
       'type' => 'boolean_checkbox',
       'weight' => -3
@@ -659,12 +660,12 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'boolean_checkbox',
       'weight' => -3
     ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
-
+    
     $fields['run_npm'] = BaseFieldDefinition::create('boolean')->setLabel(" Generate files style ? ")->setDisplayOptions('form', [
       'type' => 'boolean_checkbox',
       'weight' => -3
     ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
-
+    
     $fields['force_regenerate_npm_files'] = BaseFieldDefinition::create('boolean')->setLabel(" Force à regener les fichiers npm ")->setDisplayOptions('form', [
       'type' => 'boolean_checkbox',
       'weight' => -3
@@ -679,12 +680,12 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setConstraints([
       'UniqueField' => []
     ]);
-
+    
     $fields['created'] = BaseFieldDefinition::create('created')->setLabel(t('Created'))->setDescription(t('The time that the entity was created.'));
-
+    
     $fields['changed'] = BaseFieldDefinition::create('changed')->setLabel(t('Changed'))->setDescription(t('The time that the entity was last edited.'));
-
+    
     return $fields;
   }
-
+  
 }

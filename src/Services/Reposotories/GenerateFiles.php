@@ -59,6 +59,8 @@ libraries-override:
       css/global-style.css: {}
   js:
     js/global-style.js: {}
+  dependencies:
+    - core/once
 
 vendor-style:
   css:

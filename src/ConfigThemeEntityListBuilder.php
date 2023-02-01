@@ -39,4 +39,24 @@ class ConfigThemeEntityListBuilder extends EntityListBuilder {
     return $row + parent::buildRow($entity);
   }
   
+  /**
+   *
+   * {@inheritdoc}
+   * @see \Drupal\Core\Entity\EntityListBuilder::render()
+   */
+  public function render() {
+    $build = parent::render();
+    // On ajoute lien pour l'edition avec filtre.
+    $build['views_list'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'a',
+      '#value' => 'Utiliser la liste avec filtre',
+      '#weight' => -10,
+      '#attributes' => [
+        'href' => '/model-de-site-web'
+      ]
+    ];
+    return $build;
+  }
+  
 }

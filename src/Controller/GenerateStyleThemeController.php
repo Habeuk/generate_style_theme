@@ -9,7 +9,7 @@ use Drupal\generate_style_theme\Services\GenerateStyleTheme;
 use Drupal\Component\Serialization\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
-use Stephane888\Debug\Utility as UtilityError;
+use Stephane888\Debug\ExceptionExtractMessage;
 use Drupal\generate_style_theme\Services\ManageFileCustomStyle;
 
 /**
@@ -73,7 +73,7 @@ class GenerateStyleThemeController extends ControllerBase {
         return $this->reponse('');
       }
       catch (\Exception $e) {
-        $errors = UtilityError::errorAll($e);
+        $errors = ExceptionExtractMessage::errorAll($e);
         $this->getLogger('generate_style_theme')->critical($e->getMessage() . '<br>' . implode("<br>", $errors));
         return $this->reponse($errors, 400, $e->getMessage());
       }

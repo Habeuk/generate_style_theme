@@ -389,7 +389,7 @@ vendor-style:
                 // On parcourt les plugins.
                 if (is_array($plugin))
                   foreach ($plugin as $plugin_id => $library) {
-                    if (!empty($library))
+                    if (!empty($library) && is_array($library))
                       $libraries[$plugin_id] = implode("\n", $library);
                     // dump($libraries);
                   }

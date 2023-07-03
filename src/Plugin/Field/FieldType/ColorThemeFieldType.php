@@ -23,22 +23,5 @@ use Drupal\colorapi\Plugin\Field\FieldType\ColorItem;
  * )
  */
 class ColorThemeFieldType extends ColorItem {
-  
-  /**
-   *
-   * {@inheritdoc}
-   */
-  public static function defaultStorageSettings() {
-    return [] + parent::defaultStorageSettings();
-  }
-  
-  /**
-   *
-   * {@inheritdoc}
-   */
-  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
-    $properties = parent::propertyDefinitions($field_definition);
-    return $properties;
-  }
-  
+
 }

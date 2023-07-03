@@ -20,26 +20,19 @@ use Drupal\colorapi\Plugin\Field\FieldWidget\ColorapiWidgetBase;
  * )
  */
 class ColorThemeWidgetType extends ColorapiWidgetBase {
-  
+
   /**
    *
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    // $element['#type'] = 'details';
-    // $element['#open'] = true;
-    $element += parent::formElement($items, $delta, $element, $form, $form_state);
-    // $element['color'] = [
-    // '#type' => 'textfield',
-    // '#title' => $this->t('Color'),
-    // '#default_value' => isset($items[$delta]) ? $items[$delta]->getHexadecimal() : '',
-    // '#cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality()
-    // ];
+    $element = parent::formElement($items, $delta, $element, $form, $form_state);
+    // $element['#type'] = 'fieldset';
     $element['color']['#type'] = 'color';
     $element['name']['#access'] = false;
     $element['color']['#title'] = $element['#title'];
-    
+
     return $element;
   }
-  
+
 }

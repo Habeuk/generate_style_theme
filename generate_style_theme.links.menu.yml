@@ -12,7 +12,7 @@ entity.config_theme_entity.collection:
   title: ' Creation/MAJ du styles des themes '
   route_name: entity.config_theme_entity.collection
   description: 'List Config theme entity entities'
-  parent: system.admin_structure
+  parent: system.admin_content
   weight: 0
 
 #config_theme_entity.admin.structure.settings:
@@ -54,6 +54,7 @@ create_pages_site_form.config.settings:
   description: 'Configuration de base'
   route_name: generate_style_theme.config_tab1
   parent: system.admin_config_ui
+  weight: 40
   
   
   

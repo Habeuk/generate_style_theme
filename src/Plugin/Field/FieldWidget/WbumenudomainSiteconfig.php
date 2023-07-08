@@ -16,7 +16,7 @@ use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
  * @deprecated ce champs ne peut etre utiliser par plusieurs entité ( actuelment
  *             c'est : config_theme_entity )
  *             A widget bar.
- *
+ *            
  * @FieldWidget(
  *   id = "wbumenudomainsiteconfig",
  *   label = @Translation(" Wbumenudomain Widget Site Config "),
@@ -28,7 +28,7 @@ use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
  */
 class WbumenudomainSiteconfig extends WidgetBase {
   protected $ThemeUtility;
-
+  
   /**
    * Constructs a WidgetBase object.
    *
@@ -45,10 +45,10 @@ class WbumenudomainSiteconfig extends WidgetBase {
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ThemeUtility $ThemeUtility) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-
+    
     $this->ThemeUtility = $ThemeUtility;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -56,7 +56,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['third_party_settings'], $container->get('generate_style_theme.themeutility'));
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -66,7 +66,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
       'placeholder' => ''
     ] + parent::defaultSettings();
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -99,7 +99,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
         $hostname = $request->query->get('domaine-id');
       }
     }
-
+    
     $element['siteconf'] = [];
     $this->ThemeUtility->addContainerTree('container', $element['siteconf'], 'Configuration du site', true);
     $element['siteconf']['container']['#prefix'] = '<div id="wbumenudomain-siteconfig">';
@@ -116,7 +116,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
      * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
      */
     $configFactory = \Drupal::service('config.factory');
-
+    
     if (!empty($hostname)) {
       $config = \Drupal::config('generate_style_theme.settings')->getRawData();
       $conf = GenerateStyleThemeConfig::getDynamicConfig($hostname, $config);
@@ -127,12 +127,12 @@ class WbumenudomainSiteconfig extends WidgetBase {
       $siteConf = $config;
     }
     $this->formSiteConfig($element['siteconf']['container'], $siteConf);
-
+    
     // die();
     // $form_state->setRebuild();
     return $element;
   }
-
+  
   /**
    *
    * @param array $form
@@ -161,40 +161,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
     $page_404 = isset($siteConf["page"]["404"]) ? $siteConf["page"]["404"] : '';
     $this->ThemeUtility->addTextfieldTree('page.404', $form, "Page 404 par défaut ( page non trouvée )", $page_404);
   }
-
-  /**
-   *
-   * @param array $element
-   * @param FormStateInterface $form_state
-   */
-  // public function validateElement(array $element, FormStateInterface
-  // $form_state) {
-  // // die();
-  // $vals = $form_state->getUserInput();
-
-  // // name
-  // if (!empty($vals['site_config'][0]['siteconf']['container'])) {
-  // $siteConfValue = $vals['site_config'][0]['siteconf']['container'];
-  // // idConf
-  // $this->WbumenudomainConf->SetIdConfig($siteConfValue['edit-config']);
-  // // name
-  // $this->WbumenudomainConf->SaveValue('name', $siteConfValue['name']);
-  // // slogan
-  // $this->WbumenudomainConf->SaveValue('slogan', $siteConfValue['slogan']);
-  // // mail
-  // $this->WbumenudomainConf->SaveValue('mail', $siteConfValue['mail']);
-  // // page.front
-  // $this->WbumenudomainConf->SaveValue('page.front',
-  // $siteConfValue['page.front']);
-  // // page.403
-  // $this->WbumenudomainConf->SaveValue('page.403',
-  // $siteConfValue['page.403']);
-  // // page.404
-  // $this->WbumenudomainConf->SaveValue('page.404',
-  // $siteConfValue['page.404']);
-  // }
-  // }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -208,7 +175,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
     ];
     return $element;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -227,5 +194,5 @@ class WbumenudomainSiteconfig extends WidgetBase {
     }
     return parent::massageFormValues($values, $form, $form_state);
   }
-
+  
 }

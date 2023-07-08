@@ -70,7 +70,7 @@ class GenerateStyleThemeController extends ControllerBase {
         $this->ManageFileCustomStyle->saveScss($style_scss);
         // \Stephane888\Debug\debugLog::kintDebugDrupal($entityModel->get('style_scss')->value,
         // 'setDefaultStyle', true);
-        return $this->reponse('');
+        return $this->reponse('Add custom style from model to site model : OK.');
       }
       catch (\Exception $e) {
         $errors = ExceptionExtractMessage::errorAll($e);

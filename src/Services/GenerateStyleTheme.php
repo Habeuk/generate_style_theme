@@ -203,6 +203,10 @@ class GenerateStyleTheme extends ControllerBase {
         $editConfig->set('name', $siteConfValue['name']);
         // si un utilisateur n'est pas explicement definit, on utilise celui de
         // l'utilisateur connecter.
+        // (NB: cette approche n'est ok, car elle permet pas d'envoyer des
+        // mails.
+        // Pour envoyer des mails de manieres assez sûr l'email doit etre en
+        // function du domaine).
         if (empty($siteConfValue['mail'])) {
           $editConfig->set('mail', \Drupal::currentUser()->getEmail());
         }

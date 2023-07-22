@@ -58,7 +58,7 @@ libraries-override:
     theme:
       css/global-style.css: {}
   js:
-    js/global-style.js: {}
+    js/global-style.js: { preprocess: false }
   dependencies:
     - core/once
 
@@ -67,7 +67,7 @@ vendor-style:
     theme:
       css/vendor-style.css: {}
   js:
-    js/vendor-style.js: {}
+    js/vendor-style.js: { preprocess: false }
 ';
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;

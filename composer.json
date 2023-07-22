@@ -1,5 +1,5 @@
 {
-    "name": "stephane888/generate_style_theme",
+    "name": "habeuk/generate_style_theme",
     "description": "generate subtheme",
     "type": "drupal-module-custom",
     "require": {

@@ -110,7 +110,6 @@ vendor-style:
   }
   
   private function getVendorStyle() {
-    // import "@stephane888/wbu-atomique/js/swiper/swiper-big-v3.js";
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['js'];
     $string = $vendor_import . '
       // On recupere le fichier scss generer precedament.
@@ -225,18 +224,33 @@ vendor-style:
    * --
    */
   function scssFiles() {
+    $this->buildVariables();
     $this->scssFilesGlobalStyle();
     $this->scssFilesVendorStyle();
   }
   
-  private function scssFilesVendorStyle() {
-    $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
-    // On charge les mixins et les variables.
+  /**
+   * On genere le fichier de variable.
+   */
+  private function buildVariables() {
     $string = '';
     $string .= $this->buildScssVar();
+    // Cree le fichier.
+    $filename = $this->themeName . '_variables.scss';
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
+    debugLog::$debug = false;
+    debugLog::logger($string, $filename, false, 'file', $path, true);
+  }
+  
+  private function scssFilesVendorStyle() {
+    $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
+    $variable_file = './' . $this->themeName . '_variables.scss';
+    // On charge les mixins et les variables.
+    $string = '';
     $string .= '
-    @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
-    ';
+    @use "' . $variable_file . '" as *;';
+    $string .= '
+     @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;';
     $string .= $vendor_import;
     
     // Cree le fichier.
@@ -255,23 +269,16 @@ vendor-style:
      * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity
      */
     $entity = $this->entity;
-    
+    $variable_file = './' . $this->themeName . '_variables.scss';
     // On charge les mixins et les variables.
     $string = '';
-    // Ce modele est gardé pour etre compatible avec le site les roisdelareno.
-    // if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
-    // $libray = !empty($entity->getLirairy()['value']) ?
-    // $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
-    // $confs = $this->getScssFromLibrairy($libray);
-    // $string .= $confs['configs'] . $this->buildScssVar();
-    // $string .= $confs['files'];
-    // }
-    // else {
-    // $string .= $this->buildScssVar();
-    // $string .= $this->buildEntityImportScss();
-    // }
-    $string .= $this->buildScssVar();
-    $string .= ' @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *; ';
+    $string .= '
+    @use "' . $variable_file . '" as *;
+    ';
+    $string .= ' 
+    // On a besoi de ce fichier pour les styles ajoutés dans ./custom.scss.
+    // @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *; 
+    ';
     $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
       $string .= $styleImport;
@@ -286,6 +293,15 @@ vendor-style:
         $string .= $confs['files'];
       }
     }
+    
+    // // add debug
+    // $string .= '
+    // @debug "
+    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+    // ";
+    // @debug $wbu-h3-font-size;
+    // @debug $wbu-h3-font-size-sm;
+    // ';
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
@@ -298,6 +314,11 @@ vendor-style:
     }
   }
   
+  /**
+   * Construit les variables.
+   *
+   * @return string
+   */
   private function buildScssVar() {
     $string = '';
     /**
@@ -320,19 +341,27 @@ vendor-style:
     $space_top = isset($entity->getspace_top()['value']) ? $entity->getspace_top()['value'] : '4';
     $space_inner_top = isset($entity->getspace_inner_top()['value']) ? $entity->getspace_inner_top()['value'] : '0.5';
     if (!empty($entity->getwbu_titre_big())) {
-      $string .= '$wbu_titre_big: ' . $entity->getwbu_titre_big() . ';';
+      $string .= '
+$wbu_titre_big: ' . $entity->getwbu_titre_big() . ';';
     }
     if (!empty($entity->getwbu_titre_suppra())) {
-      $string .= '$wbu_titre_suppra: ' . $entity->getwbu_titre_suppra() . ';';
+      $string .= '
+$wbu_titre_suppra: ' . $entity->getwbu_titre_suppra() . ';';
     }
     if (!empty($entity->getwbu_titre_biggest())) {
-      $string .= '$wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
+      $string .= '
+$wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     $wbu_link_color = $entity->getScssColorValue($entity->getColorLink());
     $wbu_bootstrap_primary = $entity->getScssColorValue($entity->getBootstrapColorPrimary());
     
     return '
-    @use "@stephane888/wbu-atomique/scss/_variables.scss" as *;
+    /**
+     * On definie les variables à ce niveau afin que les variables qui derive de ces valeurs soit ajusté.
+     * Example : $wbu-h1-font-size est definie ici, les derivées $wbu-h1-font-size-md, $wbu-h1-font-size-sm vont etre
+     * egalement surcharger.
+     */
+
     //color
     $wbu-color-primary: ' . $color_primary . ';
     $wbu-color-secondary: ' . $color_secondaire . ';
@@ -340,24 +369,30 @@ vendor-style:
     $wbu-background: ' . $color_background . ';
     $wbu-link-color: ' . $wbu_link_color . ';
     $wbu-bootstrap-primary: ' . $wbu_bootstrap_primary . ';
-    //
+
+    // Police
     $wbu-h1-font-size: ' . $wbu_h1_font_size . ';
-    $wbu-h1-font-size-md: $wbu-h1-font-size * 0.8;
-    $wbu-h1-font-size-sm: $wbu-h1-font-size * 0.7;
     $wbu-h2-font-size: ' . $wbu_h2_font_size . ';
-    $wbu-h2-font-size-sm: $wbu-h2-font-size * 0.8;
     $wbu-h3-font-size: ' . $wbu_h3_font_size . ';
-    $wbu-h3-font-size-sm: $wbu-h3-font-size * 0.8;
     $wbu-h4-font-size: ' . $wbu_h4_font_size . ';
     $wbu-h5-font-size: ' . $wbu_h5_font_size . ';
-    $wbu-h6-font-size: ' . $wbu_h6_font_size . ';
+    $wbu-h6-font-size: ' . $wbu_h6_font_size . ';    
+    $wbu-default-font-size: ' . $text_font_size . ';
+    ' . $string . '
+
+    /**
+     * On injecte toutes les variables directement dans ce fichier.
+     */
+    @import "@stephane888/wbu-atomique/scss/_variables.scss";
+    @import "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss";    
+
+    // Les variables qui ont besoins des informations provenant du core de
+    // wbu-atomique.
     $space_bottom: $wbu-margin * ' . $space_bottom . ';
     $space_top: $wbu-margin * ' . $space_top . ';
-    //$space_inner_top: $space_top * ' . $space_inner_top . ';
+    $space_inner_top: $space_top * ' . $space_inner_top . ';
     $space_inner_top: $space_top * 0.5;
-    $wbu-default-font-size: ' . $text_font_size . ';
-
-    ' . $string;
+';
   }
   
   /**

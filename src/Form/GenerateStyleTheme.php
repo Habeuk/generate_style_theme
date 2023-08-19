@@ -65,7 +65,7 @@ class GenerateStyleTheme extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Chemin vers la commande npm'),
       '#default_value' => $config->get('tab1.pwd_npm'),
-      '#description' => " Utiliser la commande 'which npm' afin de determiner le chemin "
+      '#description' => " Utiliser la commande 'whereis npm' afin de determiner le chemin "
     ];
     $form['vendor_import'] = [
       '#type' => 'details',

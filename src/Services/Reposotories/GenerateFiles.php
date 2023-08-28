@@ -14,7 +14,7 @@ trait GenerateFiles {
    * @var FileSystem
    */
   protected $FileSystem;
-  
+
   /**
    * --
    */
@@ -48,7 +48,7 @@ libraries-override:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-  
+
   /**
    * --
    */
@@ -74,7 +74,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-  
+
   /**
    * --
    */
@@ -82,7 +82,7 @@ vendor-style:
     $this->getGlobalStyle();
     $this->getVendorStyle();
   }
-  
+
   /**
    * On importe le fichier scss qui a été generé et les fichiers js qui sont
    * dans la config du theme.
@@ -108,7 +108,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-  
+
   private function getVendorStyle() {
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['js'];
     $string = $vendor_import . '
@@ -127,7 +127,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-  
+
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $build_mode = $this->generate_style_themeSettings['tab1']['build_mode'];
@@ -148,13 +148,12 @@ vendor-style:
     if ($exc['return_var']) {
       \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");
       $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
-    }
-    else {
+    } else {
       // \Drupal::messenger()->addStatus(" Fichier du theme generer avec
       // success, veuillez utiliser CTRL+F5 ");
     }
   }
-  
+
   /**
    * On copie les fichiers.
    *
@@ -162,11 +161,11 @@ vendor-style:
    */
   function CopyWbuAtomiqueThemeOld() {
     // wbu-atomique-theme/src/js
-    $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('module', "generate_style_theme") . "/wbu-atomique-theme";
+    $modulePath = DRUPAL_ROOT . "/" . $this->pathResolver->getPath('module', "generate_style_theme") . "/wbu-atomique-theme";
     $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName;
     $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
   }
-  
+
   /**
    * Les liens symbolique ne marge pas.
    * On va faire un lien, Car cela est plus facile à gerer et occupe moins
@@ -174,7 +173,7 @@ vendor-style:
    */
   function CopyWbuAtomiqueTheme() {
     // wbu-atomique-theme/src/js
-    $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('module', "generate_style_theme") . "/wbu-atomique-theme";
+    $modulePath = DRUPAL_ROOT . "/" . $this->pathResolver->getPath('module', "generate_style_theme") . "/wbu-atomique-theme";
     // $script = ' cp -r ' . $modulePath . ' ' . $this->themePath . '/' .
     // $this->themeName;
     // $script .= " && ";
@@ -191,24 +190,22 @@ vendor-style:
         if ($output !== 'node_modules') {
           if ($script) {
             $script .= ' && cp -r ' . $modulePath . '/' . $output . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
-          }
-          else
+          } else
             $script .= ' cp -r ' . $modulePath . '/' . $output . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
         }
       }
-    }
-    else {
+    } else {
       throw new \Exception(' Impossible de lire le contenu des fichiers  ');
     }
     // on fait un lien symbolique avec node_modules.
-    $modulePath = DRUPAL_ROOT . "/" . drupal_get_path('theme', $this->baseTheme) . "/wbu-atomique-theme";
+    $modulePath = DRUPAL_ROOT . "/" . $this->pathResolver->getPath('theme', $this->baseTheme) . "/wbu-atomique-theme";
     $script .= ' && ln -s ' . $modulePath . '/node_modules   ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
     $exc = $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
     if ($exc['return_var']) {
       $this->logger->warning('Error de copie des fichiers : <br>' . implode("<br>", $exc['output']));
     }
   }
-  
+
   /**
    * --
    */
@@ -219,7 +216,7 @@ vendor-style:
       $this->logger->warning('Error lors de la suppression de /wbu-atomique-theme : <br>' . implode("<br>", $exc['output']));
     }
   }
-  
+
   /**
    * --
    */
@@ -228,7 +225,7 @@ vendor-style:
     $this->scssFilesGlobalStyle();
     $this->scssFilesVendorStyle();
   }
-  
+
   /**
    * On genere le fichier de variable.
    */
@@ -241,7 +238,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-  
+
   private function scssFilesVendorStyle() {
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
     $variable_file = './' . $this->themeName . '_variables.scss';
@@ -252,14 +249,14 @@ vendor-style:
     $string .= '
      @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;';
     $string .= $vendor_import;
-    
+
     // Cree le fichier.
     $filename = $this->themeName . '--vendor.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-  
+
   /**
    * --
    */
@@ -283,8 +280,7 @@ vendor-style:
     if (!empty($styleImport)) {
       $string .= $styleImport;
       $string .= '@use "./custom.scss";';
-    }
-    else {
+    } else {
       // Ce modele est gardé pour etre compatible avec le site lesroisdelareno.
       if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
         $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
@@ -293,7 +289,7 @@ vendor-style:
         $string .= $confs['files'];
       }
     }
-    
+
     // // add debug
     // $string .= '
     // @debug "
@@ -305,7 +301,7 @@ vendor-style:
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
-    
+
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
     // on cree un fichier pour le style custom, le fichier n'existe pas;
@@ -313,7 +309,7 @@ vendor-style:
       debugLog::logger("", "custom.scss", false, 'file', $path, true);
     }
   }
-  
+
   /**
    * Construit les variables.
    *
@@ -354,7 +350,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     $wbu_link_color = $entity->getScssColorValue($entity->getColorLink());
     $wbu_bootstrap_primary = $entity->getScssColorValue($entity->getBootstrapColorPrimary());
-    
+
     return '
     /**
      * On definie les variables à ce niveau afin que les variables qui derive de ces valeurs soit ajusté.
@@ -394,7 +390,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     $space_inner_top: $space_top * 0.5;
 ';
   }
-  
+
   /**
    * Permet de recuperer les données de styles.
    */
@@ -408,7 +404,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     return $styleToImport;
   }
-  
+
   /**
    *
    * @param array $EntityImport
@@ -440,7 +436,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     return $styleToImport;
   }
-  
+
   private function excuteCmd($cmd, $name = "excuteCmd") {
     ob_start();
     $return_var = '';
@@ -456,7 +452,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     ];
     return $debug;
   }
-  
+
   protected function getScssFromLibrairy($libray) {
     if ($libray == 'lesroisdelareno/prestataires_m8')
       return [
@@ -533,5 +529,4 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     else
       throw new \Exception(" Fichier de style scss non definit ");
   }
-  
 }

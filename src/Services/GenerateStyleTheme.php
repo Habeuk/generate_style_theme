@@ -14,7 +14,7 @@ class GenerateStyleTheme extends ControllerBase {
   protected $themeDirectory;
   protected $themePath;
   protected $entity;
-  
+
   /**
    * Nom du theme parent.
    *
@@ -25,7 +25,7 @@ class GenerateStyleTheme extends ControllerBase {
    * Contient la configuation du module generate_style_theme.
    */
   protected $generate_style_themeSettings = [];
-  
+
   /**
    * Contient la cle du theme qui est encours de traitement.
    * example : domain.config.arche5_lesroisdelareno_fr.system.theme si on
@@ -42,7 +42,7 @@ class GenerateStyleTheme extends ControllerBase {
    * system.site
    */
   protected $configKeySite = null;
-  
+
   /**
    * Contient la clée des paramettres du theme qui est encours de traitement.
    * example :
@@ -57,22 +57,22 @@ class GenerateStyleTheme extends ControllerBase {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory = null;
-  
+
   /**
    *
    * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
   protected $hasError = false;
-  
+
   /**
    *
    * @var FileSystem
    */
   protected $FileSystem;
-  
+
   use GenerateFiles;
-  
+
   /**
    *
    * @param Array $configs
@@ -89,13 +89,13 @@ class GenerateStyleTheme extends ControllerBase {
     $this->logger = \Drupal::logger('generate_style_theme');
     $this->setDynamicConfig();
   }
-  
+
   private function getConfiguration() {
     $config = \Drupal::config('generate_style_theme.settings')->getRawData();
     $this->ValidConfig($config);
     return $config;
   }
-  
+
   /**
    * Definie une configuration variable.
    */
@@ -114,7 +114,7 @@ class GenerateStyleTheme extends ControllerBase {
     // }
     // }
   }
-  
+
   /**
    * \Drupal::config('generate_style_theme.settings')->getRawData();
    * Return le chemin vers le dossier parent du theme definit par defaut.
@@ -126,7 +126,7 @@ class GenerateStyleTheme extends ControllerBase {
    */
   protected function getPath() {
     $defaultThemeName = \Drupal::config('system.theme')->get('default');
-    $path_of_module = DRUPAL_ROOT . '/' . drupal_get_path('theme', $defaultThemeName);
+    $path_of_module = DRUPAL_ROOT . '/' . $this->pathResolver->getPath('theme', $defaultThemeName);
     $path_of_module = explode("/", $path_of_module);
     //
     if (!empty($path_of_module)) {
@@ -143,7 +143,7 @@ class GenerateStyleTheme extends ControllerBase {
     }
     throw new \Exception(" Impossible de determiner le chemin vers le dossier du theme. ");
   }
-  
+
   /**
    *
    * @param Boolean $createThme
@@ -156,10 +156,10 @@ class GenerateStyleTheme extends ControllerBase {
         $this->DeleteFilesNpm();
         $createThme = true;
       }
-      
+
       if ($createThme)
         $this->CopyWbuAtomiqueTheme();
-      
+
       $this->scssFiles();
       $this->jsFiles();
       //
@@ -171,12 +171,11 @@ class GenerateStyleTheme extends ControllerBase {
       $this->setConfigTheme();
       $this->setLogoToTheme();
       // $this->entity->validate();
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->logger->warning($e->getMessage());
     }
   }
-  
+
   /**
    * --
    */
@@ -187,7 +186,7 @@ class GenerateStyleTheme extends ControllerBase {
       $this->excuteCmd($script);
     }
   }
-  
+
   /**
    * --
    */
@@ -209,18 +208,16 @@ class GenerateStyleTheme extends ControllerBase {
         // function du domaine).
         if (empty($siteConfValue['mail'])) {
           $editConfig->set('mail', \Drupal::currentUser()->getEmail());
-        }
-        else
+        } else
           $editConfig->set('mail', $siteConfValue['mail']);
         //
         $editConfig->save();
-      }
-      else {
+      } else {
         \Drupal::messenger()->addWarning(' Imposible de mettre à jour la page home ');
       }
     }
   }
-  
+
   protected function setLogoToTheme() {
     if ($this->configKeyThemeSettings) {
       /**
@@ -235,7 +232,7 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
-  
+
   /**
    * Permet de valider la configuration du module.
    *
@@ -248,7 +245,7 @@ class GenerateStyleTheme extends ControllerBase {
     }
     throw new \LogicException("Certaines données de configuration sont inexistantes.");
   }
-  
+
   /**
    * Permet de definir le theme selectionner comme theme par defaut pour le
    * domaine choisie et applique quelques paramettre de configurations.
@@ -264,7 +261,7 @@ class GenerateStyleTheme extends ControllerBase {
    */
   protected function SetCurrentThemeDefaultOfDomaine() {
     if ($this->themeName && $this->entity->SetThemeAsDefaut()) {
-      
+
       $listThemes = \Drupal::service('theme_handler')->listInfo();
       // $listThemesInstalled = \Drupal::config("core.extension")->get('theme');
       // /**
@@ -275,7 +272,7 @@ class GenerateStyleTheme extends ControllerBase {
       $ExtLitThemes->reset();
       // dump($ExtLitThemes->getList());
       // dump($listThemesInstalled);
-      
+
       /**
        * On installe le nouveau theme.
        */
@@ -290,15 +287,14 @@ class GenerateStyleTheme extends ControllerBase {
         $ActiveAsignService->ActiveThemeForDomaine([
           $this->themeName => $this->themeName
         ]);
-      }
-      else {
+      } else {
         // \Drupal::messenger()->addStatus(' Theme deja installé : ' .
         // $this->themeName);
       }
-      
+
       $configs = \Drupal::config($this->configKeyTheme);
       $defaultThemeName = $configs->get('default');
-      
+
       // On definit le theme comme theme par defaut pour le nouveau theme.
       if ($this->themeName != $defaultThemeName) {
         /**
@@ -312,5 +308,4 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
-  
 }

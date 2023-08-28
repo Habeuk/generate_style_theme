@@ -51,6 +51,6 @@ class ConfigThemeEntityHtmlRouteProvider extends AdminHtmlRouteProvider {
 
       return $route;
     }
+    return [];
   }
-
 }

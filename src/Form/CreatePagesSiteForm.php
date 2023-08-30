@@ -100,8 +100,7 @@ class CreatePagesSiteForm extends FormBase {
       if ($form_state->get('page_num') == 2) {
         $this->buildFormPrestataire($form, $form_state);
         return $this->CreatePagesNextPage($form, $form_state);
-      }
-      else {
+      } else {
         $form['email-user-d'] = [
           '#type' => 'email',
           '#title' => 'Email du proproitaire de domaine',
@@ -109,8 +108,7 @@ class CreatePagesSiteForm extends FormBase {
         ];
         return $this->CreatePagesNextPage($form, $form_state);
       }
-    }
-    else {
+    } else {
       $form_state->set('page_num', 1);
       $this->FormWbumenudomain->buildFormWbumenudomain($form, $form_state);
     }
@@ -153,8 +151,7 @@ class CreatePagesSiteForm extends FormBase {
         'new_contents',
         'prestataires'
       ]);
-    }
-    else
+    } else
       $entity = $this->entityTypeManager->getStorage('node')->create([
         'type' => 'prestataires'
       ]);
@@ -434,7 +431,7 @@ class CreatePagesSiteForm extends FormBase {
       return true;
     // Validation de l'email
     if ($form_state->has('email-user-d')) {
-      if (\Drupal::entityQuery('user')->condition('mail', $form_state->get('email-user-d'))->execute()) {
+      if (\Drupal::entityQuery('user')->condition('mail', $form_state->get('email-user-d'))->accessCheck(false)->execute()) {
         $form_state->setErrorByName('email-user-d', ' Ce email existe deja ');
       }
     }
@@ -475,8 +472,7 @@ class CreatePagesSiteForm extends FormBase {
        * @var Wbumenudomain $entity_wbumenudomain
        */
       dump($entity_wbumenudomain->toArray());
-    }
-    else
+    } else
       $this->FormWbumenudomain->submitForm($form, $form_state);
 
     /**
@@ -586,8 +582,7 @@ class CreatePagesSiteForm extends FormBase {
     $rid = 'prestataires';
     if ($typeContenuHomePage == 'model_d_affichage_theme_commerce') {
       $rid = 'vendeurs';
-    }
-    elseif ($typeContenuHomePage == 'model_d_affichage_architecte_') {
+    } elseif ($typeContenuHomePage == 'model_d_affichage_architecte_') {
       $rid = 'architecte';
     }
     $user->addRole($rid);
@@ -644,5 +639,4 @@ class CreatePagesSiteForm extends FormBase {
       ], $entity_node);
     }
   }
-
 }

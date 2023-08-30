@@ -24,16 +24,16 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
    * @var ConfigThemeEntity
    */
   protected $entity;
-  
+
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
     $conf = ConfigDrupal::config("generate_style_theme.settings");
-    
+
     if (!empty($conf['tab1']['use_domain']) && \Drupal::moduleHandler()->moduleExists('domain')) {
       $domainId = $this->entity->getHostname();
       // Suppression de blocs personnaliser.
       $entity_type_id = 'block_content';
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $query->condition('field_domain_access', $domainId);
       $ids = $query->execute();
@@ -74,8 +74,8 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
          */
         $domain_ovh_entity = reset($domain_ovh_entities);
       }
-      
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $orGroup = $query->orConditionGroup();
       $orGroup->condition('id', $domainId, 'CONTAINS');
@@ -84,7 +84,7 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
         $orGroup->condition('id', $domain_ovh_entity->getsubDomain() . '_main');
         //
       }
-      
+
       $query->condition($orGroup);
       $ids = $query->execute();
       $form['menu'] = [
@@ -113,8 +113,8 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
       }
       // Suppression des blocks.
       $entity_type_id = 'block';
-      
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $query->condition('id', $domainId, 'CONTAINS');
       $ids = $query->execute();
@@ -143,7 +143,7 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
         }
       }
       // block en relation avec le theme.
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       $query->condition('theme', $domainId);
       $ids = $query->execute();
       $form['block2'] = [
@@ -170,10 +170,10 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
           ];
         }
       }
-      
+
       // Suppression des domain.
       $entity_type_id = 'domain';
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $query->condition('id', $domainId, '=');
       $ids = $query->execute();
@@ -201,10 +201,10 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
           ];
         }
       }
-      
+
       // Suppression des nodes.
       $entity_type_id = 'node';
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $query->condition('field_domain_access', $domainId);
       $ids = $query->execute();
@@ -232,10 +232,10 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
           ];
         }
       }
-      
+
       // Suppression des blocks_contents.
       $entity_type_id = 'blocks_contents';
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       $query->condition('field_domain_access', $domainId);
       $ids = $query->execute();
       $form['blocks_contents'] = [
@@ -265,7 +265,7 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
       // Suppression des domain_ovh_entity. Sa suppresion doit entrainer la
       // suppression de "donnee_internet_entity";
       $entity_type_id = 'domain_ovh_entity';
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $query->condition('domain_id_drupal', $domainId);
       $ids = $query->execute();
@@ -297,7 +297,7 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
       // Suppression des site_type_datas.
       $entity_type_id = 'site_internet_entity';
       $field_access = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $query->condition($field_access, $domainId);
       $ids = $query->execute();
@@ -329,7 +329,7 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
       // Suppression des site_type_datas.
       $entity_type_id = 'commerce_product';
       $field_access = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()->accessCheck(false);
       // $query->condition('status', 1);
       $query->condition($field_access, $domainId);
       $ids = $query->execute();
@@ -361,5 +361,4 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
     }
     return $form;
   }
-  
 }

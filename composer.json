@@ -1,7 +1,7 @@
 {
   "name": "habeuk/generate_style_theme",
   "description": "generate subtheme",
-  "type": "drupal-module-custom",
+  "type": "drupal-custom-module",
   "require": {
     "drupal/colorapi": "^1.1",
     "habeuk/layoutgenentitystyles": "^1.0 | dev-1x",

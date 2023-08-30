@@ -121,6 +121,13 @@ class GenerateStyleTheme extends ControllerBase {
     // }
     // }
   }
+  
+  protected function getPathResolver(){
+      if(!$this->pathResolver){
+          $this->pathResolver = \Drupal::service('extension.path.resolver');
+      }
+      return $this->pathResolver;
+  }
 
   /**
    * \Drupal::config('generate_style_theme.settings')->getRawData();
@@ -133,7 +140,7 @@ class GenerateStyleTheme extends ControllerBase {
    */
   protected function getPath() {
     $defaultThemeName = \Drupal::config('system.theme')->get('default');
-    $path_of_module = DRUPAL_ROOT . '/' . $this->pathResolver->getPath('theme', $defaultThemeName);
+    $path_of_module = DRUPAL_ROOT . '/' . $this->getPathResolver()->getPath('theme', $defaultThemeName);
     $path_of_module = explode("/", $path_of_module);
     //
     if (!empty($path_of_module)) {

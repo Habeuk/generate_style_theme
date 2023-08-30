@@ -74,6 +74,7 @@ function generate_style_theme_form_config_theme_entity_form_alter(&$form, FormSt
  * @return []
  */
 function _generate_style_theme_siteconfig_alter($form, FormStateInterface $form_state) {
+    dump($form['site_config']['widget']);
   return $form['site_config']['widget'][0]['siteconf']['container'];
 }
 

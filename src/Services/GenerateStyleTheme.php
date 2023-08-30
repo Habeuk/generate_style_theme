@@ -70,6 +70,12 @@ class GenerateStyleTheme extends ControllerBase {
    * @var FileSystem
    */
   protected $FileSystem;
+  
+  /**
+   *
+   * @var \Drupal\Core\Extension\ExtensionPathResolver
+   */
+  protected $pathResolver;
 
   use GenerateFiles;
 
@@ -87,6 +93,7 @@ class GenerateStyleTheme extends ControllerBase {
     $this->baseTheme = $this->generate_style_themeSettings['tab1']['theme_base'];
     $this->configFactory = \Drupal::service('config.factory');
     $this->logger = \Drupal::logger('generate_style_theme');
+    $this->pathResolver = \Drupal::service('extension.path.resolver');
     $this->setDynamicConfig();
   }
 

@@ -46,6 +46,8 @@ class GenerateStyleThemeController extends ControllerBase {
   /**
    * Permet de recuperer les styles definit dans une entity et de les renvoyés
    * vers le themes.
+   * Cette fonctionnalitées est limités pour le moment à wb-horizon.
+   * ( donc doit etre deplacer vers lesroidelareno ).
    *
    * @param integer $id
    * @param string $theme_name

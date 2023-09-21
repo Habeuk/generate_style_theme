@@ -63,16 +63,7 @@ generate_style_theme.layout_default_form:
     parameters:
       section_storage:
         layout_builder_tempstore: TRUE
-        
-        
-generate_style_theme.create_pages_site_form:
-  path: '/generate_style_theme/form/create_pages_site'
-  defaults:
-    _form: '\Drupal\generate_style_theme\Form\CreatePagesSiteForm'
-    _title: 'CreatePagesSiteForm'
-  requirements:
-    _access: 'TRUE'
-    
+ 
 generate_style_theme.config_tab1:
   path: '/admin/config/generate_style_theme/default-base'
   defaults:

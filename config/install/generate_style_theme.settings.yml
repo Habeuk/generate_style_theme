@@ -1,4 +1,3 @@
-storage_auto: 'content_create_automaticaly'
 langcode: 'en'
 tab1: 
   theme_base: 'theme_reference_wbu'

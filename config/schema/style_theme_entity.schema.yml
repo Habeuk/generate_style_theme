@@ -1,12 +1,1 @@
-generate_style_theme.style_theme_entity.*:
-  type: config_entity
-  label: 'Style de theme config'
-  mapping:
-    id:
-      type: string
-      label: 'ID'
-    label:
-      type: label
-      label: 'Label'
-    uuid:
-      type: string
+

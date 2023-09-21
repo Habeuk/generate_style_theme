@@ -1,8 +1,3 @@
-entity.style_theme_entity.add_form:
-  route_name: entity.style_theme_entity.add_form
-  title: 'Add Style de theme'
-  appears_on:
-    - entity.style_theme_entity.collection
 entity.config_theme_entity.add_form:
   route_name: entity.config_theme_entity.add_form
   title: 'Add Config theme entity'

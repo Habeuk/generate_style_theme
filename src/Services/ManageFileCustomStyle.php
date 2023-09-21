@@ -47,7 +47,7 @@ class ManageFileCustomStyle extends ControllerBase {
   /**
    * Ecrase le contenu scss existant.
    * L'idee est de permettre à plusieurs modules d'ajouter du contenu dans le
-   * fichier.
+   * fichier. Pour ce faire on va passer par une entité.
    *
    * @param string $string
    */

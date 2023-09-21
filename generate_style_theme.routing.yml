@@ -14,56 +14,7 @@ generate_style_theme.installtheme:
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::installTheme'
   requirements:
     _role: 'administrator'
-    
-generate_style_theme.layout_entete_form:
-  path: '/generate_style_theme/form/layout_entete'
-  defaults:
-    _form: '\Drupal\generate_style_theme\Form\LayoutEnteteForm'
-    _title: 'LayoutEnteteForm'
-  requirements:
-    _role: 'administrator'
-    
-generate_style_theme.layout_entete_form_v2:
-  path: '/generate_style_theme/form/layout_entete_v2'
-  defaults:
-    _form: '\Drupal\generate_style_theme\Form\LayoutEnteteFormV2'
-    _title: 'LayoutEnteteForm'
-  requirements:
-    _role: 'administrator'
 
-generate_style_theme.layout_merge_config:
-  path: '/generate_style_theme/restaure-layout/{section_storage}'
-  defaults:
-    _form: '\Drupal\generate_style_theme\Form\LayoutMergeConfigForm'
-    _title: 'Permet de restaurer la structure des layouts'
-  requirements:
-    _role: 'administrator'
-    
-generate_style_theme.layout_footer_form:
-  path: '/generate_style_theme/form/layout_footer'
-  defaults:
-    _form: '\Drupal\generate_style_theme\Form\LayoutFooterForm'
-    _title: 'LayoutEnteteForm'
-  requirements:
-    _role: 'administrator'
-    
-generate_style_theme.layout_default_form:
-  path: '/generate_style_theme/form/layout_default'
-  defaults:
-    _form: '\Drupal\generate_style_theme\Form\LayoutDefaultForm'
-    _title: 'LayoutDefaultForm'    
-    section_storage_type: defaults
-    section_storage: block_content.layout_entete_m1.default
-    delta: 0
-    plugin_id: null
-  requirements:
-    _role: 'administrator'
-  options:
-    _admin_route: FALSE
-    parameters:
-      section_storage:
-        layout_builder_tempstore: TRUE
- 
 generate_style_theme.config_tab1:
   path: '/admin/config/generate_style_theme/default-base'
   defaults:
@@ -79,9 +30,7 @@ generate_style_theme.updatestyletheme:
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::UpdateStyleTheme'
   requirements:
     _access: 'TRUE'
-    
 
-    
 generate_style_theme.managecustom.styles:
   path: '/admin/config/generate_style_theme/manage-custom-styles'
   defaults:
@@ -99,13 +48,7 @@ generate_style_theme.set_default_style:
   requirements:
     _access: 'TRUE'
     
-generate_style_theme.layout_paragraph:
-  path: '/generate_style_theme/form/layout-paragraph'
-  defaults:
-    _form: '\Drupal\generate_style_theme\Form\LayoutParagraph'
-    _title: 'LayoutEnteteForm'
-  requirements:
-    _role: 'administrator'
+
     
 
     

@@ -68,8 +68,7 @@ class GenerateStyleThemeController extends ControllerBase {
         $this->ManageFileCustomStyle->theme_name = $theme_name;
         $style_scss = $entityModel->get('style_scss')->value;
         $style_js = $entityModel->get('style_js')->value;
-        $this->ManageFileCustomStyle->saveJs($style_js);
-        $this->ManageFileCustomStyle->saveScss($style_scss);
+        $this->ManageFileCustomStyle->saveStyle('entity.site_type_datas', 'lesroidelareno', $style_scss, $style_js);
         // \Stephane888\Debug\debugLog::kintDebugDrupal($entityModel->get('style_scss')->value,
         // 'setDefaultStyle', true);
         return $this->reponse('Add custom style from model to site model : OK.');

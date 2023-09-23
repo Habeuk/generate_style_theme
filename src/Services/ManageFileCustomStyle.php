@@ -16,18 +16,6 @@ class ManageFileCustomStyle extends ControllerBase {
    * @var string
    */
   protected $path;
-  /**
-   * Contient les styles scss recement visité.
-   *
-   * @var Array
-   */
-  protected $pathScss = [];
-  /**
-   * Contient les styles js recement visité.
-   *
-   * @var Array
-   */
-  protected $pathJs = [];
   
   /**
    * Permet de definir un theme autre que celui encours pour la sauvegarde.
@@ -82,7 +70,7 @@ class ManageFileCustomStyle extends ControllerBase {
         'module' => $module,
         'scss' => $string
       ];
-      FilesStyle::create($values);
+      $entity = FilesStyle::create($values);
       $entity->save();
     }
     $this->generateCustomFile();
@@ -108,7 +96,7 @@ class ManageFileCustomStyle extends ControllerBase {
         'module' => $module,
         'scss' => $string
       ];
-      FilesStyle::create($values);
+      $entity = FilesStyle::create($values);
       $entity->save();
     }
     $this->generateCustomFile();
@@ -137,7 +125,7 @@ class ManageFileCustomStyle extends ControllerBase {
         'scss' => $scss,
         'js' => $js
       ];
-      FilesStyle::create($values);
+      $entity = FilesStyle::create($values);
       $entity->save();
     }
     $this->generateCustomFile();
@@ -161,12 +149,10 @@ class ManageFileCustomStyle extends ControllerBase {
    * @return string|boolean
    */
   public function getScss($key, $module) {
-    if (!$this->pathScss) {
-      $this->pathScss = $this->getPath() . '/scss/custom.scss';
-      if (!file_exists($this->pathScss))
-        debugLog::logger("", "custom.scss", false, 'file', $this->getPath() . '/scss', true);
+    $entity = FilesStyle::loadByName($key, $module);
+    if ($entity) {
+      return $entity->getScss();
     }
-    return file_get_contents($this->pathScss);
   }
   
   /**
@@ -175,12 +161,10 @@ class ManageFileCustomStyle extends ControllerBase {
    * @return string|boolean
    */
   public function getJs($key, $module) {
-    if (!$this->pathJs) {
-      $this->pathJs = $this->getPath() . '/js/custom.js';
-      if (!file_exists($this->pathJs))
-        debugLog::logger("", "custom.js", false, 'file', $this->getPath() . '/js', true);
+    $entity = FilesStyle::loadByName($key, $module);
+    if ($entity) {
+      return $entity->getJs();
     }
-    return file_get_contents($this->pathJs);
   }
   
 }

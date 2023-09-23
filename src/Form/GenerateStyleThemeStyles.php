@@ -67,12 +67,12 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
     $form['file_scss'] = [
       '#type' => 'textarea',
       '#title' => $this->t(' Custom scss '),
-      '#default_value' => $this->ManageFileCustomStyle->getScss()
+      '#default_value' => $this->ManageFileCustomStyle->getScss(self::$key, 'generate_style_theme')
     ];
     $form['file_js'] = [
       '#type' => 'textarea',
       '#title' => $this->t(' Custom js '),
-      '#default_value' => $this->ManageFileCustomStyle->getJs()
+      '#default_value' => $this->ManageFileCustomStyle->getJs(self::$key, 'generate_style_theme')
     ];
     //
     return parent::buildForm($form, $form_state);
@@ -85,8 +85,7 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $file_scss = $form_state->getValue('file_scss');
     $file_js = $form_state->getValue('file_js');
-    $this->ManageFileCustomStyle->saveJs($file_js);
-    $this->ManageFileCustomStyle->saveScss($file_scss);
+    $this->ManageFileCustomStyle->saveStyle(self::$key, 'generate_style_theme', $file_scss, $file_js);
   }
   
 }

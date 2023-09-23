@@ -54,3 +54,10 @@ generate_style_theme.set_default_style:
     
     
     
+entity.files_style.settings:
+  path: 'admin/structure/files-style'
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\FilesStyleSettingsForm'
+    _title: 'Files style'
+  requirements:
+    _permission: 'administer files style'

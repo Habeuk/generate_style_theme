@@ -4,3 +4,9 @@ entity.config_theme_entity.add_form:
   appears_on:
     - entity.config_theme_entity.collection
 
+
+files_style.add_form:
+  title: 'Add files style'
+  route_name: entity.files_style.add_form
+  appears_on:
+    - entity.files_style.collection

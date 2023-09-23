@@ -18,3 +18,14 @@ create_pages_site_form.config.settings:
   
   
   
+
+entity.files_style.settings:
+  title: 'Files style'
+  description: 'Configure a Files style entity type.'
+  route_name:  entity.files_style.settings
+  parent: system.admin_structure
+entity.files_style.collection:
+  title: 'Files styles'
+  description: 'List of files styles.'
+  route_name: entity.files_style.collection
+  parent: system.admin_content

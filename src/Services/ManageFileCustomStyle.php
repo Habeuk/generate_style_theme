@@ -7,6 +7,7 @@ use Drupal\Core\Extension\ExtensionPathResolver;
 use Stephane888\Debug\debugLog;
 use Stephane888\Debug\Repositories\ConfigDrupal;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\generate_style_theme\Entity\FilesStyle;
 
 class ManageFileCustomStyle extends ControllerBase {
   
@@ -15,8 +16,24 @@ class ManageFileCustomStyle extends ControllerBase {
    * @var string
    */
   protected $path;
-  protected $pathScss;
-  protected $pathJs;
+  /**
+   * Contient les styles scss recement visité.
+   *
+   * @var Array
+   */
+  protected $pathScss = [];
+  /**
+   * Contient les styles js recement visité.
+   *
+   * @var Array
+   */
+  protected $pathJs = [];
+  
+  /**
+   * Permet de definir un theme autre que celui encours pour la sauvegarde.
+   *
+   * @var string
+   */
   public $theme_name;
   
   /**
@@ -50,21 +67,100 @@ class ManageFileCustomStyle extends ControllerBase {
    * fichier. Pour ce faire on va passer par une entité.
    *
    * @param string $string
+   * @deprecated car il faudra enregistrer le scss et le js dans la meme entité.
+   *             Use saveStyle()
    */
-  public function saveScss($string) {
-    debugLog::logger($string, "custom.scss", false, 'file', $this->getPath() . '/scss', true);
+  public function saveScss($string, $key, $module) {
+    $entity = FilesStyle::loadByName($key, $module);
+    if ($entity) {
+      $entity->setScss($string);
+      $entity->save();
+    }
+    else {
+      $values = [
+        'label' => $key,
+        'module' => $module,
+        'scss' => $string
+      ];
+      FilesStyle::create($values);
+      $entity->save();
+    }
+    $this->generateCustomFile();
   }
   
   /**
    * Ecrase le contenu js existant
    *
    * @param string $string
+   * @deprecated car il faudra enregistrer le scss et le js dans la meme entité.
+   *             Use saveStyle()
+   *            
    */
-  public function saveJs($string) {
-    debugLog::logger($string, "custom.js", false, 'file', $this->getPath() . '/js', true);
+  public function saveJs($string, $key, $module) {
+    $entity = FilesStyle::loadByName($key, $module);
+    if ($entity) {
+      $entity->setScss($string);
+      $entity->save();
+    }
+    else {
+      $values = [
+        'label' => $key,
+        'module' => $module,
+        'scss' => $string
+      ];
+      FilesStyle::create($values);
+      $entity->save();
+    }
+    $this->generateCustomFile();
   }
   
-  public function getScss() {
+  /**
+   * Permet d'enregistrer les styles pour un module.
+   * Utiliser principalement pour les styles de surcharge.
+   *
+   * @param string $key
+   * @param string $module
+   * @param string $scss
+   * @param string $js
+   */
+  public function saveStyle($key, $module, $scss, $js) {
+    $entity = FilesStyle::loadByName($key, $module);
+    if ($entity) {
+      $entity->setScss($scss);
+      $entity->setJs($js);
+      $entity->save();
+    }
+    else {
+      $values = [
+        'label' => $key,
+        'module' => $module,
+        'scss' => $scss,
+        'js' => $js
+      ];
+      FilesStyle::create($values);
+      $entity->save();
+    }
+    $this->generateCustomFile();
+  }
+  
+  public function generateCustomFile() {
+    $entities = FilesStyle::loadMultiple();
+    $scss = '';
+    $js = '';
+    foreach ($entities as $entity) {
+      $scss .= $entity->getScss();
+      $js .= $entity->getJs();
+    }
+    debugLog::logger($js, "custom.js", false, 'file', $this->getPath() . '/js', true);
+    debugLog::logger($scss, "custom.scss", false, 'file', $this->getPath() . '/scss', true);
+  }
+  
+  /**
+   * Permet de recuperer le style d'un module.
+   *
+   * @return string|boolean
+   */
+  public function getScss($key, $module) {
     if (!$this->pathScss) {
       $this->pathScss = $this->getPath() . '/scss/custom.scss';
       if (!file_exists($this->pathScss))
@@ -73,7 +169,12 @@ class ManageFileCustomStyle extends ControllerBase {
     return file_get_contents($this->pathScss);
   }
   
-  public function getJs() {
+  /**
+   * Permet de recuperer le style d'un module.
+   *
+   * @return string|boolean
+   */
+  public function getJs($key, $module) {
     if (!$this->pathJs) {
       $this->pathJs = $this->getPath() . '/js/custom.js';
       if (!file_exists($this->pathJs))

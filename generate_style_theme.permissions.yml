@@ -18,3 +18,7 @@ view published config theme entity entities:
 view unpublished config theme entity entities:
   title: 'View unpublished Config theme entity entities'
 
+
+administer files style:
+  title: 'Administer files style settings'
+  restrict access: true

@@ -19,3 +19,26 @@ entity.config_theme_entity.delete_form:
   base_route:  entity.config_theme_entity.canonical
   title: Delete
   weight: 10
+
+entity.files_style.settings:
+  title: 'Settings'
+  route_name: entity.files_style.settings
+  base_route: entity.files_style.settings
+entity.files_style.view:
+  title: 'View'
+  route_name: entity.files_style.canonical
+  base_route: entity.files_style.canonical
+entity.files_style.edit_form:
+  title: 'Edit'
+  route_name: entity.files_style.edit_form
+  base_route: entity.files_style.canonical
+entity.files_style.delete_form:
+  title: 'Delete'
+  route_name: entity.files_style.delete_form
+  base_route: entity.files_style.canonical
+  weight: 10
+entity.files_style.collection:
+  title: 'Files styles'
+  route_name: entity.files_style.collection
+  base_route: system.admin_content
+  weight: 10

@@ -131,6 +131,19 @@ class ManageFileCustomStyle extends ControllerBase {
     $this->generateCustomFile();
   }
   
+  /**
+   * Permet de supprimer un style.
+   *
+   * @param string $key
+   * @param string $module
+   */
+  public function deleteStyle($key, $module) {
+    $entity = FilesStyle::loadByName($key, $module);
+    if ($entity) {
+      $entity->delete();
+    }
+  }
+  
   public function generateCustomFile() {
     $entities = FilesStyle::loadMultiple();
     $scss = '';

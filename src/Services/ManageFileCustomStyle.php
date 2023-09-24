@@ -110,8 +110,11 @@ class ManageFileCustomStyle extends ControllerBase {
    * @param string $module
    * @param string $scss
    * @param string $js
+   * @param array $customValue,
+   *        permet de passer des valeurs specique unqiuement lors de la
+   *        creation.
    */
-  public function saveStyle($key, $module, $scss, $js) {
+  public function saveStyle($key, $module, $scss, $js, $customValue = []) {
     $entity = FilesStyle::loadByName($key, $module);
     if ($entity) {
       $entity->setScss($scss);
@@ -124,7 +127,7 @@ class ManageFileCustomStyle extends ControllerBase {
         'module' => $module,
         'scss' => $scss,
         'js' => $js
-      ];
+      ] + $customValue;
       $entity = FilesStyle::create($values);
       $entity->save();
     }

@@ -39,14 +39,7 @@ generate_style_theme.managecustom.styles:
   requirements:
     _access: 'TRUE'
     
-generate_style_theme.set_default_style:
-  path: '/generate_style_theme/set_default_style/{id}/{theme_name}/{entity_type_id}'
-  defaults:
-    _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::setDefaultStyle'
-    _title: 'Set default style'
-    entity_type_id: 'site_type_datas'
-  requirements:
-    _access: 'TRUE'
+
     
 
     

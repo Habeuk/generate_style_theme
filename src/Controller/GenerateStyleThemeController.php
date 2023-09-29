@@ -9,6 +9,8 @@ use Drupal\generate_style_theme\Services\GenerateStyleTheme;
 use Drupal\Component\Serialization\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\generate_style_theme\Entity\ConfigThemeEntity;
+use Stephane888\Debug\ExceptionExtractMessage;
+use Drupal\generate_style_theme\Services\ManageFileCustomStyle;
 
 /**
  * Returns responses for Generate style theme routes.
@@ -22,8 +24,15 @@ class GenerateStyleThemeController extends ControllerBase {
    */
   protected $themeInstaller;
   
-  public function __construct(ThemeInstaller $themeInstaller) {
+  /**
+   *
+   * @var ManageFileCustomStyle
+   */
+  protected $ManageFileCustomStyle;
+  
+  public function __construct(ThemeInstaller $themeInstaller, ManageFileCustomStyle $ManageFileCustomStyle) {
     $this->themeInstaller = $themeInstaller;
+    $this->ManageFileCustomStyle = $ManageFileCustomStyle;
   }
   
   /**
@@ -32,6 +41,48 @@ class GenerateStyleThemeController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static($container->get('theme_installer'), $container->get('generate_style_theme.manage_file_custom_style'));
+  }
+  
+  /**
+   * Permet de recuperer les styles definit dans une entity et de les renvoyés
+   * vers le themes.
+   * Cette fonctionnalitées est limités pour le moment à wb-horizon.
+   * ( donc doit etre deplacer vers lesroidelareno ).
+   *
+   * @param integer $id
+   * @param string $theme_name
+   * @param string $entity_type_id
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function setDefaultStyle($id, $theme_name, $entity_type_id = 'site_type_datas') {
+    /**
+     * C'est le contenu model.
+     * Dans ce contenu model, seul quelques sont necessaire.
+     * [ layout_paragraphs ]
+     *
+     * @var \Drupal\creation_site_virtuel\Entity\SiteTypeDatas $entityModel
+     */
+    $entityModel = $this->entityTypeManager()->getStorage($entity_type_id)->load($id);
+    if ($entityModel) {
+      try {
+        $this->ManageFileCustomStyle->theme_name = $theme_name;
+        $style_scss = $entityModel->get('style_scss')->value;
+        $style_js = $entityModel->get('style_js')->value;
+        $this->ManageFileCustomStyle->saveStyle('entity.site_type_datas', 'lesroidelareno', $style_scss, $style_js);
+        // \Stephane888\Debug\debugLog::kintDebugDrupal($entityModel->get('style_scss')->value,
+        // 'setDefaultStyle', true);
+        return $this->reponse('Add custom style from model to site model : OK.');
+      }
+      catch (\Exception $e) {
+        $errors = ExceptionExtractMessage::errorAll($e);
+        $this->getLogger('generate_style_theme')->critical($e->getMessage() . '<br>' . implode("<br>", $errors));
+        return $this->reponse($errors, 400, $e->getMessage());
+      }
+    }
+    else {
+      $this->getLogger('generate_style_theme')->critical(" Le contenu model n'existe plus : " . $id);
+      return $this->reponse([], 400, "Le contenu model n'existe plus : " . $id);
+    }
   }
   
   /**

@@ -4,12 +4,11 @@
   "type": "drupal-custom-module",
   "require": {
     "drupal/colorapi": "^1.1",
-    "habeuk/layoutgenentitystyles": "^1.1.5 | dev-1x",
+    "habeuk/layoutgenentitystyles": "^1.0 | dev-1x",
     "habeuk/debug": "^2.0 | dev-2x",
     "habeuk/theme_reference_wbu": "^1.0 | dev-1x"
   },
   "license": "MIT",
-  "prefer-stable": true,
   "authors": [
     {
       "name": "stephane888",

@@ -35,29 +35,18 @@ class ManageFileCustomStyle extends ControllerBase {
   }
   
   /**
-   * --
    *
    * @return string
    */
   protected function getPath() {
     if (!$this->path) {
-      $this->getSelectedTheme();
+      if (!$this->theme_name) {
+        $conf = ConfigDrupal::config('system.theme');
+        $this->theme_name = $conf['default'];
+      }
       $this->path = DRUPAL_ROOT . '/' . $this->ExtensionPathResolver->getPath('theme', $this->theme_name) . '/wbu-atomique-theme/src';
     }
     return $this->path;
-  }
-  
-  /**
-   * --
-   *
-   * @return string
-   */
-  protected function getSelectedTheme() {
-    if (!$this->theme_name) {
-      $conf = ConfigDrupal::config('system.theme');
-      $this->theme_name = $conf['default'];
-    }
-    return $this->theme_name;
   }
   
   /**
@@ -121,11 +110,8 @@ class ManageFileCustomStyle extends ControllerBase {
    * @param string $module
    * @param string $scss
    * @param string $js
-   * @param array $customValue,
-   *        permet de passer des valeurs specique unqiuement lors de la
-   *        creation.
    */
-  public function saveStyle($key, $module, $scss, $js, $customValue = []) {
+  public function saveStyle($key, $module, $scss, $js) {
     $entity = FilesStyle::loadByName($key, $module);
     if ($entity) {
       $entity->setScss($scss);
@@ -138,7 +124,7 @@ class ManageFileCustomStyle extends ControllerBase {
         'module' => $module,
         'scss' => $scss,
         'js' => $js
-      ] + $customValue;
+      ];
       $entity = FilesStyle::create($values);
       $entity->save();
     }
@@ -160,8 +146,7 @@ class ManageFileCustomStyle extends ControllerBase {
   
   public function generateCustomFile() {
     $entities = FilesStyle::loadMultiple();
-    $variable_file = './' . $this->getSelectedTheme() . '_variables.scss';
-    $scss = '    @use "' . $variable_file . '" as *;    ';
+    $scss = '';
     $js = '';
     foreach ($entities as $entity) {
       $scss .= $entity->getScss();

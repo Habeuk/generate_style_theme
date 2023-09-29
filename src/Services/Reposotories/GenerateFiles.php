@@ -133,6 +133,7 @@ vendor-style:
     $npm = 'npm';
     if (!empty($this->generate_style_themeSettings['tab1']['pwd_npm']))
       $npm = $this->generate_style_themeSettings['tab1']['pwd_npm'];
+    
     $script = ' ';
     // if (!empty($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'],
     // ".kksa") !== false) {
@@ -454,6 +455,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
   }
   
   private function excuteCmd($cmd, $name = "excuteCmd") {
+    \Drupal::messenger()->addStatus($cmd);
     ob_start();
     $return_var = '';
     $output = '';

@@ -67,7 +67,8 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
     $form['file_scss'] = [
       '#type' => 'textarea',
       '#title' => $this->t(' Custom scss '),
-      '#default_value' => $this->ManageFileCustomStyle->getScss(self::$key, 'generate_style_theme')
+      '#default_value' => $this->ManageFileCustomStyle->getScss(self::$key, 'generate_style_theme'),
+      '#row' => '30'
     ];
     $form['file_js'] = [
       '#type' => 'textarea',

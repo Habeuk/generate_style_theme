@@ -262,6 +262,9 @@ vendor-style:
     @use "' . $variable_file . '" as *;';
     $string .= '
      @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;';
+    if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
+      $string .= '@use "./custom.scss";';
+    }
     $string .= $vendor_import;
     
     // Cree le fichier.
@@ -287,24 +290,33 @@ vendor-style:
     $string .= '
     @use "' . $variable_file . '" as *;
     ';
-    $string .= '
-    // On a besoin de ce fichier pour les styles ajoutés dans ./custom.scss.
-    // @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
-    ';
+    
     $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
       $string .= $styleImport;
+    }
+    // else {
+    // // Ce modele est gardé pour etre compatible avec le site lesroisdelareno.
+    // if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
+    // $libray = !empty($entity->getLirairy()['value']) ?
+    // $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
+    // $confs = $this->getScssFromLibrairy($libray);
+    // $string .= $confs['configs'] . $this->buildScssVar();
+    // $string .= $confs['files'];
+    // }
+    // }
+    // On importe ce fichier dans vendor
+    // car on a besoin d'utiliser @extent.
+    /**
+     * Afin d'avoir un code compatible, on ferra cette modification plus tard.
+     * i.e à la version 4x.
+     * si la variable est à true on ne fait rien.
+     */
+    if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
+      //
+    }
+    else
       $string .= '@use "./custom.scss";';
-    }
-    else {
-      // Ce modele est gardé pour etre compatible avec le site lesroisdelareno.
-      if (\Drupal::moduleHandler()->moduleExists('wbumenudomain')) {
-        $libray = !empty($entity->getLirairy()['value']) ? $entity->getLirairy()['value'] : 'lesroisdelareno/prestataires_m0';
-        $confs = $this->getScssFromLibrairy($libray);
-        $string .= $confs['configs'] . $this->buildScssVar();
-        $string .= $confs['files'];
-      }
-    }
     
     // // add debug
     // $string .= '
@@ -346,6 +358,10 @@ vendor-style:
     $wbu_h2_font_size = isset($entity->getH2FontSize()['value']) ? $entity->getH2FontSize()['value'] : '2.4rem';
     $wbu_h3_font_size = !empty($entity->getH3FontSize()) ? $entity->getH3FontSize() : '1.8rem';
     $wbu_h4_font_size = !empty($entity->getH4FontSize()) ? $entity->getH4FontSize() : '1.6rem';
+    $string .= '
+    // On a besoin de ce fichier pour les styles ajoutés dans ./custom.scss.
+    // @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
+    ';
     $wbu_h5_font_size = !empty($entity->getH5FontSize()) ? $entity->getH5FontSize() : '1.4rem';
     $wbu_h6_font_size = !empty($entity->getH6FontSize()) ? $entity->getH6FontSize() : '1.4rem';
     $text_font_size = isset($entity->gettext_font_size()['value']) ? $entity->gettext_font_size()['value'] : '1.4rem';

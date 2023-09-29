@@ -85,6 +85,11 @@ class GenerateStyleTheme extends ConfigFormBase {
       '#title' => 'Contient les imports js par defaut',
       '#default_value' => $config->get('tab1.vendor_import.js')
     ];
+    $form['vendor_import']['load_custom_in_vendor'] = [
+      '#type' => 'checkbox',
+      '#title' => "Charge le fichier custom dans vendor, cela permet d'utiliser @extent.",
+      '#default_value' => $config->get('tab1.vendor_import.load_custom_in_vendor')
+    ];
     return parent::buildForm($form, $form_state);
   }
   

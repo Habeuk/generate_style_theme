@@ -260,10 +260,17 @@ vendor-style:
     $string = '';
     $string .= '
     @use "' . $variable_file . '" as *;';
+    // Les fichiers requis pour l'environnment drupal.
     $string .= '
-     @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;';
+@use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
+@use "@stephane888/wbu-atomique/scss/bootstrap-all.scss"; 
+@use "@stephane888/wbu-atomique/scss/atome/typography/_default.scss"; 
+@use "@stephane888/wbu-atomique/scss/molecule/default-class.scss";
+    ';
     if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
-      $string .= '@use "./custom.scss";';
+      $string .= '
+@use "./custom.scss";
+';
     }
     $string .= $vendor_import;
     

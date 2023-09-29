@@ -29,6 +29,11 @@ class ManageFileCustomStyle extends ControllerBase {
    * @var ExtensionPathResolver
    */
   protected $ExtensionPathResolver;
+  /**
+   *
+   * @var array
+   */
+  protected $generate_style_themeSettings = [];
   
   function __construct(ExtensionPathResolver $ExtensionPathResolver) {
     $this->ExtensionPathResolver = $ExtensionPathResolver;
@@ -58,6 +63,13 @@ class ManageFileCustomStyle extends ControllerBase {
       $this->theme_name = $conf['default'];
     }
     return $this->theme_name;
+  }
+  
+  public function getConfigGenerateStyleTheme() {
+    if (!$this->generate_style_themeSettings) {
+      $this->generate_style_themeSettings = ConfigDrupal::config('generate_style_theme.settings');
+    }
+    return $this->generate_style_themeSettings;
   }
   
   /**
@@ -162,6 +174,13 @@ class ManageFileCustomStyle extends ControllerBase {
     $entities = FilesStyle::loadMultiple();
     $variable_file = './' . $this->getSelectedTheme() . '_variables.scss';
     $scss = '    @use "' . $variable_file . '" as *;    ';
+    if (!empty($this->getConfigGenerateStyleTheme()['tab1']['vendor_import']['load_custom_in_vendor'])) {
+      $scss .= '
+// ces elements ne sont pas importé dans le rendu final ...vendor.css car cela ils sont deja dans ...vendor.scss .( tester sur sass-loader@11.1.1 && sass@1.66.1 )
+@use "@stephane888/wbu-atomique/scss/bootstrap-all.scss" as *;
+@use "@stephane888/wbu-atomique/scss/molecule/default-class.scss" as *;
+';
+    }
     $js = '';
     foreach ($entities as $entity) {
       $scss .= $entity->getScss();

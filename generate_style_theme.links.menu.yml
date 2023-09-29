@@ -18,7 +18,7 @@ generate_style_theme.managecustom.styles:
   title: 'Custom style (scss && js) '
   description: 'Style ajouter par le module generate_style_theme'
   route_name: generate_style_theme.managecustom.styles
-  parent: system.admin_config_ui
+  parent: generate_style_theme.config_tab1
   weight: 40
   
   

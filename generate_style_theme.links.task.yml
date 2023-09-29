@@ -42,3 +42,17 @@ entity.files_style.collection:
   route_name: entity.files_style.collection
   base_route: system.admin_content
   weight: 10
+  
+#custom
+generate_style_theme.config_tab1:
+  title: 'Configuration de base'
+  route_name: generate_style_theme.config_tab1
+  base_route: generate_style_theme.config_tab1
+  weight: 10
+  
+generate_style_theme.managecustom.styles:
+  title: 'Custom style (scss && js )'
+  route_name: generate_style_theme.managecustom.styles
+  base_route: generate_style_theme.config_tab1
+  weight: 10
+  

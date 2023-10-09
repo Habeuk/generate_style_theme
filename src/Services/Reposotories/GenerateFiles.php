@@ -148,10 +148,6 @@ vendor-style:
       \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");
       $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
     }
-    else {
-      // \Drupal::messenger()->addStatus(" Fichier du theme generer avec
-      // success, veuillez utiliser CTRL+F5 ");
-    }
   }
   
   /**

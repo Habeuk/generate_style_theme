@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class GenerateStyleTheme extends ConfigFormBase {
   private static $key = 'generate_style_theme.settings';
-  
+
   /**
    *
    * {@inheritdoc}
@@ -18,7 +18,7 @@ class GenerateStyleTheme extends ConfigFormBase {
   public function getFormId() {
     return self::$key;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class GenerateStyleTheme extends ConfigFormBase {
       self::$key
     ];
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -44,7 +44,7 @@ class GenerateStyleTheme extends ConfigFormBase {
     $form['use_domain'] = [
       '#type' => 'checkbox',
       '#title' => 'Generer css&js themes à partir du domaine',
-      '#description' => " Vous devez egalement activer 'enable domain config'",
+      '#description' => "",
       '#default_value' => $config->get('tab1.use_domain')
     ];
     $form['save_multifile'] = [
@@ -77,7 +77,7 @@ class GenerateStyleTheme extends ConfigFormBase {
       '#type' => 'textarea',
       '#title' => 'Contient les imports scss par defaut',
       '#default_value' => $config->get('tab1.vendor_import.scss'),
-      '#description' => " Les imports definit doivent commencer par @use, la configuration serra automatiquement appliquer. <br> 
+      '#description' => " Les imports definit doivent commencer par @use, la configuration serra automatiquement appliquer. <br>
       Mais vous pourriez appliquer une configuration tant qu'elle ne conside avec celle par defaut "
     ];
     $form['vendor_import']['js'] = [
@@ -92,7 +92,7 @@ class GenerateStyleTheme extends ConfigFormBase {
     ];
     return parent::buildForm($form, $form_state);
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -108,5 +108,5 @@ class GenerateStyleTheme extends ConfigFormBase {
     $config->set('tab1.pwd_npm', $form_state->getValue('pwd_npm'));
     $config->save();
   }
-  
+
 }

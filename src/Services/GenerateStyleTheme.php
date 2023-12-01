@@ -70,7 +70,7 @@ class GenerateStyleTheme extends ControllerBase {
    * @var FileSystem
    */
   protected $FileSystem;
-  
+
   /**
    *
    * @var \Drupal\Core\Extension\ExtensionPathResolver
@@ -99,7 +99,6 @@ class GenerateStyleTheme extends ControllerBase {
 
   private function getConfiguration() {
     $config = \Drupal::config('generate_style_theme.settings')->getRawData();
-    $this->ValidConfig($config);
     return $config;
   }
 
@@ -121,12 +120,12 @@ class GenerateStyleTheme extends ControllerBase {
     // }
     // }
   }
-  
-  protected function getPathResolver(){
-      if(!$this->pathResolver){
-          $this->pathResolver = \Drupal::service('extension.path.resolver');
-      }
-      return $this->pathResolver;
+
+  protected function getPathResolver() {
+    if (!$this->pathResolver) {
+      $this->pathResolver = \Drupal::service('extension.path.resolver');
+    }
+    return $this->pathResolver;
   }
 
   /**
@@ -185,7 +184,8 @@ class GenerateStyleTheme extends ControllerBase {
       $this->setConfigTheme();
       $this->setLogoToTheme();
       // $this->entity->validate();
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->logger->warning($e->getMessage());
     }
   }
@@ -222,11 +222,13 @@ class GenerateStyleTheme extends ControllerBase {
         // function du domaine).
         if (empty($siteConfValue['mail'])) {
           $editConfig->set('mail', \Drupal::currentUser()->getEmail());
-        } else
+        }
+        else
           $editConfig->set('mail', $siteConfValue['mail']);
         //
         $editConfig->save();
-      } else {
+      }
+      else {
         \Drupal::messenger()->addWarning(' Imposible de mettre à jour la page home ');
       }
     }
@@ -245,19 +247,6 @@ class GenerateStyleTheme extends ControllerBase {
         $editConfigTheme->set('logo.use_default', 0)->save();
       }
     }
-  }
-
-  /**
-   * Permet de valider la configuration du module.
-   *
-   * @deprecated doit etre supprimer un foix le module fonctionne sur
-   *             lesroisdelareno et le storibon.
-   */
-  protected function ValidConfig(array $config) {
-    if (!empty($config['tab1']['theme_base']) && isset($config['tab1']['use_domain'])) {
-      return true;
-    }
-    throw new \LogicException("Certaines données de configuration sont inexistantes.");
   }
 
   /**
@@ -301,7 +290,8 @@ class GenerateStyleTheme extends ControllerBase {
         $ActiveAsignService->ActiveThemeForDomaine([
           $this->themeName => $this->themeName
         ]);
-      } else {
+      }
+      else {
         // \Drupal::messenger()->addStatus(' Theme deja installé : ' .
         // $this->themeName);
       }
@@ -322,4 +312,5 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
+
 }

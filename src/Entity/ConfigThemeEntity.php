@@ -122,6 +122,9 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             case 'site_internet_entity':
             case 'commerce_product':
             case 'blocks_contents':
+              $Storage = $entityTypeManager->getStorage($entity_type_id);
+              if (!$Storage)
+                break;
               $query = $entityTypeManager->getStorage($entity_type_id)->getQuery();
               $query->condition($field_access, $domainId);
               $query->accessCheck(False);
@@ -212,7 +215,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             $domainId => $domainId
           ];
           $ThemeInstaller->uninstall($theme_list);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           \Drupal::messenger()->addWarning(" Le theme n'a pas pu etre desintallé : " . $domainId);
           \Drupal::logger('generate_style_theme')->warning(" Le theme n'a pas pu etre desintallé : " . $domainId);
         }
@@ -267,7 +271,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
           // curl_exec($ch);
           // curl_close($ch);
           file_get_contents($url);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           \Drupal::logger('generate_style_theme')->warning(" generate_style_theme : Le lien du logo n'est pas toujours bien generé ");
         }
         // return path to save in theme.settings.logo.url
@@ -730,4 +735,5 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
 
     return $fields;
   }
+
 }

@@ -243,6 +243,7 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
         '#title' => 'Les blocks_contents qui seront supprimés : ' . count($ids),
         '#open' => false
       ];
+
       if ($ids) {
         $entities = $this->entityTypeManager->getStorage($entity_type_id)->loadMultiple($ids);
         foreach ($entities as $node) {
@@ -361,4 +362,5 @@ class ConfigThemeEntityDeleteForm extends ContentEntityDeleteForm {
     }
     return $form;
   }
+
 }

@@ -4,5 +4,5 @@ description: "Permet de modifier les styles d'un theme."
 package: Custom
 core_version_requirement: ^9 || ^10
 dependencies:
-  - colorapi
-  - formatage_models
+  - colorapi:colorapi
+  - formatage_models:formatage_models

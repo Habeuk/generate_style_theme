@@ -588,30 +588,33 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       ]
     ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
 
-    $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [
-      'type' => 'colorapi_color_display'
+    $fields['color_primary'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
+    // => 'color_theme_formatter_type'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#CE3B3B',
       'name' => 'color primary'
     ])->setDescription("Couleur Principal, tres utilisée");
 
-    $fields['color_secondaire'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur
-      secondaire ")->setRequired(TRUE)->setDisplayOptions('form', [
-      'type' => 'colorapi_color_display'
+    $fields['color_secondaire'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(" Couleur
+      secondaire ")->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
+                                                                     // =>
+                                                                     // 'color_theme_formatter_type'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#DD731D',
       'name' => ''
     ])->setDescription("Couleur de niveau 2, moins utilisée");
-    $fields['wbu_color_thirdly'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur
-      tertiaires ")->setRequired(TRUE)->setDisplayOptions('form', [
-      'type' => 'colorapi_color_display'
+    $fields['wbu_color_thirdly'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(" Couleur
+      tertiaires ")->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
+                                                                     // =>
+                                                                     // 'color_theme_formatter_type'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#F88C12',
       'name' => ''
     ])->setDescription("Couleur de niveau 3, tres peut utiliser");
-    $fields['wbubackground'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur
-      d'arrière plan ")->setRequired(TRUE)->setDisplayOptions('form', [
-      'type' => 'colorapi_color_display'
+    $fields['wbubackground'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(" Couleur
+      d'arrière plan ")->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
+                                                                         // =>
+                                                                         // 'color_theme_formatter_type'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#0F103E',
       'name' => ''

@@ -16,7 +16,7 @@ use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
  * @deprecated ce champs ne peut etre utiliser par plusieurs entité ( actuelment
  *             c'est : config_theme_entity )
  *             A widget bar.
- *
+ *            
  * @FieldWidget(
  *   id = "wbumenudomainsiteconfig",
  *   label = @Translation(" Wbumenudomain Widget Site Config "),
@@ -28,7 +28,7 @@ use Drupal\generate_style_theme\GenerateStyleTheme as GenerateStyleThemeConfig;
  */
 class WbumenudomainSiteconfig extends WidgetBase {
   protected $ThemeUtility;
-
+  
   /**
    * Constructs a WidgetBase object.
    *
@@ -45,10 +45,10 @@ class WbumenudomainSiteconfig extends WidgetBase {
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ThemeUtility $ThemeUtility) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-
+    
     $this->ThemeUtility = $ThemeUtility;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -56,7 +56,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['third_party_settings'], $container->get('generate_style_theme.themeutility'));
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -66,25 +66,24 @@ class WbumenudomainSiteconfig extends WidgetBase {
       'placeholder' => ''
     ] + parent::defaultSettings();
   }
-
+  
   /**
    *
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-
     // get value
     // dump($items[$delta]->value);
     // $value = isset($items[$delta]->value) ? $items[$delta]->value : '';
     // on recupere le domaine-id à partir du champs (via l'action ajax).
     $hostname = $form_state->getValue('hostname');
-    // dump(Json::decode($items->value));
     if (!empty($hostname[0]['value'])) {
       $hostname = $hostname[0]['value'];
       $this->ThemeUtility->ActiveUseAjax();
     }
     // Si non, on recupere à partir de l'entité.( pour l'edition).
     elseif (\Drupal::routeMatch()->getRouteName() == 'entity.config_theme_entity.edit_form') {
+      // dump(\Drupal::routeMatch()->getParameters());
       /**
        *
        * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $config_theme_entity
@@ -100,7 +99,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
         $hostname = $request->query->get('domaine-id');
       }
     }
-
+    
     $element['siteconf'] = [];
     $this->ThemeUtility->addContainerTree('container', $element['siteconf'], 'Configuration du site', true);
     $element['siteconf']['container']['#prefix'] = '<div id="wbumenudomain-siteconfig">';
@@ -117,6 +116,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
      * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
      */
     $configFactory = \Drupal::service('config.factory');
+    
     if (!empty($hostname)) {
       $config = \Drupal::config('generate_style_theme.settings')->getRawData();
       $conf = GenerateStyleThemeConfig::getDynamicConfig($hostname, $config);
@@ -127,19 +127,17 @@ class WbumenudomainSiteconfig extends WidgetBase {
       $siteConf = $config;
     }
     $this->formSiteConfig($element['siteconf']['container'], $siteConf);
-
+    
     // die();
     // $form_state->setRebuild();
     return $element;
   }
-
+  
   /**
    *
    * @param array $form
    * @param int $id_config
    * @param array $siteConf
-   *        doit provenir de la configuration afin de ne pas perdre toute
-   *        configuration effectuer ailleurs. (par example dans site setting).
    */
   public function formSiteConfig(array &$form, array $siteConf = []) {
     // edit config
@@ -163,7 +161,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
     $page_404 = isset($siteConf["page"]["404"]) ? $siteConf["page"]["404"] : '';
     $this->ThemeUtility->addTextfieldTree('page.404', $form, "Page 404 par défaut ( page non trouvée )", $page_404);
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -177,7 +175,7 @@ class WbumenudomainSiteconfig extends WidgetBase {
     ];
     return $element;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -196,5 +194,5 @@ class WbumenudomainSiteconfig extends WidgetBase {
     }
     return parent::massageFormValues($values, $form, $form_state);
   }
-
+  
 }

@@ -11,11 +11,11 @@ use Drupal\colorapi\Plugin\Field\FieldWidget\ColorapiWidgetBase;
  * Plugin implementation of the 'color_theme_widget_type' widget.
  *
  * @FieldWidget(
- *   id = "color_theme_widget_type",
+ *   id = "generate_style_theme_color_widget",
  *   module = "generate_style_theme",
  *   label = @Translation("Color theme widget type"),
  *   field_types = {
- *     "color_theme_field_type"
+ *     "generate_style_theme_color"
  *   }
  * )
  */

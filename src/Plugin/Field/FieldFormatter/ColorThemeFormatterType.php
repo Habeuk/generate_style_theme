@@ -13,13 +13,13 @@ use Drupal\colorapi\Plugin\Field\FieldFormatter\ColorapiColorDisplayFormatter;
  * Plugin implementation of the 'color_theme_formatter_type' formatter.
  *
  * @FieldFormatter(
- *   id = "color_theme_formatter_type",
+ *   id = "generate_style_theme_color_formatter",
  *   label = @Translation("Color theme formatter type"),
  *   field_types = {
- *     "color_theme_field_type"
+ *     "generate_style_theme_color"
  *   }
  * )
  */
 class ColorThemeFormatterType extends ColorapiColorDisplayFormatter {
-  
+
 }

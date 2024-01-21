@@ -74,7 +74,8 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
           'codemirror',
           'lang_scss'
         ]
-      ]
+      ],
+      "#description" => "Vous pouvez ajouter les mixins et les librairies inclut dans @stephane888/wbu-atomique"
     ];
     $form['file_js'] = [
       '#type' => 'textarea',
@@ -86,8 +87,10 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
           'codemirror',
           'lang_js'
         ]
-      ]
+      ],
+      "#description" => "Vous pouvez ajouter les mixins et les librairies inclut dans @stephane888/wbu-atomique"
     ];
+    $form['#attached']['library'][] = 'generate_style_theme/codemirror_admin';
     //
     return parent::buildForm($form, $form_state);
   }

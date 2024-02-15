@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class GenerateStyleTheme extends ConfigFormBase {
   private static $key = 'generate_style_theme.settings';
-
+  
   /**
    *
    * {@inheritdoc}
@@ -18,7 +18,7 @@ class GenerateStyleTheme extends ConfigFormBase {
   public function getFormId() {
     return self::$key;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class GenerateStyleTheme extends ConfigFormBase {
       self::$key
     ];
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -68,7 +68,7 @@ class GenerateStyleTheme extends ConfigFormBase {
       '#description' => " Utiliser la commande 'whereis npm' afin de determiner le chemin "
     ];
     $form['vendor_import'] = [
-      '#type' => 'details',
+      '#type' => 'fieldset',
       '#tree' => true,
       '#open' => true,
       '#title' => 'Styles vendor scss & js'
@@ -78,21 +78,35 @@ class GenerateStyleTheme extends ConfigFormBase {
       '#title' => 'Contient les imports scss par defaut',
       '#default_value' => $config->get('tab1.vendor_import.scss'),
       '#description' => " Les imports definit doivent commencer par @use, la configuration serra automatiquement appliquer. <br>
-      Mais vous pourriez appliquer une configuration tant qu'elle ne conside avec celle par defaut "
+      Mais vous pourriez appliquer une configuration tant qu'elle ne coïncider avec celle par defaut ",
+      '#attributes' => [
+        'class' => [
+          'codemirror',
+          'lang_scss'
+        ]
+      ]
     ];
     $form['vendor_import']['js'] = [
       '#type' => 'textarea',
       '#title' => 'Contient les imports js par defaut',
-      '#default_value' => $config->get('tab1.vendor_import.js')
+      '#default_value' => $config->get('tab1.vendor_import.js'),
+      '#attributes' => [
+        'class' => [
+          'codemirror',
+          'lang_js'
+        ]
+      ]
     ];
     $form['vendor_import']['load_custom_in_vendor'] = [
       '#type' => 'checkbox',
-      '#title' => "Charge le fichier custom dans vendor, cela permet d'utiliser @extent.",
-      '#default_value' => $config->get('tab1.vendor_import.load_custom_in_vendor')
+      '#title' => "Utiliser un seul fichier scss, cela permet d'utiliser @extend.",
+      '#default_value' => $config->get('tab1.vendor_import.load_custom_in_vendor'),
+      '#description' => "Cette action permet de generer un seul fichier css pour le site et d'utiliser efficacement la proproité @extend"
     ];
+    $form['#attached']['library'][] = 'generate_style_theme/codemirror_admin';
     return parent::buildForm($form, $form_state);
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -108,5 +122,5 @@ class GenerateStyleTheme extends ConfigFormBase {
     $config->set('tab1.pwd_npm', $form_state->getValue('pwd_npm'));
     $config->save();
   }
-
+  
 }

@@ -14,7 +14,7 @@ trait GenerateFiles {
    * @var FileSystem
    */
   protected $FileSystem;
-
+  
   /**
    * --
    */
@@ -47,7 +47,7 @@ libraries-override:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * --
    */
@@ -73,7 +73,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * --
    */
@@ -81,7 +81,7 @@ vendor-style:
     $this->getGlobalStyle();
     $this->getVendorStyle();
   }
-
+  
   /**
    * On importe le fichier scss qui a été generé et les fichiers js qui sont
    * dans la config du theme.
@@ -107,7 +107,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   private function getVendorStyle() {
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['js'];
     $string = $vendor_import . '
@@ -126,7 +126,7 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $build_mode = $this->generate_style_themeSettings['tab1']['build_mode'];
@@ -149,7 +149,7 @@ vendor-style:
       $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
   /**
    * Les liens symbolique ne marge pas.
    * On va faire un lien, Car cela est plus facile à gerer et occupe moins
@@ -190,7 +190,7 @@ vendor-style:
       $this->logger->warning('Error de copie des fichiers : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
   /**
    * --
    */
@@ -201,7 +201,7 @@ vendor-style:
       $this->logger->warning('Error lors de la suppression de /wbu-atomique-theme : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
   /**
    * --
    */
@@ -211,14 +211,14 @@ vendor-style:
     $this->scssFilesVendorStyle();
     $this->scssFilesFromArray();
   }
-
+  
   /**
    * Permet de construire un fchier avec des styles ajoutés dans un tableau.
    * Les styles peuveant provenir de la surcharge sur
    */
   private function scssFilesFromArray() {
   }
-
+  
   /**
    * On genere le fichier de variable.
    */
@@ -231,87 +231,53 @@ vendor-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * On genere le fichier contenant les imports provenant des layouts et des
    * modules.
    */
   private function scssFilesVendorStyle() {
-    $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
-    $variable_file = './' . $this->themeName . '_variables.scss';
-    // On charge les mixins et les variables.
-    $string = '';
-    $string .= '
-    @use "' . $variable_file . '" as *;';
-    // Les fichiers requis pour l'environnment drupal.
-    $string .= '
-// Ce fichier semble pas requis, mais doit etre tester en profondeur.( il bug avec celui de dessus car il renvoit les memes variable ).
-// @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
-@use "@stephane888/wbu-atomique/scss/bootstrap-all.scss";
-@use "@stephane888/wbu-atomique/scss/atome/typography/_default.scss";
-@use "@stephane888/wbu-atomique/scss/molecule/default-class.scss";
-    ';
-    if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
-      $string .= '
-@use "./custom.scss";
-';
+    $string = '@use "' . $this->getFileNameFileVariable() . '" as *;';
+    if (empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
+      $string .= $this->initLoader();
+      $string .= $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
     }
-    $string .= $vendor_import;
-
     // Cree le fichier.
     $filename = $this->themeName . '--vendor.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * On genere le fichier contenant les imports provenant des layouts et
    * modules.
+   * De plus, si load_custom_in_vendor est à true on doit generer un seul
+   * fichier.
    */
   private function scssFilesGlobalStyle() {
-    /**
-     *
-     * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $entity
-     */
-    $entity = $this->entity;
-    $variable_file = './' . $this->themeName . '_variables.scss';
-    // On charge les mixins et les variables.
-    $string = '';
-    $string .= '
-    @use "' . $variable_file . '" as *;
-    ';
-
+    $string = '@use "' . $this->getFileNameFileVariable() . '" as *;';
+    // pour charger un seul fichier.
+    if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
+      $string .= $this->initLoader();
+    }
+    // On importe les styles definit de maniere automatique.
     $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
       $string .= $styleImport;
     }
-
-    // On importe ce fichier dans vendor
-    // car on a besoin d'utiliser @extent.
     /**
-     * Afin d'avoir un code compatible, on ferra cette modification plus tard.
-     * i.e à la version 4x.
-     * si la variable est à true on ne fait rien.
+     * On chargera toujours le fichier custom.scss ici.
      */
+    $string .= '@use "./custom.scss";';
+    // pour charger un seul fichier.
     if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
-      //
+      $string .= $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
     }
-    else
-      $string .= '@use "./custom.scss";';
-
-    // // add debug
-    // $string .= '
-    // @debug "
-    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
-    // ";
-    // @debug $wbu-h3-font-size;
-    // @debug $wbu-h3-font-size-sm;
-    // ';
+    
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
-
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
     // on cree un fichier pour le style custom, si le fichier n'existe pas;
@@ -319,7 +285,7 @@ vendor-style:
       debugLog::logger("", "custom.scss", false, 'file', $path, true);
     }
   }
-
+  
   /**
    * Construit les variables.
    *
@@ -364,7 +330,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     $wbu_link_color = $entity->getScssColorValue($entity->getColorLink());
     $wbu_bootstrap_primary = $entity->getScssColorValue($entity->getBootstrapColorPrimary());
-
+    
     return '
     /**
      * On definie les variables à ce niveau afin que les variables qui derive de ces valeurs soit ajusté.
@@ -404,7 +370,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     $space_inner_top: $space_top * 0.5;
 ';
   }
-
+  
   /**
    * Permet de recuperer les données de styles.
    */
@@ -418,7 +384,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     return $styleToImport;
   }
-
+  
   /**
    *
    * @param array $EntityImport
@@ -450,7 +416,7 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     return $styleToImport;
   }
-
+  
   private function excuteCmd($cmd, $name = "excuteCmd") {
     ob_start();
     $return_var = '';
@@ -466,5 +432,22 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
     ];
     return $debug;
   }
-
+  
+  protected function getFileNameFileVariable() {
+    return './' . $this->themeName . '_variables.scss';
+  }
+  
+  /**
+   * Les styles par defaut qui permettent d'initialiser le theme.
+   *
+   * @return string
+   */
+  protected function initLoader() {
+    $string = '@use "@stephane888/wbu-atomique/scss/bootstrap-all.scss";
+@use "@stephane888/wbu-atomique/scss/atome/typography/_default.scss";
+@use "@stephane888/wbu-atomique/scss/molecule/default-class.scss";
+@use "@stephane888/wbu-atomique/scss/drupal/ajustement.scss";';
+    return $string;
+  }
+  
 }

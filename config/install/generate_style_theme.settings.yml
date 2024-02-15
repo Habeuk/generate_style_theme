@@ -6,6 +6,7 @@ tab1:
   build_mode: ProdCMD
   pwd_npm: '/usr/local/bin/npm'
   vendor_import: 
-    scss: '@use "@stephane888/wbu-atomique/scss/drupal/ajustement.scss";'
+    scss: ''
     js: 'import "@stephane888/wbu-atomique/js/bootstrap/all.js";'
+    load_custom_in_vendor: true
   

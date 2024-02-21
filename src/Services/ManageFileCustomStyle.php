@@ -176,8 +176,10 @@ class ManageFileCustomStyle extends ControllerBase {
     $scss = '    @use "' . $variable_file . '" as *;    ';
     if (!empty($this->getConfigGenerateStyleTheme()['tab1']['vendor_import']['load_custom_in_vendor'])) {
       $scss .= '
-// L`import ci-dessous n`est pas charger dans le fichier final ...vendor.css; Car cela il est deja dans ...vendor.scss .( tester sur sass-loader@11.1.1 && sass@1.66.1 )
+// On charge ces imports afin de pouvoir utiliser @extend.
 @use "@stephane888/wbu-atomique/scss/bootstrap-all.scss";
+@use "@stephane888/wbu-atomique/scss/atome/typography/_default.scss";
+@use "@stephane888/wbu-atomique/scss/molecule/default-class.scss";
 ';
     }
     $js = '';

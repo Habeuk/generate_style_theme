@@ -73,9 +73,46 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
+    // On definie autant de valeur que possible afin d'accelerer la creation
+    // d'un theme dans un env. en ligne de commande ou code
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
-      'settheme_as_defaut' => TRUE
+      'settheme_as_defaut' => TRUE,
+      'status' => 1,
+      'hostname' => 'habeuk_model',
+      'color_primary' => [
+        'name' => "color primary",
+        "color" => "#2E8BC0"
+      ],
+      'color_secondaire' => [
+        'name' => "color secondaire",
+        "color" => "#B1D4E0"
+      ],
+      'wbu_color_thirdly' => [
+        'name' => "color thirdly",
+        "color" => "#145DA0"
+      ],
+      'wbubackground' => [
+        'name' => "color background",
+        "color" => "#0C2D48"
+      ],
+      "select_link_color" => "color_primary",
+      "wbu_bootstrap_primary" => "color_primary",
+      "wbu_titre_suppra" => "7.4rem",
+      "wbu_titre_biggest" => "6.4rem",
+      "wbu_titre_big" => "5.4rem",
+      "h1_font_size" => "4.4rem",
+      "h2_font_size" => "3.4rem",
+      "h3_font_size" => "2.8rem",
+      "h4_font_size" => "2.2rem",
+      "h5_font_size" => "1.8rem",
+      "h6_font_size" => "1.4rem",
+      "text_font_size" => "1.6rem",
+      "space_bottom" => 5,
+      "space_top" => 5,
+      "space_inner_top" => 0.5,
+      "run_npm" => 0,
+      "force_regenerate_npm_files" => 0
     ];
   }
   

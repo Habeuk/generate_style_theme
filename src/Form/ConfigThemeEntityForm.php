@@ -43,7 +43,6 @@ class ConfigThemeEntityForm extends ContentEntityForm {
      * @var \Drupal\generate_style_theme\Entity\ConfigThemeEntity $config_theme_entity
      */
     $config_theme_entity = $this->entity;
-    // dump($config_theme_entity->toArray());
     return $form;
   }
   

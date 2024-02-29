@@ -2,6 +2,11 @@
 
 namespace Drupal\generate_style_theme\Services;
 
+/**
+ *
+ * @author stephane
+ * @deprecated delete before 4x
+ */
 class MenusToPageCreate {
   protected $menuPage = [
     2 => null, // estimer mes travaux.
@@ -90,7 +95,8 @@ class MenusToPageCreate {
   ];
   
   /**
-   * Retourne, un array contenant les pages qui vont etre creer en function des items du menu selectionnées.
+   * Retourne, un array contenant les pages qui vont etre creer en function des
+   * items du menu selectionnées.
    *
    * @param array $menuValue
    * @return NULL[]|number[]|string[][]|string[][][][]

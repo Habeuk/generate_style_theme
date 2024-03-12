@@ -27,13 +27,15 @@ base theme: ' . $this->baseTheme . '
 
 regions:
   top_header: "Top header"
-  header: "Header"
+  header: "header"
   hero_slider: "Hero slider"
-  content: "Contenu principal"
-  sidebar_left: "sidebar left"
+  sidebar_left: "Sidebar left"
+  sidebar_right: "Sidebar right"
+  before_content: "beforeContent"
+  content: "content"
+  after_content: "afterContent"
   call_to_action: "Call to action"
   footer: "Footer"
-  commerce_sidebar_left: "commerce sidebar left"
 
 # Ajout des librairies
 libraries:

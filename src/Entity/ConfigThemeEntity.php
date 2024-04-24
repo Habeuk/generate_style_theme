@@ -73,9 +73,46 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
+    // On definie autant de valeur que possible afin d'accelerer la creation
+    // d'un theme dans un env. en ligne de commande ou code
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
-      'settheme_as_defaut' => TRUE
+      'settheme_as_defaut' => TRUE,
+      'status' => 1,
+      'hostname' => 'habeuk_model',
+      'color_primary' => [
+        'name' => "color primary",
+        "color" => "#2E8BC0"
+      ],
+      'color_secondaire' => [
+        'name' => "color secondaire",
+        "color" => "#B1D4E0"
+      ],
+      'wbu_color_thirdly' => [
+        'name' => "color thirdly",
+        "color" => "#145DA0"
+      ],
+      'wbubackground' => [
+        'name' => "color background",
+        "color" => "#0C2D48"
+      ],
+      "select_link_color" => "color_primary",
+      "wbu_bootstrap_primary" => "color_primary",
+      "wbu_titre_suppra" => "7.4rem",
+      "wbu_titre_biggest" => "6.4rem",
+      "wbu_titre_big" => "5.4rem",
+      "h1_font_size" => "4.4rem",
+      "h2_font_size" => "3.4rem",
+      "h3_font_size" => "2.8rem",
+      "h4_font_size" => "2.2rem",
+      "h5_font_size" => "1.8rem",
+      "h6_font_size" => "1.4rem",
+      "text_font_size" => "1.6rem",
+      "space_bottom" => 5,
+      "space_top" => 5,
+      "space_inner_top" => 0.5,
+      "run_npm" => 1,
+      "force_regenerate_npm_files" => 0
     ];
   }
 
@@ -215,8 +252,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
             $domainId => $domainId
           ];
           $ThemeInstaller->uninstall($theme_list);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
           \Drupal::messenger()->addWarning(" Le theme n'a pas pu etre desintallé : " . $domainId);
           \Drupal::logger('generate_style_theme')->warning(" Le theme n'a pas pu etre desintallé : " . $domainId);
         }
@@ -271,8 +307,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
           // curl_exec($ch);
           // curl_close($ch);
           file_get_contents($url);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
           \Drupal::logger('generate_style_theme')->warning(" generate_style_theme : Le lien du logo n'est pas toujours bien generé ");
         }
         // return path to save in theme.settings.logo.url
@@ -588,36 +623,33 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       ]
     ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
 
-    $fields['color_primary'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
-    // => 'color_theme_formatter_type'
+    $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [
+      'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#CE3B3B',
       'name' => 'color primary'
     ])->setDescription("Couleur Principal, tres utilisée");
 
-    $fields['color_secondaire'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(" Couleur
-      secondaire ")->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
-                                                                     // =>
-                                                                     // 'color_theme_formatter_type'
+    $fields['color_secondaire'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur
+      secondaire ")->setRequired(TRUE)->setDisplayOptions('form', [
+      'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#DD731D',
-      'name' => ''
+      'name' => 'color secondaire'
     ])->setDescription("Couleur de niveau 2, moins utilisée");
-    $fields['wbu_color_thirdly'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(" Couleur
-      tertiaires ")->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
-                                                                     // =>
-                                                                     // 'color_theme_formatter_type'
+    $fields['wbu_color_thirdly'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur
+      tertiaires ")->setRequired(TRUE)->setDisplayOptions('form', [
+      'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#F88C12',
-      'name' => ''
+      'name' => 'color therly'
     ])->setDescription("Couleur de niveau 3, tres peut utiliser");
-    $fields['wbubackground'] = BaseFieldDefinition::create('generate_style_theme_color')->setLabel(" Couleur
-      d'arrière plan ")->setRequired(TRUE)->setDisplayOptions('form', [ // 'type'
-                                                                         // =>
-                                                                         // 'color_theme_formatter_type'
+    $fields['wbubackground'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(" Couleur
+      d'arrière plan ")->setRequired(TRUE)->setDisplayOptions('form', [
+      'type' => 'colorapi_color_display'
     ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#0F103E',
-      'name' => ''
+      'name' => 'color background'
     ])->setDescription("Couleur generalement opposer à la couleur principale,
       tres utilisée");
 
@@ -738,5 +770,4 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
 
     return $fields;
   }
-
 }

@@ -1,0 +1,9 @@
+# Custom module library for general purposes.
+codemirror_admin:
+  js:
+    js/codemirror-admin.js: {}
+  css:
+    component:
+      css/codemirror-admin.css: {}
+  dependencies:
+    - core/drupalSettings

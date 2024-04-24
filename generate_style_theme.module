@@ -38,11 +38,11 @@ function generate_style_theme_form_config_theme_entity_form_alter(&$form, FormSt
       $query['lirairy']
     ];
   }
-
+  
   if (!empty($query['domaine-id']) && isset($form['hostname']['widget'][0])) {
     $form['hostname']['widget'][0]['value']['#default_value'] = $query['domaine-id'];
   }
-
+  
   if (!empty($query['content-type-home-id']) && isset($form['site_config']['widget'][0]['siteconf']['container'])) {
     $form['site_config']['widget'][0]['siteconf']['container']['page.front']['#default_value'] = '/node/' . $query['content-type-home-id'];
   }
@@ -59,7 +59,7 @@ function generate_style_theme_form_config_theme_entity_form_alter(&$form, FormSt
       'disable-refocus' => FALSE
     ];
   }
-
+  
   //
   $form['actions']['submit']['#submit'][] = [
     '\Drupal\generate_style_theme\Services\FinnaliseTheme',
@@ -169,6 +169,8 @@ function generate_style_theme_preprocess_node(&$variables) {
     ];
   }
 }
+
+
 
 
 

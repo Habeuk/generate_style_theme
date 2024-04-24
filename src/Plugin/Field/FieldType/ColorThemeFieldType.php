@@ -12,14 +12,14 @@ use Drupal\Core\TypedData\DataDefinition;
 use Drupal\colorapi\Plugin\Field\FieldType\ColorItem;
 
 /**
- * Plugin implementation of the 'generate_style_theme_color' field type.
+ * Plugin implementation of the 'color_theme_field_type' field type.
  *
  * @FieldType(
- *   id = "generate_style_theme_color",
- *   label = @Translation("Color theme"),
+ *   id = "color_theme_field_type",
+ *   label = @Translation("Color theme field type"),
  *   description = @Translation("permet de definir la couleur d'un theme"),
- *   default_widget = "generate_style_theme_color_widget",
- *   default_formatter = "generate_style_theme_color_formatter"
+ *   default_widget = "color_theme_widget_type",
+ *   default_formatter = "color_theme_formatter_type"
  * )
  */
 class ColorThemeFieldType extends ColorItem {

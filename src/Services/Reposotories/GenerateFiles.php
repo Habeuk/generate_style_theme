@@ -185,8 +185,9 @@ vendor-style:
       throw new \Exception(' Impossible de lire le contenu des fichiers  ');
     }
     // on fait un lien symbolique avec node_modules.
-    $modulePath = DRUPAL_ROOT . "/" . $this->pathResolver->getPath('theme', $this->baseTheme) . "/wbu-atomique-theme";
-    $script .= ' && ln -s ' . $modulePath . '/node_modules   ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
+    $modulePath = DRUPAL_ROOT . "/" . $this->pathResolver->getPath('theme', $this->baseTheme) . "/wbu-atomique-theme/node_modules";
+    if (file_exists($modulePath))
+      $script .= ' && ln -s ' . $modulePath . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/';
     $exc = $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
     if ($exc['return_var']) {
       $this->logger->warning('Error de copie des fichiers : <br>' . implode("<br>", $exc['output']));
@@ -200,6 +201,8 @@ vendor-style:
     $script = ' rm -rf ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $exc = $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
     if ($exc['return_var']) {
+      \Drupal::messenger()->addWarning("Une erreur s'est produite lors de la copie des fichiers");
+      dd($exc);
       $this->logger->warning('Error lors de la suppression de /wbu-atomique-theme : <br>' . implode("<br>", $exc['output']));
     }
   }

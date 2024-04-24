@@ -96,6 +96,10 @@ class FilesStyle extends RevisionableContentEntityBase implements FilesStyleInte
     return $this->get('js')->value;
   }
   
+  public function getModule() {
+    return $this->get('module')->value;
+  }
+  
   /**
    *
    * @param string $key

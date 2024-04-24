@@ -184,6 +184,10 @@ class ManageFileCustomStyle extends ControllerBase {
     }
     $js = '';
     foreach ($entities as $entity) {
+      // add comment
+      $scss .= "\n";
+      $scss .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
+      $scss .= " \n";
       $scss .= $entity->getScss();
       $js .= $entity->getJs();
     }

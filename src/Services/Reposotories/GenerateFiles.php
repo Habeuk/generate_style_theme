@@ -202,7 +202,6 @@ vendor-style:
     $exc = $this->excuteCmd($script, 'CopyWbuAtomiqueTheme');
     if ($exc['return_var']) {
       \Drupal::messenger()->addWarning("Une erreur s'est produite lors de la copie des fichiers");
-      dd($exc);
       $this->logger->warning('Error lors de la suppression de /wbu-atomique-theme : <br>' . implode("<br>", $exc['output']));
     }
   }

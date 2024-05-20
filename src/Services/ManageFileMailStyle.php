@@ -130,7 +130,7 @@ class ManageFileMailStyle extends ControllerBase {
       $scss .= " \n";
       $scss .= $entity->getScss();
     }
-    debugLog::logger($scss, "mailstyle.scss", false, 'file', $this->getPath() . '/scss', true);
+    debugLog::logger($scss, "mail-style.scss", false, 'file', $this->getPath() . '/scss', true);
   }
   
   /**

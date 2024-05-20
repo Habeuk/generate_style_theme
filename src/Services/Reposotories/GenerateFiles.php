@@ -87,6 +87,7 @@ mail-style:
   function jsFiles() {
     $this->getGlobalStyle();
     $this->getVendorStyle();
+    $this->getMailStyle();
   }
   
   /**
@@ -130,6 +131,14 @@ mail-style:
     // \Drupal::messenger()->addError("dir is not writable");
     // }
     // $this->FileSystem->chmod($path, '777');
+    debugLog::$debug = false;
+    debugLog::logger($string, $filename, false, 'file', $path, true);
+  }
+  
+  private function getMailStyle() {
+    $filename = 'mail-style.js';
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
+    $string = ' import "../scss/mail-style.scss"; ';
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
@@ -292,6 +301,10 @@ mail-style:
     // on cree un fichier pour le style custom, si le fichier n'existe pas;
     if (!file_exists($path . '/custom.scss')) {
       debugLog::logger("", "custom.scss", false, 'file', $path, true);
+    }
+    // On cree le fichier de mail s'il n'existe pas.
+    if (!file_exists($path . '/mail-style.scss')) {
+      debugLog::logger("", "mail-style.scss", false, 'file', $path, true);
     }
   }
   

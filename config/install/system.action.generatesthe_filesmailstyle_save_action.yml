@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - generate_style_theme
+id: filesmailstyle_save_action
+label: "Save filesmailstyles"
+type: filesmailstyle
+plugin: entity:save_action:filesmailstyle
+configuration: {}

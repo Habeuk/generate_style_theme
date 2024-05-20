@@ -69,6 +69,11 @@ vendor-style:
       css/vendor-style.css: {}
   js:
     js/vendor-style.js: { preprocess: false }
+
+mail-style:
+  css:
+    theme:
+      css/mail-style.css: { preprocess: true }
 ';
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;

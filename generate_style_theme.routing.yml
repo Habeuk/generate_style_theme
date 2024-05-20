@@ -1,48 +1,64 @@
 generate_style_theme.example:
-  path: '/generate-style-theme/example'
+  path: "/generate-style-theme/example"
   defaults:
-    _title: 'Example'
+    _title: "Example"
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::build'
   requirements:
-    _role: 'administrator'
-    
+    _role: "administrator"
+
 generate_style_theme.installtheme:
-  path: '/generate-style-theme/installtheme/{themename}/{domaine_id}'
+  path: "/generate-style-theme/installtheme/{themename}/{domaine_id}"
   defaults:
-    _title: 'Example'
+    _title: "Example"
     domaine_id: null
     _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::installTheme'
   requirements:
-    _role: 'administrator'
+    _role: "administrator"
 
 generate_style_theme.config_tab1:
-  path: '/admin/config/generate_style_theme/default-base'
+  path: "/admin/config/generate_style_theme/default-base"
   defaults:
     _form: '\Drupal\generate_style_theme\Form\GenerateStyleTheme'
-    _title: 'Configuration de base'
+    _title: "Configuration de base"
   requirements:
-    _permission: 'administer config theme entity entities'
-    
-generate_style_theme.updatestyletheme:
-  path: '/generate-style-theme/update-style-theme/{hostname}'
-  defaults:
-    _title: 'Example'
-    _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::UpdateStyleTheme'
-  requirements:
-    _access: 'TRUE'
+    _permission: "administer config theme entity entities"
 
 generate_style_theme.managecustom.styles:
-  path: '/admin/config/generate_style_theme/manage-custom-styles'
+  path: "/admin/config/generate_style_theme/manage-custom-styles"
   defaults:
     _form: '\Drupal\generate_style_theme\Form\GenerateStyleThemeStyles'
-    _title: 'Configuration des styles'
+    _title: "Generer des styles pour le site"
   requirements:
-    _access: 'TRUE'
-  
+    _access: "TRUE"
+
+generate_style_theme.styles.mail:
+  path: "/admin/config/generate_style_theme/mail-style"
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\GenerateMailStyle'
+    _title: "Generer des styles pour le mail"
+  requirements:
+    _permission: "administer config theme entity entities"
+
+generate_style_theme.updatestyletheme:
+  path: "/generate-style-theme/update-style-theme/{hostname}"
+  defaults:
+    _title: "Example"
+    _controller: '\Drupal\generate_style_theme\Controller\GenerateStyleThemeController::UpdateStyleTheme'
+  requirements:
+    _access: "TRUE"
+
 entity.files_style.settings:
-  path: 'admin/structure/files-style'
+  path: "admin/structure/files-style"
   defaults:
     _form: '\Drupal\generate_style_theme\Form\FilesStyleSettingsForm'
-    _title: 'Files style'
+    _title: "Files style"
   requirements:
-    _permission: 'administer files style'
+    _permission: "administer files style"
+
+entity.filesmailstyle.settings:
+  path: "admin/structure/generatesthe-filesmailstyle"
+  defaults:
+    _form: '\Drupal\generate_style_theme\Form\FilesMailStyleSettingsForm'
+    _title: "FilesMailStyle"
+  requirements:
+    _permission: "administer filesmailstyle"

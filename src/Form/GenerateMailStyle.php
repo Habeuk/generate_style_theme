@@ -1,0 +1,98 @@
+<?php
+
+namespace Drupal\generate_style_theme\Form;
+
+use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Stephane888\Debug\Repositories\ConfigDrupal;
+use Stephane888\Debug\debugLog;
+use Drupal\generate_style_theme\Services\ManageFileMailStyle;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+
+/**
+ * Formulaire pour la configuration de mon module
+ */
+class GenerateMailStyle extends ConfigFormBase {
+  private static $key = 'generate_style_theme.mailstyle';
+  /**
+   *
+   * @var string
+   */
+  protected $path;
+  
+  /**
+   *
+   * @var ManageFileMailStyle
+   */
+  protected $ManageFileCustomStyle;
+  
+  function __construct(ConfigFactoryInterface $config_factory, ManageFileMailStyle $ManageFileCustomStyle) {
+    parent::__construct($config_factory);
+    $this->ManageFileCustomStyle = $ManageFileCustomStyle;
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('config.factory'), $container->get('generate_style_theme.manage_file_mail_style'));
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return self::$key;
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return [
+      self::$key
+    ];
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    //
+    $form['file_scss'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t(' Custom scss form mail '),
+      '#default_value' => $this->ManageFileCustomStyle->getScss(self::$key, 'generate_style_theme'),
+      '#rows' => '30',
+      '#attributes' => [
+        'class' => [
+          'codemirror',
+          'lang_scss'
+        ]
+      ],
+      "#description" => "
+Aucun style n'est chargé par defaut car les emails sont sujet à beaucoup de restriction. 
+<a href='https://habeuk.com/fr/node/145/'> Voir cette article </a> <br>
+Vous pouvez ajouter les mixins et les librairies inclut dans @stephane888/wbu-atomique 
+"
+    ];
+    $form['#attached']['library'][] = 'generate_style_theme/codemirror_admin';
+    //
+    return parent::buildForm($form, $form_state);
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $file_scss = $form_state->getValue('file_scss');
+    $this->ManageFileCustomStyle->saveStyle(self::$key, 'generate_style_theme', $file_scss);
+  }
+  
+}

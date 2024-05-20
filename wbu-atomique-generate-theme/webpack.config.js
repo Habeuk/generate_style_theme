@@ -21,10 +21,11 @@ plugins.push(
 
 module.exports = {
   plugins,
-  mode: env || "development", // On définit le mode en fonction de la valeur de NODE_ENV
+  mode: env || "development", // On définit le mode en fonction de la valeur de NODE_ENV.
   entry: {
     "global-style": "./src/js/global-style.js",
     "vendor-style": "./src/js/vendor-style.js",
+    "mail-style":"./src/js/mail-style.js"
   },
   output: {
     path: path.resolve(__dirname, "../"),

@@ -80,6 +80,7 @@ class ManageFileCustomStyle extends ControllerBase {
    * @param string $string
    * @deprecated car il faudra enregistrer le scss et le js dans la meme entité.
    *             Use saveStyle()
+   *             delete in 5x
    */
   public function saveScss($string, $key, $module) {
     $entity = FilesStyle::loadByName($key, $module);
@@ -105,7 +106,7 @@ class ManageFileCustomStyle extends ControllerBase {
    * @param string $string
    * @deprecated car il faudra enregistrer le scss et le js dans la meme entité.
    *             Use saveStyle()
-   *            
+   *             delete in 5x
    */
   public function saveJs($string, $key, $module) {
     $entity = FilesStyle::loadByName($key, $module);
@@ -170,7 +171,15 @@ class ManageFileCustomStyle extends ControllerBase {
     }
   }
   
+  /**
+   * Genere les fichiers de base.
+   */
   public function generateCustomFile() {
+    /**
+     * L'enssemble des styles present dans l'entite ne vont pas dans custom.
+     *
+     * @var array $entities
+     */
     $entities = FilesStyle::loadMultiple();
     $variable_file = './' . $this->getSelectedTheme() . '_variables.scss';
     $scss = '    @use "' . $variable_file . '" as *;    ';

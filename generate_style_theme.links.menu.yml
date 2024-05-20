@@ -1,36 +1,53 @@
 # Config theme entity menu items definition
 entity.config_theme_entity.collection:
-  title: ' Creation/MAJ du styles des themes '
+  title: " Creation/MAJ du styles des themes "
   route_name: entity.config_theme_entity.collection
-  description: 'List Config theme entity entities'
+  description: "List Config theme entity entities"
   parent: system.admin_content
   weight: 0
 
 # Menu de configuration;
 create_pages_site_form.config.settings:
-  title: 'Generate style theme Config'
-  description: 'Configuration de base'
+  title: "Generate style theme Config"
+  description: "Configuration de base"
   route_name: generate_style_theme.config_tab1
   parent: system.admin_config_ui
   weight: 40
 #
 generate_style_theme.managecustom.styles:
-  title: 'Custom style (scss && js) '
-  description: 'Style ajouter par le module generate_style_theme'
+  title: "Custom style (scss && js) "
+  description: "Style ajouter par le module generate_style_theme"
   route_name: generate_style_theme.managecustom.styles
   parent: generate_style_theme.config_tab1
   weight: 40
-  
-  
-  
+
+#
+generate_style_theme.styles.mail:
+  title: "Custom scss for mail"
+  description: "Style ajouter par le module generate_style_theme"
+  route_name: generate_style_theme.styles.mail
+  parent: generate_style_theme.config_tab1
+  weight: 40
 
 entity.files_style.settings:
-  title: 'Files style'
-  description: 'Configure a Files style entity type.'
-  route_name:  entity.files_style.settings
+  title: "Scss and js files entity type"
+  description: "Configure a Files style entity type."
+  route_name: entity.files_style.settings
   parent: system.admin_structure
 entity.files_style.collection:
-  title: 'Files styles'
-  description: 'List of files styles.'
+  title: "Scss and js files"
+  description: "List of files styles."
   route_name: entity.files_style.collection
   parent: system.admin_content
+
+entity.filesmailstyle.settings:
+  title: "Scss for mail"
+  description: "Configure a FilesMailStyle entity type."
+  route_name: entity.filesmailstyle.settings
+  parent: entity.files_style.settings
+
+entity.filesmailstyle.collection:
+  title: "Scss for mail"
+  description: "List of filesmailstyles."
+  route_name: entity.filesmailstyle.collection
+  parent: entity.files_style.collection

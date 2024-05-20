@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - generate_style_theme
+id: filesmailstyle_delete_action
+label: "Delete filesmailstyles"
+type: filesmailstyle
+plugin: entity:delete_action:filesmailstyle
+configuration: {}

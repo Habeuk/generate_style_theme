@@ -1,58 +1,86 @@
 # Config theme entity routing definition
 config_theme_entity.settings_tab:
   route_name: config_theme_entity.settings
-  title: 'Settings'
+  title: "Settings"
   base_route: config_theme_entity.settings
 
 entity.config_theme_entity.canonical:
   route_name: entity.config_theme_entity.canonical
   base_route: entity.config_theme_entity.canonical
-  title: 'View'
+  title: "View"
 
 entity.config_theme_entity.edit_form:
   route_name: entity.config_theme_entity.edit_form
   base_route: entity.config_theme_entity.canonical
-  title: 'Edit'
+  title: "Edit"
 
 entity.config_theme_entity.delete_form:
-  route_name:  entity.config_theme_entity.delete_form
-  base_route:  entity.config_theme_entity.canonical
+  route_name: entity.config_theme_entity.delete_form
+  base_route: entity.config_theme_entity.canonical
   title: Delete
   weight: 10
 
 entity.files_style.settings:
-  title: 'Settings'
+  title: "Settings"
   route_name: entity.files_style.settings
   base_route: entity.files_style.settings
 entity.files_style.view:
-  title: 'View'
+  title: "View"
   route_name: entity.files_style.canonical
   base_route: entity.files_style.canonical
 entity.files_style.edit_form:
-  title: 'Edit'
+  title: "Edit"
   route_name: entity.files_style.edit_form
   base_route: entity.files_style.canonical
 entity.files_style.delete_form:
-  title: 'Delete'
+  title: "Delete"
   route_name: entity.files_style.delete_form
   base_route: entity.files_style.canonical
   weight: 10
 entity.files_style.collection:
-  title: 'Files styles'
+  title: "Files styles"
   route_name: entity.files_style.collection
   base_route: system.admin_content
   weight: 10
-  
+
 #custom
 generate_style_theme.config_tab1:
-  title: 'Configuration de base'
+  title: "Configuration de base"
   route_name: generate_style_theme.config_tab1
   base_route: generate_style_theme.config_tab1
   weight: 10
-  
+
 generate_style_theme.managecustom.styles:
-  title: 'Custom style (scss && js )'
+  title: "Custom style (scss && js )"
   route_name: generate_style_theme.managecustom.styles
   base_route: generate_style_theme.config_tab1
   weight: 10
-  
+
+generate_style_theme.styles.mail:
+  title: "Custom scss for mail"
+  route_name: generate_style_theme.styles.mail
+  base_route: generate_style_theme.config_tab1
+  weight: 10
+
+entity.filesmailstyle.settings:
+  title: "Settings"
+  route_name: entity.filesmailstyle.settings
+  base_route: entity.filesmailstyle.settings
+entity.filesmailstyle.view:
+  title: "View"
+  route_name: entity.filesmailstyle.canonical
+  base_route: entity.filesmailstyle.canonical
+entity.filesmailstyle.edit_form:
+  title: "Edit"
+  route_name: entity.filesmailstyle.edit_form
+  base_route: entity.filesmailstyle.canonical
+entity.filesmailstyle.delete_form:
+  title: "Delete"
+  route_name: entity.filesmailstyle.delete_form
+  base_route: entity.filesmailstyle.canonical
+  weight: 10
+entity.filesmailstyle.collection:
+  title: "FilesMailStyles"
+  route_name: entity.filesmailstyle.collection
+  base_route: system.admin_content
+  weight: 10

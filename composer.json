@@ -4,7 +4,7 @@
   "type": "drupal-custom-module",
   "require": {
     "drupal/colorapi": "^1.1",
-    "habeuk/debug": "^2.0 | dev-2x"
+    "habeuk/debug": "^2.0.5 | dev-2x"
   },
   "license": "MIT",
   "prefer-stable": true,

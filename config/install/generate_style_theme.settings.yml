@@ -1,6 +1,6 @@
 langcode: 'en'
 tab1: 
-  theme_base: 'theme_reference_wbu'
+  theme_base: 'wb_universe'
   use_domain: false
   save_multifile: false
   build_mode: ProdCMD

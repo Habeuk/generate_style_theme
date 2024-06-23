@@ -190,11 +190,17 @@ class GenerateStyleTheme extends ControllerBase {
      *
      * @var \Drupal\Core\Extension\ThemeInstaller $ThemeInstaller
      */
-    $ThemeInstaller = \Drupal::service("theme_installer");
-    $theme_list = [
-      $this->themeName => $this->themeName
-    ];
-    $ThemeInstaller->uninstall($theme_list);
+    try {
+      $ThemeInstaller = \Drupal::service("theme_installer");
+      $theme_list = [
+        $this->themeName => $this->themeName
+      ];
+      $ThemeInstaller->uninstall($theme_list);
+    }
+    catch (\Exception $e) {
+      \Drupal::messenger()->addWarning(" Le theme n'a pas pu etre desintallé : " . $this->themeName);
+      \Drupal::logger('generate_style_theme')->warning(" Le theme n'a pas pu etre desintallé : " . $this->themeName);
+    }
   }
   
   /**

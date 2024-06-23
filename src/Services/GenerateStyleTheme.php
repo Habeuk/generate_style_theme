@@ -174,10 +174,27 @@ class GenerateStyleTheme extends ControllerBase {
    */
   function deleteSubTheme() {
     if (!empty($this->themePath) && !empty($this->themeName)) {
+      // On se rassure que le theme est desintallé.
+      $this->unInstallTheme();
       $path = $this->themePath . '/' . $this->themeName;
       $script = " sudo rm -rf " . $path;
       $this->excuteCmd($script);
     }
+  }
+  
+  /**
+   * --
+   */
+  function unInstallTheme() {
+    /**
+     *
+     * @var \Drupal\Core\Extension\ThemeInstaller $ThemeInstaller
+     */
+    $ThemeInstaller = \Drupal::service("theme_installer");
+    $theme_list = [
+      $this->themeName => $this->themeName
+    ];
+    $ThemeInstaller->uninstall($theme_list);
   }
   
   /**

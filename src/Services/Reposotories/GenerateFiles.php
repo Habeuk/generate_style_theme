@@ -62,6 +62,7 @@ libraries-override:
     js/global-style.js: { preprocess: false }
   dependencies:
     - core/once
+    - core/drupal.message
 
 vendor-style:
   css:
@@ -471,5 +472,4 @@ $wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
 @use "@stephane888/wbu-atomique/scss/drupal/ajustement.scss";';
     return $string;
   }
-  
 }

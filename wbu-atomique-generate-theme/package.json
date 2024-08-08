@@ -42,6 +42,6 @@
     "not ie 11"
   ],
   "dependencies": {
-    "@stephane888/wbu-atomique": "github:stephane888/wbu-atomique#2.0.6"
+    "@stephane888/wbu-atomique": "github:stephane888/wbu-atomique#2.0.20"
   }
 }

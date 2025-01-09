@@ -140,29 +140,23 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
    */
   public function getLogo() {
     $fid = $this->get('logo')->target_id;
+    $style = $this->get('style_logo')->value;
     if (!empty($fid)) {
       $file = File::load($fid);
       if ($file) {
         // Permet de generer le fichier image, car on remarque que le fichier ne
         // se genere via theme_get_setting('logo.url');
-        $url = ImageStyle::load('medium')->buildUrl($file->getFileUri());
+        if ($style)
+          $url = ImageStyle::load($style)->buildUrl($file->getFileUri());
+        else
+          $url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
         try {
-          // $ch = curl_init();
-          // curl_setopt($ch, CURLOPT_HEADER, 0);
-          // curl_setopt($ch, CURLOPT_VERBOSE, 0);
-          // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-          // // curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/50.0
-          // (compatible;)");
-          // curl_setopt($ch, CURLOPT_URL, urlencode($url));
-          // curl_exec($ch);
-          // curl_close($ch);
           file_get_contents($url);
         }
         catch (\Exception $e) {
           \Drupal::logger('generate_style_theme')->warning(" generate_style_theme : Le lien du logo n'est pas toujours bien generé ");
         }
-        // return path to save in theme.settings.logo.url
-        return ImageStyle::load('medium')->buildUri($file->getFileUri());
+        return $url;
       }
     }
     //
@@ -438,20 +432,22 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     // Add the published field.
     $fields += static::publishedBaseFieldDefinitions($entity_type);
     //
-    $fields['user_id'] = BaseFieldDefinition::create('entity_reference')->setLabel(t('Authored by'))->setDescription(t('The user ID of author of theme. '))->setRevisionable(TRUE)->setSetting('target_type', 'user')->setSetting('handler', 'default')->setDisplayOptions('view', [
+    $fields['user_id'] = BaseFieldDefinition::create('entity_reference')->setLabel(t('Authored by'))->setDescription(t('The user ID of author of theme. '))->setRevisionable(TRUE)->setSetting(
+      'target_type', 'user')->setSetting('handler', 'default')->setDisplayOptions('view', [
       'label' => 'hidden',
       'type' => 'author',
       'weight' => 100
-    ])->setDisplayOptions('form', [
-      'type' => 'entity_reference_autocomplete',
-      'weight' => 5,
-      'settings' => [
-        'match_operator' => 'CONTAINS',
-        'size' => '60',
-        'autocomplete_type' => 'tags',
-        'placeholder' => ''
-      ]
-    ])->setDisplayConfigurable('form', false)->setDisplayConfigurable('view', TRUE);
+    ])->setDisplayOptions('form',
+      [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => ''
+        ]
+      ])->setDisplayConfigurable('form', false)->setDisplayConfigurable('view', TRUE);
     
     //
     /**
@@ -461,22 +457,35 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
      *             domain. ( il faudra tenir compte que cest assez utiliser,
      *             migration et ++ ).
      */
-    $fields['hostname'] = BaseFieldDefinition::create('wbumenudomaineditlink')->setLabel(t(' Hostname ou nom de domaine '))->setRequired(TRUE)->setDisplayOptions('form', [
-      'type' => 'wbumenudomainhost',
+    $fields['hostname'] = BaseFieldDefinition::create('wbumenudomaineditlink')->setLabel(t(' Hostname ou nom de domaine '))->setRequired(TRUE)->setDisplayOptions('form',
+      [
+        'type' => 'wbumenudomainhost',
+        'settings' => [],
+        'weight' => -3
+      ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->addConstraint('UniqueField');
+    
+    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo .. ')->setSetting('preview_image_style', 'medium')->setDisplayOptions('form',
+      [
+        'type' => 'image_image',
+        'settings' => [
+          'preview_image_style' => 'medium'
+        ]
+      ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "50x50");
+    
+    $fields['style_logo'] = BaseFieldDefinition::create('list_string')->setLabel(t('Select the style for the logo'))->setDisplayOptions('view', [
+      'label' => 'above'
+    ])->setDisplayOptions('form', [
+      'type' => 'options_select',
       'settings' => [],
       'weight' => -3
-    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->addConstraint('UniqueField');
+    ])->setSettings([
+      'allowed_values_function' => 'Drupal\generate_style_theme\Entity\ConfigThemeEntity::getImageStyles'
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue();
     
-    $fields['logo'] = BaseFieldDefinition::create('image')->setLabel(' Logo .. ')->setSetting('preview_image_style', 'medium')->setDisplayOptions('form', [
-      'type' => 'image_image',
-      'settings' => [
-        'preview_image_style' => 'medium'
-      ]
-    ])->setDisplayConfigurable('form', true)->setDisplayConfigurable('view', TRUE)->setSetting("min_resolution", "150x120");
-    
-    $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form', [
-      'type' => 'colorapi_color_display'
-    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
+    $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form',
+      [
+        'type' => 'colorapi_color_display'
+      ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue([
       'color' => '#CE3B3B',
       'name' => 'color primary'
     ])->setDescription("Couleur Principal, tres utilisée");
@@ -510,29 +519,32 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'options_select',
       'settings' => [],
       'weight' => -3
-    ])->setDefaultValue('color_primary')->setSettings([
-      'allowed_values' => [
-        'color_primary' => 'Couleur primaire',
-        'color_secondaire' => "Couleur secondaire",
-        'wbu_color_thirdly' => 'Couleur tertiaires',
-        'wbubackground' => "Couleur d'arrière plan"
-      ]
-    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDescription(t(' Selectionne la couleur des liens par defaut "Couleur primaire" '));
+    ])->setDefaultValue('color_primary')->setSettings(
+      [
+        'allowed_values' => [
+          'color_primary' => 'Couleur primaire',
+          'color_secondaire' => "Couleur secondaire",
+          'wbu_color_thirdly' => 'Couleur tertiaires',
+          'wbubackground' => "Couleur d'arrière plan"
+        ]
+      ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDescription(t(' Selectionne la couleur des liens par defaut "Couleur primaire" '));
     
-    $fields['wbu_bootstrap_primary'] = BaseFieldDefinition::create('list_string')->setLabel(t(' Selectionne la couleur des boutons '))->setRequired(true)->setDisplayOptions('view', [
-      'label' => 'above'
-    ])->setDisplayOptions('form', [
+    $fields['wbu_bootstrap_primary'] = BaseFieldDefinition::create('list_string')->setLabel(t(' Selectionne la couleur des boutons '))->setRequired(true)->setDisplayOptions('view',
+      [
+        'label' => 'above'
+      ])->setDisplayOptions('form', [
       'type' => 'options_select',
       'settings' => [],
       'weight' => -3
-    ])->setDefaultValue('color_primary')->setSettings([
-      'allowed_values' => [
-        'color_primary' => 'Couleur primaire',
-        'color_secondaire' => "Couleur secondaire",
-        'wbu_color_thirdly' => 'Couleur tertiaires',
-        'wbubackground' => "Couleur d'arrière plan"
-      ]
-    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDescription(t(' Selectionne la couleur des boutons (primary for bootstrap) " '));
+    ])->setDefaultValue('color_primary')->setSettings(
+      [
+        'allowed_values' => [
+          'color_primary' => 'Couleur primaire',
+          'color_secondaire' => "Couleur secondaire",
+          'wbu_color_thirdly' => 'Couleur tertiaires',
+          'wbubackground' => "Couleur d'arrière plan"
+        ]
+      ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDescription(t(' Selectionne la couleur des boutons (primary for bootstrap) " '));
     
     $fields['wbu_titre_suppra'] = BaseFieldDefinition::create('string')->setLabel(" Taille de la police de titre (wbu-titre-suppra) ")->setDisplayOptions('form', [
       'type' => 'string_textfield'
@@ -590,28 +602,32 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'type' => 'boolean_checkbox',
       'weight' => -3
     ]);
-    $fields['settheme_as_defaut'] = BaseFieldDefinition::create('boolean')->setLabel(" Definir ce theme comme theme par defaut ")->setDisplayOptions('form', [
-      'type' => 'boolean_checkbox',
-      'weight' => -3
-    ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
+    $fields['settheme_as_defaut'] = BaseFieldDefinition::create('boolean')->setLabel(" Definir ce theme comme theme par defaut ")->setDisplayOptions('form',
+      [
+        'type' => 'boolean_checkbox',
+        'weight' => -3
+      ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
     
     $fields['run_npm'] = BaseFieldDefinition::create('boolean')->setLabel(" Generate files style ? ")->setDisplayOptions('form', [
       'type' => 'boolean_checkbox',
       'weight' => -3
     ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true);
     
-    $fields['force_regenerate_npm_files'] = BaseFieldDefinition::create('boolean')->setLabel(" Force à regener les fichiers npm ")->setDisplayOptions('form', [
-      'type' => 'boolean_checkbox',
-      'weight' => -3
-    ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true)->setDefaultValue(false)->setDescription(" Utile dans les cas de figure ou on a pas pu generer les fichiers ");
+    $fields['force_regenerate_npm_files'] = BaseFieldDefinition::create('boolean')->setLabel(" Force à regener les fichiers npm ")->setDisplayOptions('form',
+      [
+        'type' => 'boolean_checkbox',
+        'weight' => -3
+      ])->setDisplayOptions('view', [])->setDisplayConfigurable('view', TRUE)->setDisplayConfigurable('form', true)->setDefaultValue(true)->setDefaultValue(false)->setDescription(
+      " Utile dans les cas de figure ou on a pas pu generer les fichiers ");
     // NB: application de ses informations se fait apres la creation du theme.
     // @see
     // Drupal\generate_style_theme\Services\GenerateStyleTheme::setConfigTheme()
-    $fields['site_config'] = BaseFieldDefinition::create('wbumenudomaineditlink')->setLabel(t(' Information de configuration du domaine '))->setRequired(false)->setDisplayOptions('form', [
-      'type' => 'wbumenudomainsiteconfig',
-      'settings' => [],
-      'weight' => -3
-    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setConstraints([
+    $fields['site_config'] = BaseFieldDefinition::create('wbumenudomaineditlink')->setLabel(t(' Information de configuration du domaine '))->setRequired(false)->setDisplayOptions('form',
+      [
+        'type' => 'wbumenudomainsiteconfig',
+        'settings' => [],
+        'weight' => -3
+      ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setConstraints([
       'UniqueField' => []
     ]);
     
@@ -622,4 +638,11 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
     return $fields;
   }
   
+  public static function getImageStyles() {
+    $options_style = [];
+    foreach (\Drupal\image\Entity\ImageStyle::loadMultiple() as $style) {
+      $options_style[$style->id()] = $style->label();
+    }
+    return $options_style;
+  }
 }

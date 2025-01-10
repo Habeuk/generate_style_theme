@@ -136,7 +136,8 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
   }
   
   /**
-   * -
+   * -Retorune le chemin non absolue car cela dit etre valide pour la
+   * configuration du theme.
    */
   public function getLogo() {
     $fid = $this->get('logo')->target_id;
@@ -148,10 +149,16 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
         // se genere via theme_get_setting('logo.url');
         if ($style)
           $url = ImageStyle::load($style)->buildUrl($file->getFileUri());
-        else
-          $url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+        else {
+          $url = \Drupal::service('file_url_generator')->generateString($file->getFileUri());
+        }
         try {
-          file_get_contents($url);
+          if ($style)
+            $urltest = ImageStyle::load($style)->buildUrl($file->getFileUri(), true);
+          else {
+            $urltest = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+          }
+          file_get_contents($urltest);
         }
         catch (\Exception $e) {
           \Drupal::logger('generate_style_theme')->warning(" generate_style_theme : Le lien du logo n'est pas toujours bien generé ");

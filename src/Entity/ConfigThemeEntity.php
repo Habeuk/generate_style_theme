@@ -487,7 +487,7 @@ class ConfigThemeEntity extends ContentEntityBase implements ConfigThemeEntityIn
       'weight' => -3
     ])->setSettings([
       'allowed_values_function' => 'Drupal\generate_style_theme\Entity\ConfigThemeEntity::getImageStyles'
-    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue();
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayConfigurable('view', TRUE)->setDefaultValue("");
     
     $fields['color_primary'] = BaseFieldDefinition::create('color_theme_field_type')->setLabel(' Couleur primaire ')->setRequired(TRUE)->setDisplayOptions('form',
       [

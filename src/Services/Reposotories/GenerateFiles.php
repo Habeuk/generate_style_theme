@@ -36,6 +36,7 @@ regions:
   after_content: "afterContent"
   call_to_action: "Call to action"
   footer: "Footer"
+  hide_content : "Hide content"
 
 # Ajout des librairies
 libraries:

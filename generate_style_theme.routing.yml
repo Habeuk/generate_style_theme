@@ -24,10 +24,11 @@ generate_style_theme.config_tab1:
     _permission: "administer config theme entity entities"
 
 generate_style_theme.managecustom.styles:
-  path: "/admin/config/generate_style_theme/manage-custom-styles"
+  path: "/admin/config/generate_style_theme/manage-custom-styles/{files_style_id}"
   defaults:
     _form: '\Drupal\generate_style_theme\Form\GenerateStyleThemeStyles'
     _title: "Generer des styles pour le site"
+    files_style_id: "generate_style_theme.styles"
   requirements:
     _access: "TRUE"
 

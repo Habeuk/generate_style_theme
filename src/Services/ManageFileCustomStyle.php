@@ -156,6 +156,7 @@ class ManageFileCustomStyle extends ControllerBase {
       $entity->save();
     }
     $this->generateCustomFile();
+    return $entity;
   }
   
   /**
@@ -227,5 +228,4 @@ class ManageFileCustomStyle extends ControllerBase {
       return $entity->getJs();
     }
   }
-  
 }

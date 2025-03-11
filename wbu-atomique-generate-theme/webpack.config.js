@@ -1,128 +1,111 @@
-//webpack.config.js
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin"); // Importer le plugin ESLint
 
-// on récupère la valeur de NODE_ENV
 const env = process.env.NODE_ENV;
-
 const devMode = process.env.NODE_ENV !== "production";
 
-const plugins = [];
-
-// enable in production only
-plugins.push(
+const plugins = [
   new MiniCssExtractPlugin({
     filename: "./css/[name].css",
     chunkFilename: "[id].css",
-  })
-);
+  }),
+  new ESLintPlugin({ // Ajouter ESLintPlugin
+    extensions: ['js'], // Fichiers à vérifier
+    exclude: 'node_modules', // Exclure le dossier node_modules
+    fix: true, // Corrige automatiquement les erreurs simples
+  }),
+];
 
 module.exports = {
   plugins,
-  mode: env || "development", // On définit le mode en fonction de la valeur de NODE_ENV.
+  mode: env || "development",
   entry: {
     "global-style": "./src/js/global-style.js",
     "vendor-style": "./src/js/vendor-style.js",
-    "mail-style":"./src/js/mail-style.js"
+    "mail-style": "./src/js/mail-style.js",
   },
   output: {
     path: path.resolve(__dirname, "../"),
     filename: "./js/[name].js",
   },
   devtool: devMode ? "inline-source-map" : false,
+  cache: {
+    type: "filesystem", // Active le cache
+  },
   module: {
     rules: [
-      //règles de compilations pour les fichiers .js
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env"],
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env"],
+            },
           },
-        },
+          // Supprimer eslint-loader
+        ],
       },
-      // Règles de compilations pour les fichiers .css
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: "../",
-            },
-          },
+          devMode
+            ? "style-loader"
+            : {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                  publicPath: "../",
+                },
+              },
           {
             loader: "css-loader",
             options: {
               importLoaders: 1,
+              url: false, // Désactive le traitement des URLs
             },
           },
           {
             loader: "postcss-loader",
             options: {
               sourceMap: true,
-            },
-          },
-          {
-            loader: "resolve-url-loader", // améliore la résolution des chemins relatifs
-            // (utile par exemple quand une librairie tierce fait référence à des images ou des fonts situés dans son propre dossier)
-            options: {
-              publicPath: "../images",
+              postcssOptions: {
+                plugins: [require("autoprefixer")],
+              },
             },
           },
           {
             loader: "sass-loader",
             options: {
-              sourceMap: true, // il est indispensable d'activer les sourcemaps pour que postcss fonctionne correctement
+              sourceMap: true,
               implementation: require("sass"),
             },
           },
         ],
       },
-      //règles de compilations pour les fonts
       {
-        test: /\.(eot|ttf|woff|woff2)$/,
-        loader: "file-loader",
-        options: {
-          name: "fonts/[name].[hash].[ext]",
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "images/[name][ext]",
         },
-      },
-      //règles de compilations pour les images
-      {
-        test: /\.(gif|png|jpe?g)$/i,
-        use: [
-          {
-            // Using file-loader for these files
-            loader: "file-loader?name=[name].[ext]&outputPath=./images/",
-
-            // In options we can set different things like format
-            // and directory to save
-            // options: {
-            //     outputPath: (__dirname, '../images')
-            // }
-          },
-          { loader: "image-webpack-loader" },
-        ],
       },
       {
         test: /\.svg$/i,
-        use: [
-          {
-            // Using file-loader for these files
-            loader: "file-loader?name=[name].[ext]&outputPath=./icons/",
-
-            // In options we can set different things like format
-            // and directory to save
-            // options: {
-            //     outputPath: (__dirname, '../images')
-            // }
-          },
-          { loader: "image-webpack-loader" },
-        ],
+        type: "asset/resource",
+        generator: {
+          filename: "icons/[name][ext]",
+        },
+      },
+      {
+        test: /\.(eot|ttf|woff|woff2)$/,
+        type: "asset/resource",
+        generator: {
+          filename: "fonts/[name][ext]",
+        },
       },
     ],
   },
@@ -135,16 +118,7 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      new CssMinimizerPlugin({
-        minimizerOptions: {
-          preset: [
-            "default",
-            {
-              discardComments: { removeAll: true },
-            },
-          ],
-        },
-      }),
+      new CssMinimizerPlugin(),
       new TerserPlugin(),
     ],
   },

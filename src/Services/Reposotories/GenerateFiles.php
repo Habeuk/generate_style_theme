@@ -58,9 +58,9 @@ libraries-override:
     $string = 'global-style:
   css:
     theme:
-      css/global-style.css: {}
+      css/global-style.css: {weight: -8}
   js:
-    js/global-style.js: { preprocess: false }
+    js/global-style.js: {weight: -8, preprocess: false }
   dependencies:
     - core/once
     - core/drupal.message
@@ -68,14 +68,14 @@ libraries-override:
 vendor-style:
   css:
     theme:
-      css/vendor-style.css: {}
+      css/vendor-style.css: {weight: -9}
   js:
-    js/vendor-style.js: { preprocess: false }
+    js/vendor-style.js: {weight: -9, preprocess: false }
 
 mail-style:
   css:
     theme:
-      css/mail-style.css: { preprocess: true }
+      css/mail-style.css: {weight: -7, preprocess: true }
 ';
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;

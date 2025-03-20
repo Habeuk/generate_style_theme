@@ -6,15 +6,17 @@ const ESLintPlugin = require("eslint-webpack-plugin"); // Importer le plugin ESL
 
 const env = process.env.NODE_ENV;
 const devMode = process.env.NODE_ENV !== "production";
-
+console.log("env : ", env);
+console.log("env : ", devMode);
 const plugins = [
   new MiniCssExtractPlugin({
     filename: "./css/[name].css",
     chunkFilename: "[id].css",
   }),
-  new ESLintPlugin({ // Ajouter ESLintPlugin
-    extensions: ['js'], // Fichiers à vérifier
-    exclude: 'node_modules', // Exclure le dossier node_modules
+  new ESLintPlugin({
+    // Ajouter ESLintPlugin
+    extensions: ["js"], // Fichiers à vérifier
+    exclude: "node_modules", // Exclure le dossier node_modules
     fix: true, // Corrige automatiquement les erreurs simples
   }),
 ];
@@ -47,20 +49,28 @@ module.exports = {
               presets: ["@babel/preset-env"],
             },
           },
-          // Supprimer eslint-loader
         ],
       },
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          devMode
-            ? "style-loader"
-            : {
-                loader: MiniCssExtractPlugin.loader,
-                options: {
-                  publicPath: "../",
-                },
-              },
+          // 1/2 permet d'injecter directeent le style dans le navigateur.
+//          devMode
+//            ? "style-loader"
+//            : {
+//                loader: MiniCssExtractPlugin.loader,
+//                options: {
+//                  publicPath: "../",
+//                },
+//              },
+          // 2/2 Permet de modifier directement les fichiers css.
+		  // On doit desactiver la premiere approche, car on a pour abitude de fonctionner avec la seconde.
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: "../", // Ajustez selon votre structure de dossiers
+            },
+          },
           {
             loader: "css-loader",
             options: {
@@ -117,9 +127,6 @@ module.exports = {
     hot: true,
   },
   optimization: {
-    minimizer: [
-      new CssMinimizerPlugin(),
-      new TerserPlugin(),
-    ],
+    minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
   },
 };

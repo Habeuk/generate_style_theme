@@ -342,15 +342,15 @@ mail-style:
     $space_inner_top = isset($entity->getspace_inner_top()['value']) ? $entity->getspace_inner_top()['value'] : '0.5';
     if (!empty($entity->getwbu_titre_big())) {
       $string .= '
-$wbu_titre_big: ' . $entity->getwbu_titre_big() . ';';
+$wbu-titre-big: ' . $entity->getwbu_titre_big() . ';';
     }
     if (!empty($entity->getwbu_titre_suppra())) {
       $string .= '
-$wbu_titre_suppra: ' . $entity->getwbu_titre_suppra() . ';';
+$wbu-titre-suppra: ' . $entity->getwbu_titre_suppra() . ';';
     }
     if (!empty($entity->getwbu_titre_biggest())) {
       $string .= '
-$wbu_titre_biggest: ' . $entity->getwbu_titre_biggest() . ';';
+$wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     $wbu_link_color = $entity->getScssColorValue($entity->getColorLink());
     $wbu_bootstrap_primary = $entity->getScssColorValue($entity->getBootstrapColorPrimary());

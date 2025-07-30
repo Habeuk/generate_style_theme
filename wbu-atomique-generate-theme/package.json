@@ -8,9 +8,9 @@
     "Dev": "webpack --watch --node-env='development' --progress",
     "build": "--node-env=production webpack --watch --progress",
     "copy": "--node-env=production node scripts/build.js  --watch",
-    "Prod": "--node-env=production webpack --watch --progress",
-    "ProdCMD": "--node-env=production ./node_modules/.bin/webpack",
-    "DevCMD": "--node-env=development ./node_modules/.bin/webpack",
+    "Prod": "webpack --node-env='production' --watch --progress",
+    "ProdCMD": "./node_modules/.bin/webpack --node-env='production' ",
+    "DevCMD": "./node_modules/.bin/webpack --node-env='development' ",
     "serve": "webpack serve --mode='production' --open"
   },
   "author": "gugledas",

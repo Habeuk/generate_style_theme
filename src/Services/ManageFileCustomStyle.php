@@ -195,11 +195,17 @@ class ManageFileCustomStyle extends ControllerBase {
     $js = '';
     foreach ($entities as $entity) {
       // add comment
-      $scss .= "\n";
-      $scss .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
-      $scss .= " \n";
-      $scss .= $entity->getScss();
-      $js .= $entity->getJs();
+      $prefix = "\n";
+      $prefix .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
+      $prefix .= " \n";
+      $currentScss = $entity->getScss();
+      if (!empty($currentScss)) {
+        $scss .= $prefix . $currentScss;
+      }
+      $currentJs = $entity->getJs();
+      if (!empty($currentJs)) {
+        $js .= $prefix . $currentJs;
+      }
     }
     debugLog::logger($js, "custom.js", false, 'file', $this->getPath() . '/js', true);
     debugLog::logger($scss, "custom.scss", false, 'file', $this->getPath() . '/scss', true);

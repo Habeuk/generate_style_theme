@@ -18,6 +18,33 @@ use Symfony\Component\HttpFoundation\Request;
  */
 
 /**
+ * Adds the route_name field to the files_style entity..
+ * Implement hook_update_8001
+ *
+ * @see https://www.drupal.org/node/2554097
+ * @see https://www.drupal.org/docs/drupal-apis/update-api/introduction-to-update-api-for-drupal-8
+ * @see https://www.drupal.org/docs/7/api/schema-api/updating-tables-hook_update_n-functions
+ */
+function generate_style_theme_update_8001() {
+  $base_fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('files_style');
+  if (isset($base_fields['route_name'])) {
+    $storageDef = $base_fields['route_name'];
+    $field_name = 'route_name';
+    $entity_type_id = 'files_style';
+    /**
+     *
+     * @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $updateManager
+     */
+    $updateManager = \Drupal::entityDefinitionUpdateManager();
+    $storageDefinitionOld = $updateManager->getFieldStorageDefinition($field_name, $entity_type_id);
+    if ($storageDefinitionOld) {
+      $updateManager->uninstallFieldStorageDefinition($storageDefinitionOld);
+    }
+    $updateManager->installFieldStorageDefinition($field_name, $entity_type_id, "generate_style_theme", $storageDef);
+  }
+}
+
+/**
  * implement hook_form_FORM_ID_alter
  *
  * @param array $form

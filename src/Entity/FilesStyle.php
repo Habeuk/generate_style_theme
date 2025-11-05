@@ -116,6 +116,40 @@ class FilesStyle extends RevisionableContentEntityBase implements FilesStyleInte
   }
   
   /**
+   * Load files style by route name pattern
+   *
+   * @param string $route_pattern
+   * @return array
+   */
+  public static function loadByRoutePattern($route_pattern) {
+    $entities = \Drupal::entityTypeManager()->getStorage('files_style')->loadByProperties([]);
+    
+    $matching_entities = [];
+    foreach ($entities as $entity) {
+      $entity_route_name = $entity->getRouteName();
+      if ($entity_route_name && str_contains($entity_route_name, $route_pattern)) {
+        $matching_entities[] = $entity;
+      }
+    }
+    return $matching_entities;
+  }
+  
+  /**
+   * Load files style by route name
+   *
+   * @param string $route_name
+   * @return self|null
+   */
+  public static function loadByRouteName($route_name) {
+    $entities = \Drupal::entityTypeManager()->getStorage('files_style')->loadByProperties([
+      'route_name' => $route_name
+    ]);
+    if (!empty($entities)) {
+      return reset($entities);
+    }
+  }
+  
+  /**
    *
    * {@inheritdoc}
    */
@@ -185,6 +219,15 @@ class FilesStyle extends RevisionableContentEntityBase implements FilesStyleInte
       'label' => 'above',
       'type' => 'author',
       'weight' => 15
+    ])->setDisplayConfigurable('view', TRUE);
+    
+    $fields['route_name'] = BaseFieldDefinition::create('string')->setLabel(t('Route name'))->setDescription(t('Optional: the full or partial name of a route this style applies to.'))->setRevisionable(TRUE)->setRequired(FALSE)->setSetting('max_length', 255)->setDefaultValue(NULL)->setDisplayOptions('form', [
+      'type' => 'string_textfield',
+      'weight' => 12
+    ])->setDisplayConfigurable('form', TRUE)->setDisplayOptions('view', [
+      'label' => 'above',
+      'type' => 'string',
+      'weight' => 12
     ])->setDisplayConfigurable('view', TRUE);
     
     $fields['created'] = BaseFieldDefinition::create('created')->setLabel(t('Authored on'))->setDescription(t('The time that the files style was created.'))->setDisplayOptions('view', [

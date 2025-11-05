@@ -174,8 +174,10 @@ class ManageFileCustomStyle extends ControllerBase {
   
   /**
    * Genere les fichiers de base.
+   *
+   * @param boolean $save_multifile
    */
-  public function generateCustomFile() {
+  public function generateCustomFile($save_multifile = false) {
     /**
      * L'enssemble des styles present dans l'entite ne vont pas dans custom.
      *
@@ -194,7 +196,19 @@ class ManageFileCustomStyle extends ControllerBase {
     }
     $js = '';
     foreach ($entities as $entity) {
-      // add comment
+      if ($save_multifile) {
+        /**
+         * On garde uniquement les styles ajoutés dans le module
+         * generate_style_theme.
+         * Car ces styles sont en principe utiliser sur toutes les pages.
+         *
+         * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
+         */
+        if ($entity->getModule() !== 'generate_style_theme') {
+          continue;
+        }
+      }
+      // Add comment
       $prefix = "\n";
       $prefix .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
       $prefix .= " \n";
@@ -234,4 +248,5 @@ class ManageFileCustomStyle extends ControllerBase {
       return $entity->getJs();
     }
   }
+  
 }

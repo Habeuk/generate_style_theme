@@ -473,4 +473,5 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
 @use "@stephane888/wbu-atomique/scss/drupal/ajustement.scss";';
     return $string;
   }
+  
 }

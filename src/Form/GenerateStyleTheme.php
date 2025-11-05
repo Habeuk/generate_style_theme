@@ -41,12 +41,14 @@ class GenerateStyleTheme extends ConfigFormBase {
       '#title' => $this->t('Theme de base'),
       '#default_value' => $config->get('tab1.theme_base')
     ];
-    $form['use_domain'] = [
-      '#type' => 'checkbox',
-      '#title' => 'Generer css&js themes à partir du domaine',
-      '#description' => "",
-      '#default_value' => $config->get('tab1.use_domain')
-    ];
+    if (\Drupal::moduleHandler()->moduleExists('domain'))
+      $form['use_domain'] = [
+        '#type' => 'checkbox',
+        '#title' => 'Generer css&js themes à partir du domaine',
+        '#description' => "",
+        '#default_value' => $config->get('tab1.use_domain')
+      ];
+    
     $form['save_multifile'] = [
       '#type' => 'checkbox',
       '#title' => "Genere plusieurs fichier en function de l'entité",
@@ -115,7 +117,8 @@ class GenerateStyleTheme extends ConfigFormBase {
     parent::submitForm($form, $form_state);
     $config = $this->config(self::$key);
     $config->set('tab1.theme_base', $form_state->getValue('theme_base'));
-    $config->set('tab1.use_domain', $form_state->getValue('use_domain'));
+    if (\Drupal::moduleHandler()->moduleExists('domain'))
+      $config->set('tab1.use_domain', $form_state->getValue('use_domain'));
     $config->set('tab1.save_multifile', $form_state->getValue('save_multifile'));
     $config->set('tab1.build_mode', $form_state->getValue('build_mode'));
     $config->set('tab1.vendor_import', $form_state->getValue('vendor_import'));

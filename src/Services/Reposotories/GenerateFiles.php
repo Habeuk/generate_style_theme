@@ -225,18 +225,40 @@ mail-style:
   /**
    * --
    */
-  function scssFiles() {
+  public function scssFiles() {
     $this->buildVariables();
     $this->scssFilesGlobalStyle();
     $this->scssFilesVendorStyle();
-    $this->scssFilesFromArray();
   }
   
   /**
-   * Permet de construire un fchier avec des styles ajoutés dans un tableau.
+   * Permet de construire un fichier avec des styles ajoutés dans un tableau.
    * Les styles peuveant provenir de la surcharge sur
    */
-  private function scssFilesFromArray() {
+  public function buildCustomScssFromArray(array $styles, string $filename) {
+    $styleToImport = $this->buildEntityImport($styles);
+    $variable_file = './' . $this->themeName . '_variables.scss';
+    $scss = '    @use "' . $variable_file . '" as *;    ';
+    if (!empty($styleToImport)) {
+      $scss .= $styleToImport;
+    }
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
+    debugLog::logger($scss, $filename . ".scss", false, 'file', $path, true);
+  }
+  
+  /**
+   * Permet de construire un fichier avec des styles ajoutés dans un tableau.
+   * Les styles peuveant provenir de la surcharge sur
+   */
+  public function buildCustomJsFromArray(array $styles, string $filename) {
+    $styleToImport = $this->buildEntityImport($styles);
+    $js = '';
+    if (!empty($styleToImport)) {
+      $js .= $styleToImport;
+    }
+    $js .= 'import "../scss/' . $filename . '.scss";';
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
+    debugLog::logger($js, $filename . ".js", false, 'file', $path, true);
   }
   
   /**
@@ -429,9 +451,9 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
                 // On parcourt les plugins.
                 if (is_array($plugin))
                   foreach ($plugin as $plugin_id => $library) {
-                    if (!empty($library) && is_array($library))
+                    if (!empty($library) && is_array($library)) {
                       $libraries[$plugin_id] = implode("\n", $library);
-                    // dump($libraries);
+                    }
                   }
               }
           }

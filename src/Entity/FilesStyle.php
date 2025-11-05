@@ -100,6 +100,24 @@ class FilesStyle extends RevisionableContentEntityBase implements FilesStyleInte
     return $this->get('module')->value;
   }
   
+  public function getRouteName() {
+    return $this->get('route_name')->value;
+  }
+  
+  public function setRouteName($value) {
+    $this->set('route_name', $value);
+    return $this;
+  }
+  
+  /**
+   * Permet de determiner si le styles doit etre charger de maniere globale.
+   *
+   * @return boolean
+   */
+  public function IsGlobalAccess() {
+    return $this->getRouteName() ? false : true;
+  }
+  
   /**
    *
    * @param string $key

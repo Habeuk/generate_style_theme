@@ -204,7 +204,7 @@ class ManageFileCustomStyle extends ControllerBase {
          *
          * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
          */
-        if ($entity->getModule() !== 'generate_style_theme') {
+        if (!($entity->getModule() == 'generate_style_theme' && $entity->IsGlobalAccess())) {
           continue;
         }
       }

@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -21,14 +22,32 @@ const plugins = [
   }),
 ];
 
+// 🔹 Charger dynamiquement le JSON (s’il existe)
+let extraEntries = {};
+const entriesPath = path.resolve(__dirname, "auto_generate_entries.json");
+if (fs.existsSync(entriesPath)) {
+  try {
+    extraEntries = JSON.parse(fs.readFileSync(entriesPath, "utf-8"));
+  } catch (e) {
+    console.error(
+      "❌ ----------------- Erreur de lecture du fichier entries.json :",
+      e
+    );
+  }
+}
+// 🔹 Entrées de base
+const baseEntries = {
+  "global-style": "./src/js/global-style.js",
+  "vendor-style": "./src/js/vendor-style.js",
+  "mail-style": "./src/js/mail-style.js",
+};
+// 🔹 Fusionner les deux objets
+const entry = { ...baseEntries, ...extraEntries };
+
 module.exports = {
   plugins,
   mode: env || "development",
-  entry: {
-    "global-style": "./src/js/global-style.js",
-    "vendor-style": "./src/js/vendor-style.js",
-    "mail-style": "./src/js/mail-style.js",
-  },
+  entry,
   output: {
     path: path.resolve(__dirname, "../"),
     filename: "./js/[name].js",

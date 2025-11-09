@@ -261,6 +261,17 @@ mail-style:
     debugLog::logger($js, $filename . ".js", false, 'file', $path, true);
   }
   
+  public function autoGenerateEntries(array $auto_generate_entries) {
+    // Convertir le tableau PHP en JSON bien formaté
+    $jsonData = json_encode($auto_generate_entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    // Vérifier si la conversion a réussi
+    if ($jsonData === false) {
+      throw new \Exception('Erreur lors de la conversion du tableau en JSON : ' . json_last_error_msg());
+    }
+    $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
+    debugLog::logger($jsonData, "auto_generate_entries.json", false, 'file', $path, true);
+  }
+  
   /**
    * On genere le fichier de variable.
    */

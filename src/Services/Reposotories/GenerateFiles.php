@@ -7,6 +7,7 @@ use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Serialization\Yaml;
 
 trait GenerateFiles {
   /**
@@ -75,7 +76,7 @@ vendor-style:
 mail-style:
   css:
     theme:
-      css/mail-style.css: {weight: -7, preprocess: true }
+      css/mail-style.css: {weight: -7, preprocess: false }
 ';
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
@@ -270,6 +271,38 @@ mail-style:
     }
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     debugLog::logger($jsonData, "auto_generate_entries.json", false, 'file', $path, true);
+    $this->generateLibrairies(array_keys($auto_generate_entries));
+  }
+  
+  /**
+   *
+   * @param array $librariesName
+   */
+  protected function generateLibrairies(array $librariesName) {
+    $libraries = $this->getBaseLibraries();
+    foreach ($librariesName as $name) {
+      $libraries[$name] = [
+        'css' => [
+          'theme' => [
+            'css/' . $name . '.css' => [
+              'weight' => -5,
+              'preprocess' => false
+            ]
+          ]
+        ],
+        'js' => [
+          'js/' . $name . '.js' => [
+            'weight' => -5,
+            'preprocess' => false
+          ]
+        ]
+      ];
+    }
+    $stringYaml = Yaml::encode($libraries);
+    $filename = $this->themeName . '.libraries.yml';
+    $path = $this->themePath . '/' . $this->themeName;
+    debugLog::$debug = false;
+    debugLog::logger($stringYaml, $filename, false, 'file', $path, true);
   }
   
   /**
@@ -488,6 +521,56 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
       'script' => $cmd
     ];
     return $debug;
+  }
+  
+  private function getBaseLibraries(): array {
+    $libraries = [
+      'global-style' => [
+        'css' => [
+          'theme' => [
+            'css/global-style.css' => [
+              'weight' => -8
+            ]
+          ]
+        ],
+        'js' => [
+          'js/global-style.js' => [
+            'weight' => -8,
+            'preprocess' => false
+          ]
+        ],
+        'dependencies' => [
+          'core/once',
+          'core/drupal.message'
+        ]
+      ],
+      'vendor-style' => [
+        'css' => [
+          'theme' => [
+            'css/vendor-style.css' => [
+              'weight' => -9
+            ]
+          ]
+        ],
+        'js' => [
+          'js/vendor-style.js' => [
+            'weight' => -9,
+            'preprocess' => false
+          ]
+        ]
+      ],
+      'mail-style' => [
+        'css' => [
+          'theme' => [
+            'css/mail-style.css' => [
+              'weight' => -7,
+              'preprocess' => false
+            ]
+          ]
+        ]
+      ]
+    ];
+    return $libraries;
   }
   
   protected function getFileNameFileVariable() {

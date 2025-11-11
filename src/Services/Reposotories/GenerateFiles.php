@@ -236,12 +236,15 @@ mail-style:
    * Permet de construire un fichier avec des styles ajoutés dans un tableau.
    * Les styles peuveant provenir de la surcharge sur
    */
-  public function buildCustomScssFromArray(array $styles, string $filename) {
+  public function buildCustomScssFromArray(array $styles, string $filename, array $customStyles = []) {
     $styleToImport = $this->buildEntityImport($styles);
     $variable_file = './' . $this->themeName . '_variables.scss';
     $scss = '    @use "' . $variable_file . '" as *;    ';
     if (!empty($styleToImport)) {
       $scss .= $styleToImport;
+    }
+    if (!empty($customStyles)) {
+      $scss .= $this->buildEntityImport($customStyles);
     }
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::logger($scss, $filename . ".scss", false, 'file', $path, true);
@@ -251,13 +254,16 @@ mail-style:
    * Permet de construire un fichier avec des styles ajoutés dans un tableau.
    * Les styles peuveant provenir de la surcharge sur
    */
-  public function buildCustomJsFromArray(array $styles, string $filename) {
+  public function buildCustomJsFromArray(array $styles, string $filename, array $customStyles = []) {
     $styleToImport = $this->buildEntityImport($styles);
-    $js = '';
+    $js = 'import "../scss/' . $filename . '.scss";';
+    $js .= "\n";
     if (!empty($styleToImport)) {
       $js .= $styleToImport;
     }
-    $js .= 'import "../scss/' . $filename . '.scss";';
+    if (!empty($customStyles)) {
+      $js .= $this->buildEntityImport($customStyles);
+    }
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
     debugLog::logger($js, $filename . ".js", false, 'file', $path, true);
   }

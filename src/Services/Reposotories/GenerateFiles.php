@@ -87,8 +87,8 @@ mail-style:
   /**
    * --
    */
-  function jsFiles() {
-    $this->getGlobalStyle();
+  function jsFiles(array $libraireStyles = [], array $customStyles = []) {
+    $this->getGlobalStyle($libraireStyles, $customStyles);
     $this->getVendorStyle();
     $this->getMailStyle();
   }
@@ -97,8 +97,14 @@ mail-style:
    * On importe le fichier scss qui a été generé et les fichiers js qui sont
    * dans la config du theme.
    */
-  private function getGlobalStyle() {
+  private function getGlobalStyle(array $libraireStyles = [], array $customStyles = []) {
     $string = $this->buildEntityImportStyle('js') . "\n";
+    if (!empty($libraireStyles)) {
+      $string .= $this->buildEntityImport($libraireStyles);
+    }
+    if (!empty($customStyles)) {
+      $string .= $this->buildEntityImport($customStyles);
+    }
     $string .= 'import "../scss/' . $this->themeName . '.scss";';
     $string .= "\n";
     $filename = 'global-style.js';
@@ -226,9 +232,9 @@ mail-style:
   /**
    * --
    */
-  public function scssFiles() {
+  public function scssFiles(array $libraireStyles = [], array $defaultStyles = []) {
     $this->buildVariables();
-    $this->scssFilesGlobalStyle();
+    $this->scssFilesGlobalStyle($libraireStyles, $defaultStyles);
     $this->scssFilesVendorStyle();
   }
   
@@ -347,21 +353,29 @@ mail-style:
    * De plus, si load_custom_in_vendor est à true on doit generer un seul
    * fichier.
    */
-  private function scssFilesGlobalStyle() {
+  private function scssFilesGlobalStyle(array $libraireStyles = [], array $customStyles = []) {
     $string = '@use "' . $this->getFileNameFileVariable() . '" as *;';
     // pour charger un seul fichier.
     if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
       $string .= $this->initLoader();
     }
-    // On importe les styles definit de maniere automatique.
-    $styleImport = $this->buildEntityImportStyle('scss');
-    if (!empty($styleImport)) {
-      $string .= $styleImport;
+    
+    if (!empty($libraireStyles)) {
+      $string .= $this->buildEntityImport($libraireStyles);
     }
     /**
      * On chargera toujours le fichier custom.scss ici.
      */
     $string .= '@use "./custom.scss";';
+    // On importe les styles definit de maniere automatique.
+    $styleImport = $this->buildEntityImportStyle('scss');
+    if (!empty($styleImport)) {
+      $string .= $styleImport;
+    }
+    if (!empty($customStyles)) {
+      $string .= $this->buildEntityImport($customStyles);
+    }
+    
     // pour charger un seul fichier.
     if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
       $string .= $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];

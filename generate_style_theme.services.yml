@@ -31,3 +31,13 @@ services:
   generate_style_theme.manage_file_mail_style:
     class: Drupal\generate_style_theme\Services\ManageFileMailStyle
     arguments: ['@extension.path.resolver']
+
+  generate_style_theme.route_names_constraint_validator:
+    class: Drupal\generate_style_theme\Plugin\Validation\Constraint\RouteNamesConstraintValidator
+    arguments: ['@generate_style_theme.route_names_validator']
+    tags:
+      - { name: validator.constraint_validator }
+
+  generate_style_theme.route_names_validator:
+    class: Drupal\generate_style_theme\Services\RouteNamesValidatorService
+    arguments: ['@router.route_provider']

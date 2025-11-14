@@ -45,6 +45,95 @@ function generate_style_theme_update_8001() {
 }
 
 /**
+ * Update route_name field from string to string_long for files_style entity.
+ */
+function generate_style_theme_update_8002() {
+  $database = \Drupal::database();
+  
+  try {
+    // 1. Mettre à jour le stockage du champ dans la table de base
+    $table_name = 'files_style';
+    $field_name = 'route_name';
+    
+    // Vérifier si la colonne existe déjà en tant que string_long
+    if ($database->schema()->fieldExists($table_name, $field_name . '_value')) {
+      $current_spec = $database->schema()->getFieldSpecification($table_name, $field_name . '_value');
+      
+      // Si c'est encore un varchar, on le change en text
+      if ($current_spec['type'] == 'varchar') {
+        $spec = [
+          'type' => 'text',
+          'size' => 'big',
+        ];
+        $database->schema()->changeField($table_name, $field_name . '_value', $field_name . '_value', $spec);
+      }
+    }
+    
+    // 2. Mettre à jour le stockage du champ dans la table de révision
+    $revision_table_name = 'files_style_revision';
+    if ($database->schema()->fieldExists($revision_table_name, $field_name . '_value')) {
+      $current_spec_rev = $database->schema()->getFieldSpecification($revision_table_name, $field_name . '_value');
+      
+      if ($current_spec_rev['type'] == 'varchar') {
+        $spec_rev = [
+          'type' => 'text',
+          'size' => 'big',
+        ];
+        $database->schema()->changeField($revision_table_name, $field_name . '_value', $field_name . '_value', $spec_rev);
+      }
+    }
+    
+    // 3. Mettre à jour l'affichage du formulaire pour utiliser textarea
+    $entity_type = 'files_style';
+    $bundle = 'files_style'; // Pour les entités de contenu, le bundle est souvent le même que l'entity type
+    
+    $entity_form_display = \Drupal::entityTypeManager()
+      ->getStorage('entity_form_display')
+      ->load($entity_type . '.' . $bundle . '.default');
+    
+    if ($entity_form_display) {
+      $component = $entity_form_display->getComponent('route_name');
+      if ($component) {
+        $component['type'] = 'string_textarea';
+        $component['settings'] = ['rows' => 4];
+        $component['weight'] = 12;
+        $entity_form_display->setComponent('route_name', $component);
+        $entity_form_display->save();
+        
+        \Drupal::messenger()->addMessage(t('Updated route_name form display to use textarea.'));
+      }
+    }
+    
+    // 4. Mettre à jour l'affichage en vue
+    $entity_view_display = \Drupal::entityTypeManager()
+      ->getStorage('entity_view_display')
+      ->load($entity_type . '.' . $bundle . '.default');
+    
+    if ($entity_view_display) {
+      $component = $entity_view_display->getComponent('route_name');
+      if ($component) {
+        $component['type'] = 'basic_string';
+        $component['label'] = 'above';
+        $component['weight'] = 12;
+        $entity_view_display->setComponent('route_name', $component);
+        $entity_view_display->save();
+        
+        \Drupal::messenger()->addMessage(t('Updated route_name view display.'));
+      }
+    }
+    
+    \Drupal::messenger()->addMessage(t('Successfully updated route_name field from string to string_long.'));
+    
+    return t('Field route_name updated successfully.');
+    
+  } catch (\Exception $e) {
+    \Drupal::logger('generate_style_theme')->error('Error updating route_name field: @error', ['@error' => $e->getMessage()]);
+    \Drupal::messenger()->addError(t('Error updating route_name field: @error', ['@error' => $e->getMessage()]));
+    throw new \UpdateException('Failed to update route_name field.');
+  }
+}
+
+/**
  * implement hook_form_FORM_ID_alter
  *
  * @param array $form

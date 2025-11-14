@@ -138,11 +138,12 @@ class ManageFileCustomStyle extends ControllerBase {
    *        permet de passer des valeurs specique unqiuement lors de la
    *        creation.
    */
-  public function saveStyle($key, $module, $scss, $js, $customValue = []) {
+  public function saveStyle($key, $module, $scss, $js, $route_name="", $customValue = []) {
     $entity = FilesStyle::loadByName($key, $module);
     if ($entity) {
       $entity->setScss($scss);
       $entity->setJs($js);
+      $entity->setRouteName($route_name);
       $entity->save();
     }
     else {
@@ -150,7 +151,8 @@ class ManageFileCustomStyle extends ControllerBase {
         'label' => $key,
         'module' => $module,
         'scss' => $scss,
-        'js' => $js
+        'js' => $js,
+        'route_name' => $route_name
       ] + $customValue;
       $entity = FilesStyle::create($values);
       $entity->save();
@@ -185,17 +187,22 @@ class ManageFileCustomStyle extends ControllerBase {
      */
     $entities = FilesStyle::loadMultiple();
     $variable_file = './' . $this->getSelectedTheme() . '_variables.scss';
-    $scss = '    @use "' . $variable_file . '" as *;    ';
+    $base_scss = '    @use "' . $variable_file . '" as *;    ';
     if (!empty($this->getConfigGenerateStyleTheme()['tab1']['vendor_import']['load_custom_in_vendor'])) {
-      $scss .= '
-// On charge ces imports afin de pouvoir utiliser @extend.
-@use "@stephane888/wbu-atomique/scss/bootstrap-all.scss" as *;
-@use "@stephane888/wbu-atomique/scss/atome/typography/_default.scss" as *;
-@use "@stephane888/wbu-atomique/scss/molecule/default-class.scss" as *;
-';
+      $base_scss .= '
+      // On charge ces imports afin de pouvoir utiliser @extend.
+      @use "@stephane888/wbu-atomique/scss/bootstrap-all.scss" as *;
+      @use "@stephane888/wbu-atomique/scss/atome/typography/_default.scss" as *;
+      @use "@stephane888/wbu-atomique/scss/molecule/default-class.scss" as *;
+      ';
     }
+    $scss  = $base_scss;
     $js = '';
+    /**
+     * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
+    */
     foreach ($entities as $entity) {
+      $file_name ="custom";
       if ($save_multifile) {
         /**
          * On garde uniquement les styles ajoutés dans le module
@@ -204,8 +211,9 @@ class ManageFileCustomStyle extends ControllerBase {
          *
          * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
          */
-        if (!($entity->getModule() == 'generate_style_theme' && $entity->IsGlobalAccess())) {
-          continue;
+        if ($entity->getModule() == 'generate_style_theme' ) {
+          $file_name = $entity->label();
+          dump($file_name);
         }
       }
       // Add comment
@@ -213,12 +221,21 @@ class ManageFileCustomStyle extends ControllerBase {
       $prefix .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
       $prefix .= " \n";
       $currentScss = $entity->getScss();
-      if (!empty($currentScss)) {
-        $scss .= $prefix . $currentScss;
+      
+      if($file_name != "custom"){
+        $custom_scss = $base_scss.$currentScss;
+        
+        debugLog::logger($entity->getJs(), "$file_name.js", false, 'file', $this->getPath() . '/js', true);
+        debugLog::logger($custom_scss, "$file_name.scss", false, 'file', $this->getPath() . '/scss', true);
       }
-      $currentJs = $entity->getJs();
-      if (!empty($currentJs)) {
-        $js .= $prefix . $currentJs;
+      else{
+        if (!empty($currentScss)) {
+          $scss .= $prefix . $currentScss;
+        }
+        $currentJs = $entity->getJs();
+        if (!empty($currentJs)) {
+          $js .= $prefix . $currentJs;
+        }
       }
     }
     debugLog::logger($js, "custom.js", false, 'file', $this->getPath() . '/js', true);

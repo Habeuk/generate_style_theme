@@ -87,6 +87,7 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
     ];
     $default_css = '';
     $default_js = '';
+    $route_names = '';
     $style = null;
     if ($this->files_style_id)
       $style = \Drupal\generate_style_theme\Entity\FilesStyle::loadByName($this->files_style_id, 'generate_style_theme');
@@ -94,6 +95,7 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
       $form['details_section']['#open'] = FALSE;
       $default_css = $style->getScss();
       $default_js = $style->getJs();
+      $route_names = $style->getRouteName();
       // Ajouter un bouton à l'intérieur du champ 'details'
       $form['details_section']['custom_link'] = [
         '#type' => 'link',
@@ -194,6 +196,11 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
       ],
       "#description" => "Vous pouvez ajouter les mixins et les librairies inclut dans @stephane888/wbu-atomique"
     ];
+     $form['route_names'] = [
+      '#type' => 'textarea',
+      '#title' => t('Liste des pages ou le style doit etre appliquer'),
+      '#default_value' => $route_names,
+    ];
     $form['#attached']['library'][] = 'generate_style_theme/codemirror_admin';
     //
     return parent::buildForm($form, $form_state);
@@ -205,6 +212,26 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
   public function CheckIfLabelExist($label) {
     return \Drupal\generate_style_theme\Entity\FilesStyle::loadByName($label, 'generate_style_theme') ? true : false;
   }
+
+
+   /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    $route_names_text = $form_state->getValue('route_names');
+    
+    if (!empty($route_names_text)) {
+      /** @var \Drupal\generate_style_theme\Service\RouteNamesValidatorService $validator */
+      $validator = \Drupal::service('generate_style_theme.route_names_validator');
+      $errors = $validator->validate($route_names_text);
+
+      foreach ($errors as $error) {
+        $form_state->setErrorByName('route_names', $error);
+      }
+    }
+  }
   
   /**
    *
@@ -213,6 +240,7 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $file_scss = $form_state->getValue('file_scss');
     $file_js = $form_state->getValue('file_js');
+    $route_names = $form_state->getValue('route_names');
     $this->files_style_id = $this->routeMatch->getParameter('files_style_id');
     $key = null;
     if ($this->files_style_id) {
@@ -226,7 +254,7 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
         ]);
     }
     if ($key) {
-      $entity = $this->ManageFileCustomStyle->saveStyle($key, 'generate_style_theme', $file_scss, $file_js);
+      $entity = $this->ManageFileCustomStyle->saveStyle($key, 'generate_style_theme', $file_scss, $file_js, $route_names);
       if ($this->files_style_id == 'new') {
         $this->messenger()->addStatus($this->t('New style added'));
         $url = Url::fromRoute('generate_style_theme.managecustom.styles', [

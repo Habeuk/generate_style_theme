@@ -316,8 +316,9 @@ mail-style:
       $filesNames = array_map(function ($key, $entity) {
         return $entity->Label() . ".js";
       }, array_keys($entities), $entities);
+      
       foreach ($filesNames as $fileName) {
-        $js .= "import '$fileName';\n";
+        $js .= "import './$fileName';\n";
       }
     }
     if (!empty($styleToImport)) {

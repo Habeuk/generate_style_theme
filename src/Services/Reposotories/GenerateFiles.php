@@ -305,6 +305,22 @@ mail-style:
     $styleToImport = $this->buildEntityImport($styles);
     $js = 'import "../scss/' . $filename . '.scss";';
     $js .= "\n";
+    $path = $this->pathFromFileName($filename);
+    if (!empty($path)) {
+      
+      $entities = FilesStyle::loadByRouteName($path);
+      /**
+       *
+       * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
+       */
+      $filesNames = array_map(function ($key, $entity) {
+        return $entity->Label() . ".js";
+      }, array_keys($entities), $entities);
+      
+      foreach ($filesNames as $fileName) {
+        $js .= "import './$fileName';\n";
+      }
+    }
     if (!empty($styleToImport)) {
       $js .= $styleToImport;
     }
@@ -315,7 +331,7 @@ mail-style:
     debugLog::logger($js, $filename . ".js", false, 'file', $path, true);
   }
 
-  public function autoGenerateEntries(array $auto_generate_entries) {
+  public function autoGenerateEntries(array $auto_generate_entries, bool $generateAll = True) {
     // Convertir le tableau PHP en JSON bien formaté
     $jsonData = json_encode($auto_generate_entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     // Vérifier si la conversion a réussi
@@ -324,7 +340,11 @@ mail-style:
     }
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     debugLog::logger($jsonData, "auto_generate_entries.json", false, 'file', $path, true);
-    $this->generateLibrairies(array_keys($auto_generate_entries));
+    if ($generateAll) {
+      $this->generateLibrairies(array_keys($auto_generate_entries));
+    } else {
+      $this->generateSingleLibrairies(array_keys($auto_generate_entries)[0]);
+    }
   }
 
   /**
@@ -354,8 +374,38 @@ mail-style:
     $stringYaml = Yaml::encode($libraries);
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
+
     debugLog::$debug = false;
     debugLog::logger($stringYaml, $filename, false, 'file', $path, true);
+  }
+
+  protected function generateSingleLibrairies($libName) {
+    debugLog::$debug = false;
+    $fileName = $this->themeName . '.libraries.yml';
+    $path = $this->themePath . '/' . $this->themeName;
+
+    $existingContent = file_exists($path . '/' . $fileName) ? file_get_contents($path . '/' . $fileName) : '';
+    $libraries = Yaml::decode($existingContent);
+    if (!isset($libs[$libName])) {
+      $libraries[$libName] = [
+        'css' => [
+          'theme' => [
+            'css/' . $libName . '.css' => [
+              'weight' => -5,
+              'preprocess' => false
+            ]
+          ]
+        ],
+        'js' => [
+          'js/' . $libName . '.js' => [
+            'weight' => -5,
+            'preprocess' => false
+          ]
+        ]
+      ];
+      $stringYaml = Yaml::encode($libraries);
+      debugLog::logger($stringYaml, $fileName, false, "file", $path, true);
+    }
   }
 
   /**

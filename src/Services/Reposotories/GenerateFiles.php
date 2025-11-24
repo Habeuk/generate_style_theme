@@ -374,8 +374,7 @@ mail-style:
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
 
-    $existingContent = file_exists($path . '/' . $filename) ? file_get_contents($path . '/' . $filename) : '';
-    $table = Yaml::decode($existingContent);
+    debugLog::$debug = false;
     debugLog::logger($stringYaml, $filename, false, 'file', $path, true);
   }
 

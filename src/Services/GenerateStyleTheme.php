@@ -149,11 +149,11 @@ class GenerateStyleTheme extends ControllerBase {
         $createThme = true;
       }
       
-      if ($createThme)
-        $this->CopyWbuAtomiqueTheme();
-      
-      $this->scssFiles();
-      $this->jsFiles();
+      if ($createThme){
+        $this->CopyWbuAtomiqueTheme(); 
+        $this->scssFiles();
+        $this->jsFiles();
+      }
       //
       if ($run_npm)
         $this->RunNpm();

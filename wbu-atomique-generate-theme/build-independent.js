@@ -6,10 +6,10 @@ const os = require('os');
 
 // Configuration
 const CONFIG = {
-  maxMemoryMB: 4096, // Mémoire maximale par processus
-  batchSize: 20, // Entrées par lot
-  maxConcurrent: 3, // Processus parallèles maximum
-  nodeOptions: `--max-old-space-size=${4096}`, // Options Node.js
+  maxMemoryMB: 2048, // Mémoire maximale par processus
+  batchSize: 50, // Entrées par lot
+  maxConcurrent: 5, // Processus parallèles maximum
+  nodeOptions: `--max-old-space-size=${2048}`, // Options Node.js
 };
 
 // Charger uniquement les entrées du fichier JSON
@@ -304,3 +304,4 @@ process.on('unhandledRejection', (error) => {
 
 // Lancer le script
 main();
+

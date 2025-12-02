@@ -11,7 +11,12 @@
     "Prod": "webpack --node-env='production' --watch --progress",
     "ProdCMD": "./node_modules/.bin/webpack --node-env='production' ",
     "DevCMD": "./node_modules/.bin/webpack --node-env='development' ",
-    "serve": "webpack serve --mode='production' --open"
+    "serve": "webpack serve --mode='production' --open",
+	"build:indep": "node build-independent.js",
+	"build:indep-fast": "node build-independent.js --fast",
+	"build:indep-safe": "node build-independent.js --safe",	   
+	"dev:indep": "npm run build:indep && live-server public",	   
+	"build:watch": "nodemon --watch src --ext js,scss --exec 'npm run build:indep'"
   },
   "author": "gugledas",
   "license": "ISC",

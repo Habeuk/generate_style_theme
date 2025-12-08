@@ -16,7 +16,7 @@ trait GenerateFiles {
    * @var FileSystem
    */
   protected $FileSystem;
-
+  
   /**
    * --
    */
@@ -52,7 +52,7 @@ libraries-override:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * --
    */
@@ -84,7 +84,7 @@ mail-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * --
    */
@@ -93,7 +93,7 @@ mail-style:
     $this->getVendorStyle();
     $this->getMailStyle();
   }
-
+  
   /**
    * On importe le fichier scss qui a été generé et les fichiers js qui sont
    * dans la config du theme.
@@ -125,7 +125,7 @@ mail-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   private function getVendorStyle() {
     $vendor_import = $this->generate_style_themeSettings['tab1']['vendor_import']['js'];
     $string = $vendor_import . '
@@ -144,7 +144,7 @@ mail-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   private function getMailStyle() {
     $filename = 'mail-style.js';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
@@ -152,7 +152,7 @@ mail-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   function RunNpm() {
     $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
     $build_mode = $this->generate_style_themeSettings['tab1']['build_mode'];
@@ -175,7 +175,7 @@ mail-style:
       $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
   /**
    * Les liens symbolique ne marge pas.
    * On va faire un lien, Car cela est plus facile à gerer et occupe moins
@@ -199,11 +199,13 @@ mail-style:
         if ($output !== 'node_modules') {
           if ($script) {
             $script .= ' && cp -r ' . $modulePath . '/' . $output . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
-          } else
+          }
+          else
             $script .= ' cp -r ' . $modulePath . '/' . $output . ' ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
         }
       }
-    } else {
+    }
+    else {
       throw new \Exception(' Impossible de lire le contenu des fichiers  ');
     }
     // on fait un lien symbolique avec node_modules.
@@ -215,7 +217,7 @@ mail-style:
       $this->logger->warning('Error de copie des fichiers : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
   /**
    * --
    */
@@ -227,7 +229,7 @@ mail-style:
       $this->logger->warning('Error lors de la suppression de /wbu-atomique-theme : <br>' . implode("<br>", $exc['output']));
     }
   }
-
+  
   /**
    * --
    */
@@ -236,8 +238,7 @@ mail-style:
     $this->scssFilesGlobalStyle($libraireStyles, $defaultStyles);
     $this->scssFilesVendorStyle();
   }
-
-
+  
   private function pathFromFileName(string $filename) {
     $path_array = explode('__', $filename);
     $bundle = "";
@@ -253,7 +254,7 @@ mail-style:
         $entity_id = $path_array[2];
         break;
     }
-
+    
     $path = "";
     if ($bundle === "blocks_contents" || $bundle == "site_internet_entity") {
       $bundle = str_replace("_", "-", $bundle);
@@ -263,7 +264,7 @@ mail-style:
     }
     return $path;
   }
-
+  
   /**
    * Permet de construire un fichier avec des styles ajoutés dans un tableau.
    * Les styles peuveant provenir de la surcharge sur
@@ -274,7 +275,7 @@ mail-style:
     $variable_file = './' . $this->themeName . '_variables.scss';
     $scss = '    @use "' . $variable_file . '" as *;    ';
     if (!empty($path)) {
-
+      
       $entities = FilesStyle::loadByRouteName($path);
       /**
        *
@@ -296,7 +297,7 @@ mail-style:
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::logger($scss, $filename . ".scss", false, 'file', $path, true);
   }
-
+  
   /**
    * Permet de construire un fichier avec des styles ajoutés dans un tableau.
    * Les styles peuveant provenir de la surcharge sur
@@ -330,7 +331,7 @@ mail-style:
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
     debugLog::logger($js, $filename . ".js", false, 'file', $path, true);
   }
-
+  
   public function autoGenerateEntries(array $auto_generate_entries, bool $generateAll = True) {
     // Convertir le tableau PHP en JSON bien formaté
     $jsonData = json_encode($auto_generate_entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
@@ -342,11 +343,12 @@ mail-style:
     debugLog::logger($jsonData, "auto_generate_entries.json", false, 'file', $path, true);
     if ($generateAll) {
       $this->generateLibrairies(array_keys($auto_generate_entries));
-    } else {
+    }
+    else {
       $this->generateSingleLibrairies(array_keys($auto_generate_entries)[0]);
     }
   }
-
+  
   /**
    *
    * @param array $librariesName
@@ -374,16 +376,16 @@ mail-style:
     $stringYaml = Yaml::encode($libraries);
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
-
+    
     debugLog::$debug = false;
     debugLog::logger($stringYaml, $filename, false, 'file', $path, true);
   }
-
+  
   protected function generateSingleLibrairies($libName) {
     debugLog::$debug = false;
     $fileName = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
-
+    
     $existingContent = file_exists($path . '/' . $fileName) ? file_get_contents($path . '/' . $fileName) : '';
     $libraries = Yaml::decode($existingContent);
     if (!isset($libs[$libName])) {
@@ -407,7 +409,7 @@ mail-style:
       debugLog::logger($stringYaml, $fileName, false, "file", $path, true);
     }
   }
-
+  
   /**
    * On genere le fichier de variable.
    */
@@ -420,7 +422,7 @@ mail-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * On genere le fichier contenant les imports provenant des layouts et des
    * modules.
@@ -437,7 +439,7 @@ mail-style:
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
   }
-
+  
   /**
    * On genere le fichier contenant les imports provenant des layouts et
    * modules.
@@ -450,7 +452,7 @@ mail-style:
     if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
       $string .= $this->initLoader();
     }
-
+    
     if (!empty($libraireStyles)) {
       $string .= $this->buildEntityImport($libraireStyles);
     }
@@ -466,12 +468,12 @@ mail-style:
     if (!empty($customStyles)) {
       $string .= $this->buildEntityImport($customStyles);
     }
-
+    
     // pour charger un seul fichier.
     if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
       $string .= $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
     }
-
+    
     // Cree le fichier.
     $filename = $this->themeName . '.scss';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
@@ -486,7 +488,7 @@ mail-style:
       debugLog::logger("", "mail-style.scss", false, 'file', $path, true);
     }
   }
-
+  
   /**
    * Construit les variables.
    *
@@ -531,7 +533,7 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     $wbu_link_color = $entity->getScssColorValue($entity->getColorLink());
     $wbu_bootstrap_primary = $entity->getScssColorValue($entity->getBootstrapColorPrimary());
-
+    
     return '
     /**
      * On definie les variables à ce niveau afin que les variables qui derive de ces valeurs soit ajusté.
@@ -571,7 +573,7 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
     $space_inner_top: $space_top * 0.5;
 ';
   }
-
+  
   /**
    * Permet de recuperer les données de styles.
    */
@@ -585,7 +587,7 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     return $styleToImport;
   }
-
+  
   /**
    *
    * @param array $EntityImport
@@ -617,7 +619,7 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
     }
     return $styleToImport;
   }
-
+  
   private function excuteCmd($cmd, $name = "excuteCmd") {
     ob_start();
     $return_var = '';
@@ -633,7 +635,7 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
     ];
     return $debug;
   }
-
+  
   private function getBaseLibraries(): array {
     $libraries = [
       'global-style' => [
@@ -683,11 +685,11 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
     ];
     return $libraries;
   }
-
+  
   protected function getFileNameFileVariable() {
     return './' . $this->themeName . '_variables.scss';
   }
-
+  
   /**
    * Les styles par defaut qui permettent d'initialiser le theme.
    *

@@ -19,16 +19,7 @@ if (!fs.existsSync(entriesPath)) {
   process.exit(1);
 }
 
-const baseEntities = {
-  "global-style": "./src/js/global-style.js",
-  "vendor-style": "./src/js/vendor-style.js",
-  "mail-style": "./src/js/mail-style.js",
-};
-
-const allEntries = {
-  ...baseEntities,
-  ...JSON.parse(fs.readFileSync(entriesPath, "utf-8")),
-};
+const allEntries = JSON.parse(fs.readFileSync(entriesPath, "utf-8"));
 
 const entryNames = Object.keys(allEntries);
 console.log(`📊 ${entryNames.length} entrées détectées`);

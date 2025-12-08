@@ -149,10 +149,15 @@ class GenerateStyleTheme extends ControllerBase {
         $createThme = true;
       }
       
-      if ($createThme){
-        $this->CopyWbuAtomiqueTheme(); 
-        $this->scssFiles();
-        $this->jsFiles();
+      if ($createThme) {
+        $this->CopyWbuAtomiqueTheme();
+      /**
+       * Les fichiers ne doivent plus se contruire ici.
+       * Car les librairies ne sont plus dans le theme.
+       * ils renveront toujours un resultat erronné.
+       */
+        // $this->scssFiles();
+        // $this->jsFiles();
       }
       //
       if ($run_npm)
@@ -162,7 +167,6 @@ class GenerateStyleTheme extends ControllerBase {
       $this->SetCurrentThemeDefaultOfDomaine();
       $this->setConfigTheme();
       $this->setLogoToTheme();
-      // $this->entity->validate();
     }
     catch (\Exception $e) {
       $this->logger->warning($e->getMessage());
@@ -314,5 +318,4 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
-  
 }

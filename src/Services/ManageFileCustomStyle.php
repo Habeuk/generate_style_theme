@@ -6,7 +6,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ExtensionPathResolver;
 use Stephane888\Debug\debugLog;
 use Stephane888\Debug\Repositories\ConfigDrupal;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\generate_style_theme\Entity\FilesStyle;
 
 class ManageFileCustomStyle extends ControllerBase {
@@ -138,7 +137,7 @@ class ManageFileCustomStyle extends ControllerBase {
    *        permet de passer des valeurs specique unqiuement lors de la
    *        creation.
    */
-  public function saveStyle($key, $module, $scss, $js, $route_name="", $customValue = []) {
+  public function saveStyle($key, $module, $scss, $js, $route_name = "", $customValue = []) {
     $entity = FilesStyle::loadByName($key, $module);
     if ($entity) {
       $entity->setScss($scss);
@@ -196,13 +195,14 @@ class ManageFileCustomStyle extends ControllerBase {
       @use "@stephane888/wbu-atomique/scss/molecule/default-class.scss" as *;
       ';
     }
-    $scss  = $base_scss;
+    $scss = $base_scss;
     $js = '';
     /**
+     *
      * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
-    */
+     */
     foreach ($entities as $entity) {
-      $file_name ="custom";
+      $file_name = "custom";
       if ($save_multifile) {
         /**
          * On garde uniquement les styles ajoutés dans le module
@@ -211,9 +211,8 @@ class ManageFileCustomStyle extends ControllerBase {
          *
          * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
          */
-        if ($entity->getModule() == 'generate_style_theme' ) {
+        if ($entity->getModule() == 'generate_style_theme') {
           $file_name = $entity->label();
-          dump($file_name);
         }
       }
       // Add comment
@@ -222,13 +221,13 @@ class ManageFileCustomStyle extends ControllerBase {
       $prefix .= " \n";
       $currentScss = $entity->getScss();
       
-      if($file_name != "custom"){
-        $custom_scss = $base_scss.$currentScss;
+      if ($file_name != "custom") {
+        $custom_scss = $base_scss . $currentScss;
         
         debugLog::logger($entity->getJs(), "$file_name.js", false, 'file', $this->getPath() . '/js', true);
         debugLog::logger($custom_scss, "$file_name.scss", false, 'file', $this->getPath() . '/scss', true);
       }
-      else{
+      else {
         if (!empty($currentScss)) {
           $scss .= $prefix . $currentScss;
         }

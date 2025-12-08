@@ -4,19 +4,19 @@
   "description": "module webpack pour la compilation de mes fichier",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "DevAll": "webpack --watch --node-env='development' --progress",
-  	"Dev": "node dev-optimized.js",
-    "build": "--node-env=production webpack --watch --progress",
-    "copy": "--node-env=production node scripts/build.js  --watch",
-    "Prod": "webpack --node-env='production' --watch --progress",
-    "ProdCMD": "./node_modules/.bin/webpack --node-env='production' ",
-    "DevCMD": "./node_modules/.bin/webpack --node-env='development' ",
+    "Dev": "NODE_ENV=development node dev-optimized.js",
+    "buildAll": "--node-env=production webpack --watch --progress",
+    "build": "NODE_ENV=production node build-independent.js",
+    "ProdAll": "webpack --node-env='production' --watch --progress",
+    "Prod": "NODE_ENV=production node dev-optimized.js",
+    "Prod:custom": "NODE_ENV=production node build-independent.js --custom",
+    "ProdCMD": "NODE_ENV=production node build-independent.js",
+    "DevCMD": "NODE_ENV=development node build-independent.js",
     "serve": "webpack serve --mode='production' --open",
-  	"build:indep-fast": "node build-independent.js --fast",
-  	"build:indep-safe": "node build-independent.js --safe",	   
-  	"dev:indep": "node build-independent.js",	   
-  	"build:watch": "nodemon --watch src --ext js,scss --exec 'npm run build:indep'"
+    "build:indep-fast": "NODE_ENV=development node build-independent.js --fast",
+    "build:indep-safe": "NODE_ENV=development node build-independent.js --safe",
+    "build:custom": "NODE_ENV=development node build-independent.js --custom"
   },
   "author": "gugledas",
   "license": "ISC",
@@ -51,6 +51,6 @@
     "not ie 11"
   ],
   "dependencies": {
-    "@stephane888/wbu-atomique": "github:stephane888/wbu-atomique#2.0.31"
+    "@stephane888/wbu-atomique": "github:stephane888/wbu-atomique#2.0.33"
   }
 }

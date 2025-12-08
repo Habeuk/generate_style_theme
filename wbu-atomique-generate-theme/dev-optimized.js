@@ -1,83 +1,114 @@
 // dev-optimized.js
-const { spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const { spawn } = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const chokidar = require("chokidar");
 
-console.log('🚀 Démarrage du mode développement optimisé...\n');
+console.log("🚀 Mode développement optimisé lancé...\n");
 
-// 1. Construire toutes les entrées une fois
-console.log('📦 Construction initiale de toutes les entrées...');
-const buildProcess = spawn('node', ['build-independent.js', '--fast'], {
-  stdio: 'inherit',
-  shell: true
-});
+// ===========================
+// 1. Variables globales
+// ===========================
+let isBuilding = false;
+let pendingBuild = null;
+let debounceTimer = null;
 
-buildProcess.on('close', (code) => {
-  if (code !== 0) {
-    console.error('❌ Erreur lors de la construction initiale');
-    process.exit(code);
+// ===========================
+// 2. Fonction pour lancer un build
+// ===========================
+function runBuild(entryList) {
+  // Si un build tourne déjà → on sauvegarde le prochain
+  if (isBuilding) {
+    pendingBuild = entryList;
+    return;
   }
-  
-  console.log('\n✅ Construction initiale terminée');
-  console.log('👁️  Activation du mode watch sur les fichiers sources...\n');
-  
-  // 2. Démarrer un watcher léger pour les modifications
-  startLightWatcher();
-});
 
-function startLightWatcher() {
-  const chokidar = require('chokidar');
-  
-  // Charger le mapping des fichiers vers les entrées
-  const entries = JSON.parse(
-    fs.readFileSync('auto_generate_entries.json', 'utf-8')
+  isBuilding = true;
+
+  console.log(`\n⚙️  Build déclenché : ${entryList}`);
+
+  const build = spawn(
+    "node",
+    ["build-independent.js", "--custom", entryList],
+    {
+      stdio: "inherit",
+      shell: true,
+    }
   );
-  
-  // Inverser le mapping: fichier -> [entryNames]
-  const fileToEntries = {};
-  Object.entries(entries).forEach(([entryName, entryPath]) => {
-    const absPath = path.resolve(entryPath);
-    if (!fileToEntries[absPath]) fileToEntries[absPath] = [];
-    fileToEntries[absPath].push(entryName);
-  });
-  
-  const watcher = chokidar.watch('./src', {
-    ignored: /node_modules/,
-    persistent: true,
-    ignoreInitial: true
-  });
-  
-  watcher.on('change', (filePath) => {
-    const absPath = path.resolve(filePath);
-    
-    if (fileToEntries[absPath]) {
-      // Reconstruire seulement les entrées affectées
-      fileToEntries[absPath].forEach(entryName => {
-        console.log(`🔨 Reconstruction: ${entryName}`);
-        
-        const rebuildProcess = spawn('node', [
-          'build-single-entry.js',
-          entryName
-        ], {
-          stdio: 'inherit',
-          shell: true
-        });
-        
-        rebuildProcess.on('close', (code) => {
-          if (code === 0) {
-            console.log(`✅ ${entryName} mis à jour`);
-          }
-        });
-      });
+
+  build.on("close", (code) => {
+    isBuilding = false;
+
+    if (code === 0) {
+      console.log(`\n✅ Build terminé : ${entryList}`);
     } else {
-      // Si le fichier n'est pas une entrée directe, reconstruire toutes les entrées qui pourraient l'utiliser
-      console.log(`🔄 Fichier partagé modifié, reconstruction sélective...`);
-      
-      // Logique pour trouver quelles entrées utilisent ce fichier
-      // (à adapter selon votre structure)
+      console.log(`\n❌ Build échoué : ${entryList}`);
+    }
+
+    // Si un build était en attente, on le lance maintenant
+    if (pendingBuild) {
+      const next = pendingBuild;
+      pendingBuild = null;
+      runBuild(next);
     }
   });
-  
-  console.log('✅ Watcher démarré. Modifiez un fichier pour déclencher une reconstruction.');
-  console.log('📁 Serveur disponible sur: http://localhost:3000 (si vous avez un serveur)');
 }
+
+// ===========================
+// 3. Démarrer le watcher
+// ===========================
+function startWatcher() {
+  const entries = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, "auto_generate_entries.json"))
+  );
+
+  const fileToEntries = {};
+  Object.entries(entries).forEach(([entryName, entryPath]) => {
+    fileToEntries[path.resolve(entryPath)] = [entryName];
+  });
+
+  const baseList = ["global-style", "vendor-style", "mail-style"].join(",");
+
+  const watcher = chokidar.watch("./src", {
+    ignored: /node_modules/,
+    ignoreInitial: true,
+    persistent: true,
+  });
+
+  watcher.on("change", (filePath) => {
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+      const abs = path.resolve(filePath);
+
+      if (fileToEntries[abs]) {
+        // Reconstruction ciblée
+        const list = fileToEntries[abs].join(",");
+        runBuild(list);
+      } else {
+        // Fichier partagé → rebuild styles de base
+        runBuild(baseList);
+      }
+    }, 200); // DEBOUNCE = 200ms
+  });
+
+  console.log("👁️  Watcher prêt.");
+}
+
+//
+// 4. Build initial puis lancement du watcher
+//
+const initial = spawn("node", ["build-independent.js", "--fast"], {
+  stdio: "inherit",
+  shell: true,
+});
+
+initial.on("close", (code) => {
+  if (code === 0) {
+    console.log("🎉 Build initial OK\n");
+    startWatcher();
+  } else {
+    console.log("❌ Échec du build initial");
+    process.exit(code);
+  }
+});

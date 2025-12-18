@@ -3,10 +3,7 @@
 namespace Drupal\generate_style_theme\Services\Reposotories;
 
 use Stephane888\Debug\debugLog;
-use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\File\FileSystem;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\generate_style_theme\Entity\FilesStyle;
 
@@ -702,4 +699,5 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
 @use "@stephane888/wbu-atomique/scss/drupal/ajustement.scss";';
     return $string;
   }
+  
 }

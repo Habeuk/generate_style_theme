@@ -3,7 +3,6 @@ const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const chokidar = require("chokidar");
-
 console.log("🚀 Mode développement optimisé lancé...\n");
 
 // ===========================
@@ -12,6 +11,51 @@ console.log("🚀 Mode développement optimisé lancé...\n");
 let isBuilding = false;
 let pendingBuild = null;
 let debounceTimer = null;
+var customFiles = "";
+// Les entres de fichiers à generer.
+var entries = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, "auto_generate_entries.json")),
+);
+const fileToEntries = {};
+// ===========================
+// 2. Construit les elements
+// ===========================
+if (process.argv.includes("--custom")) {
+  const customIndex = process.argv.indexOf("--custom");
+  customFiles = process.argv[customIndex + 1];
+  if (!customFiles || customFiles.startsWith("--")) {
+    console.error("❌ Usage: node build-independent.js --custom entry1,entry2");
+    process.exit(1);
+  }
+  const names = customFiles
+    .split(",")
+    .map((name) => name.trim())
+    .filter((name) => name);
+  const customEntries = {};
+
+  names.forEach((name) => {
+    if (entries[name]) {
+      customEntries[name] = entries[name];
+    } else {
+      console.warn(`⚠️  Entrée inconnue: ${name}`);
+    }
+  });
+  if (Object.keys(customEntries).length === 0) {
+    console.error("❌ Aucune entrée valide spécifiée");
+    process.exit(1);
+  }
+  entries = customEntries;
+  Object.entries(entries).forEach(([entryName, entryPath]) => {
+    fileToEntries[path.resolve(entryPath)] = [entryName];
+  });
+} else {
+  // ===================
+  // On construit les chemins complet.
+  // ===================
+  Object.entries(entries).forEach(([entryName, entryPath]) => {
+    fileToEntries[path.resolve(entryPath)] = [entryName];
+  });
+}
 
 // ===========================
 // 2. Fonction pour lancer un build
@@ -27,14 +71,10 @@ function runBuild(entryList) {
 
   console.log(`\n⚙️  Build déclenché : ${entryList}`);
 
-  const build = spawn(
-    "node",
-    ["build-independent.js", "--custom", entryList],
-    {
-      stdio: "inherit",
-      shell: true,
-    }
-  );
+  const build = spawn("node", ["build-independent.js", "--custom", entryList], {
+    stdio: "inherit",
+    shell: true,
+  });
 
   build.on("close", (code) => {
     isBuilding = false;
@@ -58,29 +98,17 @@ function runBuild(entryList) {
 // 3. Démarrer le watcher
 // ===========================
 function startWatcher() {
-  const entries = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "auto_generate_entries.json"))
-  );
-
-  const fileToEntries = {};
-  Object.entries(entries).forEach(([entryName, entryPath]) => {
-    fileToEntries[path.resolve(entryPath)] = [entryName];
-  });
-
   const baseList = ["global-style", "vendor-style", "mail-style"].join(",");
-
   const watcher = chokidar.watch("./src", {
     ignored: /node_modules/,
     ignoreInitial: true,
     persistent: true,
   });
-
   watcher.on("change", (filePath) => {
     clearTimeout(debounceTimer);
-
     debounceTimer = setTimeout(() => {
       const abs = path.resolve(filePath);
-
+      console.log("\n🔍 Fichier modifié :", abs);
       if (fileToEntries[abs]) {
         // Reconstruction ciblée
         const list = fileToEntries[abs].join(",");
@@ -91,14 +119,17 @@ function startWatcher() {
       }
     }, 200); // DEBOUNCE = 200ms
   });
-
   console.log("👁️  Watcher prêt.");
 }
 
 //
 // 4. Build initial puis lancement du watcher
 //
-const initial = spawn("node", ["build-independent.js", "--fast"], {
+let config = ["build-independent.js"];
+if (process.argv.includes("--custom")) {
+  config = ["build-independent.js", "--custom", customFiles];
+}
+const initial = spawn("node", config, {
   stdio: "inherit",
   shell: true,
 });
@@ -112,3 +143,4 @@ initial.on("close", (code) => {
     process.exit(code);
   }
 });
+

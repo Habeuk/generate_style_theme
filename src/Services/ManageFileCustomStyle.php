@@ -176,15 +176,12 @@ class ManageFileCustomStyle extends ControllerBase {
   /**
    * Genere les fichiers de base.
    *
+   * @deprecated Permettait de generer le fichier custom.js/scss, ces fichiers
+   *             ne sont plus necessaire.
    * @param boolean $save_multifile
    */
   public function generateCustomFile($save_multifile = false) {
-    /**
-     * L'enssemble des styles present dans l'entite ne vont pas dans custom.
-     *
-     * @var array $entities
-     */
-    $entities = FilesStyle::loadMultiple();
+    $entities = FilesStyle::loadAllStatiqueStyles();
     $variable_file = './' . $this->getSelectedTheme() . '_variables.scss';
     $base_scss = '    @use "' . $variable_file . '" as *;    ';
     if (!empty($this->getConfigGenerateStyleTheme()['tab1']['vendor_import']['load_custom_in_vendor'])) {
@@ -195,50 +192,80 @@ class ManageFileCustomStyle extends ControllerBase {
       @use "@stephane888/wbu-atomique/scss/molecule/default-class.scss" as *;
       ';
     }
-    $scss = $base_scss;
-    $js = '';
     /**
      *
      * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
      */
     foreach ($entities as $entity) {
-      $file_name = "custom";
-      if ($save_multifile) {
-        /**
-         * On garde uniquement les styles ajoutés dans le module
-         * generate_style_theme.
-         * Car ces styles sont en principe utiliser sur toutes les pages.
-         *
-         * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
-         */
-        if ($entity->getModule() == 'generate_style_theme') {
-          $file_name = $entity->label();
-        }
-      }
-      // Add comment
-      $prefix = "\n";
-      $prefix .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
-      $prefix .= " \n";
-      $currentScss = $entity->getScss();
-      
-      if ($file_name != "custom") {
-        $custom_scss = $base_scss . $currentScss;
-        
-        debugLog::logger($entity->getJs(), "$file_name.js", false, 'file', $this->getPath() . '/js', true);
-        debugLog::logger($custom_scss, "$file_name.scss", false, 'file', $this->getPath() . '/scss', true);
-      }
-      else {
-        if (!empty($currentScss)) {
-          $scss .= $prefix . $currentScss;
-        }
-        $currentJs = $entity->getJs();
-        if (!empty($currentJs)) {
-          $js .= $prefix . $currentJs;
-        }
+      $file_name = $entity->label();
+      $custom_scss = $base_scss;
+      $custom_scss .= "\n";
+      $custom_scss .= $entity->getScss();
+      debugLog::logger($entity->getJs(), "$file_name.js", false, 'file', $this->getPath() . '/js', true);
+      debugLog::logger($custom_scss, "$file_name.scss", false, 'file', $this->getPath() . '/scss', true);
+    }
+  }
+  
+  /**
+   * Permet de generer les styles qui doivent etre charger sur toutes les pages.
+   *
+   * @return array
+   */
+  public function generateGlobalestyles(): array {
+    $styles = [
+      'scss' => '',
+      'js' => ''
+    ];
+    $entities = FilesStyle::loadAllStatiqueStyles();
+    foreach ($entities as $entity) {
+      /**
+       *
+       * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
+       */
+      if ($entity->IsGlobalAccess()) {
+        $prefix = "\n";
+        $prefix .= "// ====================================================================== \n";
+        $prefix .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
+        $prefix .= "\n";
+        $prefix .= "// ======================================================================";
+        $prefix .= "\n";
+        if (!empty($entity->getScss()))
+          $styles['scss'] .= $prefix . $entity->getScss();
+        if (!empty($entity->getJs()))
+          $styles['js'] .= $prefix . $entity->getJs();
       }
     }
-    debugLog::logger($js, "custom.js", false, 'file', $this->getPath() . '/js', true);
-    debugLog::logger($scss, "custom.scss", false, 'file', $this->getPath() . '/scss', true);
+    return $styles;
+  }
+  
+  /**
+   * Permet de generer les styles qui doivent etre charger sur toutes les pages.
+   *
+   * @return array
+   */
+  public function generateSpecificStyles($routePath): array {
+    $styles = [
+      'scss' => '',
+      'js' => ''
+    ];
+    $entities = FilesStyle::loadByRouteName($routePath, false);
+    foreach ($entities as $entity) {
+      /**
+       *
+       * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
+       */
+      $prefix = "\n";
+      $prefix .= "// ====================================================================== \n";
+      $prefix .= "// module : " . $entity->getModule() . ' || ' . $entity->label();
+      $prefix .= "\n";
+      $prefix .= "// ======================================================================";
+      $prefix .= "\n";
+      if (!empty($entity->getScss()))
+        $styles['scss'] .= $prefix . $entity->getScss();
+      if (!empty($entity->getJs()))
+        $styles['js'] .= $prefix . $entity->getJs();
+    }
+    return $styles;
   }
   
   /**

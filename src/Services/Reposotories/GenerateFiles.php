@@ -107,17 +107,6 @@ mail-style:
     $string .= "\n";
     $filename = 'global-style.js';
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/js';
-    // $st = $this->FileSystem->prepareDirectory($path,
-    // FileSystemInterface::CREATE_DIRECTORY |
-    // FileSystemInterface::MODIFY_PERMISSIONS);
-    // if (!$st) {
-    // \Drupal::messenger()->addError("dir is not writable");
-    // }
-    // on cree un fichier pour le style custom, le fichier n'existe pas;
-    if (!file_exists($path . '/custom.js')) {
-      debugLog::logger("", "custom.js", false, 'file', $path, true);
-    }
-    $string .= 'import "./custom.js";';
     //
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
@@ -236,6 +225,12 @@ mail-style:
     $this->scssFilesVendorStyle();
   }
   
+  /**
+   *
+   * @deprecated utiliser ailleurs
+   * @param string $filename
+   * @return string
+   */
   private function pathFromFileName(string $filename) {
     $path_array = explode('__', $filename);
     $bundle = "";
@@ -251,7 +246,6 @@ mail-style:
         $entity_id = $path_array[2];
         break;
     }
-    
     $path = "";
     if ($bundle === "blocks_contents" || $bundle == "site_internet_entity") {
       $bundle = str_replace("_", "-", $bundle);
@@ -268,29 +262,29 @@ mail-style:
    */
   public function buildCustomScssFromArray(array $styles, string $filename, array $customStyles = []) {
     $styleToImport = $this->buildEntityImport($styles);
-    $path = $this->pathFromFileName($filename);
     $variable_file = './' . $this->themeName . '_variables.scss';
     $scss = '    @use "' . $variable_file . '" as *;    ';
-    if (!empty($path)) {
-      
-      $entities = FilesStyle::loadByRouteName($path);
-      /**
-       *
-       * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
-       */
-      $filesNames = array_map(function ($key, $entity) {
-        return $entity->Label() . ".scss";
-      }, array_keys($entities), $entities);
-      foreach ($filesNames as $fileName) {
-        $scss .= "@use '$fileName';\n";
-      }
-    }
     if (!empty($styleToImport)) {
       $scss .= $styleToImport;
     }
     if (!empty($customStyles)) {
       $scss .= $this->buildEntityImport($customStyles);
     }
+    // // On ajoute les contenus de styles customs.
+    // $routePath = $this->pathFromFileName($filename);
+    // if (!empty($routePath)) {
+    // $entities = FilesStyle::loadByRouteName($routePath, false);
+    // /**
+    // *
+    // * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
+    // */
+    // $filesNames = array_map(function ($key, $entity) {
+    // return $entity->Label() . ".scss";
+    // }, array_keys($entities), $entities);
+    // foreach ($filesNames as $fileName) {
+    // $scss .= "@use '$fileName';\n";
+    // }
+    // }
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::logger($scss, $filename . ".scss", false, 'file', $path, true);
   }
@@ -303,22 +297,22 @@ mail-style:
     $styleToImport = $this->buildEntityImport($styles);
     $js = 'import "../scss/' . $filename . '.scss";';
     $js .= "\n";
-    $path = $this->pathFromFileName($filename);
-    if (!empty($path)) {
-      
-      $entities = FilesStyle::loadByRouteName($path);
-      /**
-       *
-       * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
-       */
-      $filesNames = array_map(function ($key, $entity) {
-        return $entity->Label() . ".js";
-      }, array_keys($entities), $entities);
-      
-      foreach ($filesNames as $fileName) {
-        $js .= "import './$fileName';\n";
-      }
-    }
+    // $path = $this->pathFromFileName($filename);
+    // if (!empty($path)) {
+    
+    // $entities = FilesStyle::loadByRouteName($path);
+    // /**
+    // *
+    // * @var \Drupal\generate_style_theme\Entity\FilesStyle $entity
+    // */
+    // $filesNames = array_map(function ($key, $entity) {
+    // return $entity->Label() . ".js";
+    // }, array_keys($entities), $entities);
+    
+    // foreach ($filesNames as $fileName) {
+    // $js .= "import './$fileName';\n";
+    // }
+    // }
     if (!empty($styleToImport)) {
       $js .= $styleToImport;
     }
@@ -453,10 +447,7 @@ mail-style:
     if (!empty($libraireStyles)) {
       $string .= $this->buildEntityImport($libraireStyles);
     }
-    /**
-     * On chargera toujours le fichier custom.scss ici.
-     */
-    $string .= '@use "./custom.scss";';
+    
     // On importe les styles definit de maniere automatique.
     $styleImport = $this->buildEntityImportStyle('scss');
     if (!empty($styleImport)) {
@@ -465,7 +456,6 @@ mail-style:
     if (!empty($customStyles)) {
       $string .= $this->buildEntityImport($customStyles);
     }
-    
     // pour charger un seul fichier.
     if (!empty($this->generate_style_themeSettings['tab1']['vendor_import']['load_custom_in_vendor'])) {
       $string .= $this->generate_style_themeSettings['tab1']['vendor_import']['scss'];
@@ -476,10 +466,6 @@ mail-style:
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme/src/scss';
     debugLog::$debug = false;
     debugLog::logger($string, $filename, false, 'file', $path, true);
-    // on cree un fichier pour le style custom, si le fichier n'existe pas;
-    if (!file_exists($path . '/custom.scss')) {
-      debugLog::logger("", "custom.scss", false, 'file', $path, true);
-    }
     // On cree le fichier de mail s'il n'existe pas.
     if (!file_exists($path . '/mail-style.scss')) {
       debugLog::logger("", "mail-style.scss", false, 'file', $path, true);
@@ -506,8 +492,7 @@ mail-style:
     $wbu_h2_font_size = isset($entity->getH2FontSize()['value']) ? $entity->getH2FontSize()['value'] : '2.4rem';
     $wbu_h3_font_size = !empty($entity->getH3FontSize()) ? $entity->getH3FontSize() : '1.8rem';
     $wbu_h4_font_size = !empty($entity->getH4FontSize()) ? $entity->getH4FontSize() : '1.6rem';
-    $string .= '
-    // On a besoin de ce fichier pour les styles ajoutés dans ./custom.scss.
+    $string .= '    
     // @use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
     ';
     $wbu_h5_font_size = !empty($entity->getH5FontSize()) ? $entity->getH5FontSize() : '1.4rem';

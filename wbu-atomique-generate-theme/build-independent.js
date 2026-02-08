@@ -73,14 +73,14 @@ function createMultiEntryWebpackConfig(entriesObject) {
               }
             }
           },
-
+          // fichiers SCSS / CSS
           {
             test: /\\.(sa|sc|c)ss$/,
             use: [
               MiniCssExtractPlugin.loader,
               {
                 loader: 'css-loader',
-                options: { importLoaders: 1, url: false }
+                options: { importLoaders: 1, url: false } 
               },
               {
                 loader: 'postcss-loader',
@@ -146,12 +146,12 @@ function createMultiEntryWebpackConfig(entriesObject) {
               chunks: 'all',
               minChunks: 2,
             },
-            styles: {
-              test: /\\.css$/,
-              name: 'styles',
-              chunks: 'all',
-              enforce: true,
-            },
+            // styles: {
+            //   test: /\\.css$/,
+            //   name: 'styles',
+            //   chunks: 'all',
+            //   enforce: true,
+            // },
           },
         },
       },

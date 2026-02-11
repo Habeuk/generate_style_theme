@@ -6,6 +6,7 @@
   "scripts": {
     "DevAll": "webpack --watch --node-env='development' --progress",
     "Dev": "NODE_ENV=development node dev-optimized.js",
+    "Dev:custom": "NODE_ENV=development node dev-optimized.js --custom",
     "buildAll": "--node-env=production webpack --watch --progress",
     "build": "NODE_ENV=production node build-independent.js",
     "ProdAll": "webpack --node-env='production' --watch --progress",

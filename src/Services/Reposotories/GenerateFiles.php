@@ -346,28 +346,30 @@ mail-style:
    */
   protected function generateLibrairies(array $librariesName) {
     $libraries = $this->getBaseLibraries();
+    $weight = 8;
     foreach ($librariesName as $name) {
-      $libraries[$name] = [
-        'css' => [
-          'theme' => [
-            'css/' . $name . '.css' => [
-              'weight' => -5,
+      // si deja definie on ignore.
+      if (empty($libraries[$name]))
+        $libraries[$name] = [
+          'css' => [
+            'theme' => [
+              'css/' . $name . '.css' => [
+                'weight' => $weight,
+                'preprocess' => false
+              ]
+            ]
+          ],
+          'js' => [
+            'js/' . $name . '.js' => [
+              'weight' => $weight,
               'preprocess' => false
             ]
           ]
-        ],
-        'js' => [
-          'js/' . $name . '.js' => [
-            'weight' => -5,
-            'preprocess' => false
-          ]
-        ]
-      ];
+        ];
     }
     $stringYaml = Yaml::encode($libraries);
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
-    
     debugLog::$debug = false;
     debugLog::logger($stringYaml, $filename, false, 'file', $path, true);
   }
@@ -624,13 +626,13 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
         'css' => [
           'theme' => [
             'css/global-style.css' => [
-              'weight' => -8
+              'weight' => -10
             ]
           ]
         ],
         'js' => [
           'js/global-style.js' => [
-            'weight' => -8,
+            'weight' => -10,
             'preprocess' => false
           ]
         ],
@@ -643,13 +645,13 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
         'css' => [
           'theme' => [
             'css/vendor-style.css' => [
-              'weight' => -9
+              'weight' => -11
             ]
           ]
         ],
         'js' => [
           'js/vendor-style.js' => [
-            'weight' => -9,
+            'weight' => -11,
             'preprocess' => false
           ]
         ]
@@ -684,5 +686,4 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
 @use "@stephane888/wbu-atomique/scss/drupal/ajustement.scss";';
     return $string;
   }
-  
 }

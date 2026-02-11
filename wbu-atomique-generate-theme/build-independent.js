@@ -138,22 +138,22 @@ function createMultiEntryWebpackConfig(entriesObject) {
           new CssMinimizerPlugin(),
           new TerserPlugin()
         ],
-        splitChunks: {
-          cacheGroups: {
-            vendor: {
-              test: /[\\\\/]node_modules[\\\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              minChunks: 2,
-            },
-            // styles: {
-            //   test: /\\.css$/,
-            //   name: 'styles',
-            //   chunks: 'all',
-            //   enforce: true,
-            // },
-          },
-        },
+        // splitChunks: {
+		//   cacheGroups: {
+		//     vendor: {
+		//       test: /[\\\\/]node_modules[\\\\/]/,
+		//       name: 'vendors',
+		//       chunks: 'all',
+		//       minChunks: 2,
+		//     },
+		//     // styles: {
+		//     //   test: /\\.css$/,
+		//     //   name: 'styles',
+		//     //   chunks: 'all',
+		//     //   enforce: true,
+		//     // },
+		//   },
+		// },
       },
 
       performance: { 

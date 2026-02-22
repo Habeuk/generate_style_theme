@@ -162,6 +162,22 @@ mail-style:
     }
   }
   
+  function RunNpmCustom(array $customFiles) {
+    $pathNpm = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
+    $build_mode = 'Prod:custom';
+    $npm = 'npm';
+    $script = ' ';
+    if (!empty($this->generate_style_themeSettings['tab1']['pwd_npm']))
+      $npm = $this->generate_style_themeSettings['tab1']['pwd_npm'];
+    $custom = \implode(",", $customFiles);
+    $script .= $npm . " --prefix " . $pathNpm . " run " . $build_mode . " --custom " . $custom;
+    $exc = $this->excuteCmd($script, 'RunNpm');
+    if ($exc['return_var']) {
+      \Drupal::messenger()->addError(" Impossible de generer le theme NPM Error ");
+      $this->logger->warning('NPM Error : <br>' . implode("<br>", $exc['output']));
+    }
+  }
+  
   /**
    * Les liens symbolique ne marge pas.
    * On va faire un lien, Car cela est plus facile à gerer et occupe moins
@@ -331,12 +347,29 @@ mail-style:
       throw new \Exception('Erreur lors de la conversion du tableau en JSON : ' . json_last_error_msg());
     }
     $path = $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
-    debugLog::logger($jsonData, "auto_generate_entries.json", false, 'file', $path, true);
     if ($generateAll) {
+      debugLog::logger($jsonData, "auto_generate_entries.json", false, 'file', $path, true);
       $this->generateLibrairies(array_keys($auto_generate_entries));
+      \Drupal::messenger()->addWarning("Vous devez effacer les caches");
     }
     else {
-      $this->generateSingleLibrairies(array_keys($auto_generate_entries)[0]);
+      $old_entries = \file_get_contents($path . '/auto_generate_entries.json');
+      if ($old_entries) {
+        $old_entries_json = json_decode($old_entries, true);
+        $generateLibrarie = false;
+        foreach ($auto_generate_entries as $key => $value) {
+          if (empty($old_entries_json[$key])) {
+            $old_entries_json[$key] = $value;
+            $generateLibrarie = true;
+          }
+        }
+        if ($generateLibrarie) {
+          $jsonData = json_encode($old_entries_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+          debugLog::logger($jsonData, "auto_generate_entries.json", false, 'file', $path, true);
+          $this->generateLibrairies(array_keys($old_entries_json));
+          \Drupal::messenger()->addWarning("Vous devez effacer les caches");
+        }
+      }
     }
   }
   
@@ -346,34 +379,37 @@ mail-style:
    */
   protected function generateLibrairies(array $librariesName) {
     $libraries = $this->getBaseLibraries();
-    $weight = 8;
     foreach ($librariesName as $name) {
-      // si deja definie on ignore.
-      if (empty($libraries[$name]))
-        $libraries[$name] = [
-          'css' => [
-            'theme' => [
-              'css/' . $name . '.css' => [
-                'weight' => $weight,
-                'preprocess' => false
-              ]
-            ]
-          ],
-          'js' => [
-            'js/' . $name . '.js' => [
-              'weight' => $weight,
+      $libraries[$name] = [
+        'css' => [
+          'theme' => [
+            'css/' . $name . '.css' => [
+              'weight' => -5,
               'preprocess' => false
             ]
           ]
-        ];
+        ],
+        'js' => [
+          'js/' . $name . '.js' => [
+            'weight' => -5,
+            'preprocess' => false
+          ]
+        ]
+      ];
     }
     $stringYaml = Yaml::encode($libraries);
     $filename = $this->themeName . '.libraries.yml';
     $path = $this->themePath . '/' . $this->themeName;
+    
     debugLog::$debug = false;
     debugLog::logger($stringYaml, $filename, false, 'file', $path, true);
   }
   
+  /**
+   *
+   * @deprecated Cette approche n'est plus utilisé.
+   * @param string $libName
+   */
   protected function generateSingleLibrairies($libName) {
     debugLog::$debug = false;
     $fileName = $this->themeName . '.libraries.yml';
@@ -626,13 +662,13 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
         'css' => [
           'theme' => [
             'css/global-style.css' => [
-              'weight' => -10
+              'weight' => -8
             ]
           ]
         ],
         'js' => [
           'js/global-style.js' => [
-            'weight' => -10,
+            'weight' => -8,
             'preprocess' => false
           ]
         ],
@@ -645,13 +681,13 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
         'css' => [
           'theme' => [
             'css/vendor-style.css' => [
-              'weight' => -11
+              'weight' => -9
             ]
           ]
         ],
         'js' => [
           'js/vendor-style.js' => [
-            'weight' => -11,
+            'weight' => -9,
             'preprocess' => false
           ]
         ]
@@ -686,4 +722,5 @@ $wbu-titre-biggest: ' . $entity->getwbu_titre_biggest() . ';';
 @use "@stephane888/wbu-atomique/scss/drupal/ajustement.scss";';
     return $string;
   }
+  
 }

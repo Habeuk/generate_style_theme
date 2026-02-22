@@ -3,6 +3,7 @@ tab1:
   theme_base: 'wb_universe'
   use_domain: false
   save_multifile: false
+  run_node: true
   build_mode: ProdCMD
   pwd_npm: '/usr/local/bin/npm'
   vendor_import: 

@@ -196,12 +196,12 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
       ],
       "#description" => "Vous pouvez ajouter les mixins et les librairies inclut dans @stephane888/wbu-atomique"
     ];
-     $form['route_names'] = [
+    $form['route_names'] = [
       '#type' => 'textarea',
       '#title' => t('Liste des pages ou le style doit etre appliquer'),
-      '#default_value' => $route_names,
+      '#default_value' => $route_names
     ];
-    $form['#attached']['library'][] = 'generate_style_theme/codemirror_admin';
+    $form['#attached']['library'][] = 'layout_custom_style/codemirror_admin';
     //
     return parent::buildForm($form, $form_state);
   }
@@ -212,21 +212,21 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
   public function CheckIfLabelExist($label) {
     return \Drupal\generate_style_theme\Entity\FilesStyle::loadByName($label, 'generate_style_theme') ? true : false;
   }
-
-
-   /**
+  
+  /**
+   *
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-
+    
     $route_names_text = $form_state->getValue('route_names');
     
     if (!empty($route_names_text)) {
       /** @var \Drupal\generate_style_theme\Service\RouteNamesValidatorService $validator */
       $validator = \Drupal::service('generate_style_theme.route_names_validator');
       $errors = $validator->validate($route_names_text);
-
+      
       foreach ($errors as $error) {
         $form_state->setErrorByName('route_names', $error);
       }
@@ -271,4 +271,5 @@ class GenerateStyleThemeStyles extends ConfigFormBase {
       $this->getLogger('generate_style_theme')->info("Error de sauvegarde de style JS : " . $file_js);
     }
   }
+  
 }

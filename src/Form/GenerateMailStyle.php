@@ -81,7 +81,7 @@ Aucun style n'est chargé par defaut car les emails sont sujet à beaucoup de re
 Vous pouvez ajouter les mixins et les librairies inclut dans @stephane888/wbu-atomique 
 "
     ];
-    $form['#attached']['library'][] = 'generate_style_theme/codemirror_admin';
+    $form['#attached']['library'][] = 'layout_custom_style/codemirror_admin';
     //
     return parent::buildForm($form, $form_state);
   }

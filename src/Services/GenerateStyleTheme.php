@@ -142,8 +142,6 @@ class GenerateStyleTheme extends ControllerBase {
     try {
       if (!$this->themePath)
         throw new \Exception("The path to the theme folder is not accessible.");
-      $this->InfoYml();
-      $this->LibrairiesYml();
       if ($this->entity->get('force_regenerate_npm_files')->value) {
         $this->DeleteFilesNpm();
         $createThme = true;
@@ -151,6 +149,8 @@ class GenerateStyleTheme extends ControllerBase {
       
       if ($createThme) {
         $this->CopyWbuAtomiqueTheme();
+        $this->InfoYml();
+        $this->LibrairiesYml();
       /**
        * Les fichiers ne doivent plus se contruire ici.
        * Car les librairies ne sont plus dans le theme.
@@ -318,4 +318,5 @@ class GenerateStyleTheme extends ControllerBase {
       }
     }
   }
+  
 }

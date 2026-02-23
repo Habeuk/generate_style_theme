@@ -380,22 +380,23 @@ mail-style:
   protected function generateLibrairies(array $librariesName) {
     $libraries = $this->getBaseLibraries();
     foreach ($librariesName as $name) {
-      $libraries[$name] = [
-        'css' => [
-          'theme' => [
-            'css/' . $name . '.css' => [
+      if (empty($libraries[$name]))
+        $libraries[$name] = [
+          'css' => [
+            'theme' => [
+              'css/' . $name . '.css' => [
+                'weight' => -5,
+                'preprocess' => false
+              ]
+            ]
+          ],
+          'js' => [
+            'js/' . $name . '.js' => [
               'weight' => -5,
               'preprocess' => false
             ]
           ]
-        ],
-        'js' => [
-          'js/' . $name . '.js' => [
-            'weight' => -5,
-            'preprocess' => false
-          ]
-        ]
-      ];
+        ];
     }
     $stringYaml = Yaml::encode($libraries);
     $filename = $this->themeName . '.libraries.yml';

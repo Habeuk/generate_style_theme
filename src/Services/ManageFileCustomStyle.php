@@ -96,7 +96,6 @@ class ManageFileCustomStyle extends ControllerBase {
       $entity = FilesStyle::create($values);
       $entity->save();
     }
-    $this->generateCustomFile();
   }
   
   /**
@@ -122,7 +121,6 @@ class ManageFileCustomStyle extends ControllerBase {
       $entity = FilesStyle::create($values);
       $entity->save();
     }
-    $this->generateCustomFile();
   }
   
   /**
@@ -156,7 +154,6 @@ class ManageFileCustomStyle extends ControllerBase {
       $entity = FilesStyle::create($values);
       $entity->save();
     }
-    $this->generateCustomFile();
     return $entity;
   }
   
@@ -176,8 +173,8 @@ class ManageFileCustomStyle extends ControllerBase {
   /**
    * Genere les fichiers de base.
    *
-   * @deprecated Permettait de generer le fichier custom.js/scss, ces fichiers
-   *             ne sont plus necessaire.
+   * @deprecated Permettait de generer le fichier custom.js/scss et d'autres
+   *             fichiers, ces fichiers ne sont plus necessaire.
    * @param boolean $save_multifile
    */
   public function generateCustomFile($save_multifile = false) {

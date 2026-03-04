@@ -53,7 +53,7 @@ final class ManageHeaders extends ConfigFormBase {
     ];
     
     // We'll support up to 20 tags; we can use Ajax to add more.
-    $max = 3;
+    $max = 10;
     for ($i = 0; $i < $max; $i++) {
       $tag = $header_tags[$i] ?? [];
       

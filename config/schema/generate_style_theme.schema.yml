@@ -1,0 +1,8 @@
+# Schema for the configuration files of the Generate style theme module.
+generate_style_theme.settings:
+  type: config_object
+  label: 'Generate style theme settings'
+  mapping:
+    example:
+      type: string
+      label: 'Example'

@@ -84,3 +84,9 @@ entity.filesmailstyle.collection:
   route_name: entity.filesmailstyle.collection
   base_route: system.admin_content
   weight: 10
+  
+generate_style_theme.manage_headers:
+  title: "Manage headers"
+  route_name: generate_style_theme.manage_headers
+  base_route: generate_style_theme.config_tab1
+  weight: 10

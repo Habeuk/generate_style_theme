@@ -63,3 +63,11 @@ entity.filesmailstyle.settings:
     _title: "FilesMailStyle"
   requirements:
     _permission: "administer filesmailstyle"
+
+generate_style_theme.manage_headers:
+  path: '/admin/config/system/manage-headers'
+  defaults:
+    _title: 'Manage headers'
+    _form: 'Drupal\generate_style_theme\Form\ManageHeaders'
+  requirements:
+    _permission: 'administer site configuration'

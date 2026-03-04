@@ -229,65 +229,99 @@ function generate_style_theme_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Pour Ajouter les onglets permettant l'edition d'un contenu affiché en mode
- * default.
- * NB:
- * Cette logique doit etre limiter au node.
+ * Implements hook_page_attachments().
  *
- * @param array $variables
+ * Ajoute les balises d'en-tête configurées (preconnect, stylesheet, preload,
+ * etc.)
  */
-function generate_style_theme_preprocess_node(&$variables) {
-  $entityNodeRoute = 'entity.node.canonical';
-  $entityFormEdit = 'entity.node.edit_form';
-  $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
-  // dump($variables);
-  if (!$variables['page'] && $variables['view_mode'] == 'default' && !empty($user) && in_array('administrator', $user->getRoles())) {
-    $request = \Drupal::request();
-    $destination = $request->getRequestUri();
-    /**
-     *
-     * @var \Drupal\Node\Entity\node $node
-     */
-    $node = $variables['elements']['#node'];
-    $variables['content']['onglets'] = [
-      '#theme' => 'menu_local_tasks',
-      '#weight' => -40,
-      '#secondary' => [
-        [
-          "#theme" => "menu_local_task",
-          '#link' => [
-            'title' => 'Voir',
-            'url' => \Drupal\Core\Url::fromRoute($entityNodeRoute, [
-              'node' => $node->id()
-            ]),
-            'localized_options' => []
-          ],
-          "#active" => true,
-          "#weight" => 100,
-          '#access' => true
-        ],
-        [
-          "#theme" => "menu_local_task",
-          '#link' => [
-            'title' => 'Modifier',
-            'url' => \Drupal\Core\Url::fromRoute($entityFormEdit, [
-              'node' => $node->id()
-            ], [
-              'query' => array(
-                'destination' => $destination
-              )
-            ]),
-            'localized_options' => []
-          ],
-          "#active" => false,
-          "#weight" => 100,
-          '#access' => true
-        ]
-      ]
+function generate_style_theme_page_attachments(array &$attachments) {
+  $config = \Drupal::config('generate_style_theme.settings');
+  $header_tags = $config->get('header_tags') ?: [];
+  
+  foreach ($header_tags as $tag) {
+    $type = $tag['type'] ?? '';
+    $href = $tag['href'] ?? '';
+    $crossorigin = $tag['crossorigin'] ?? '';
+    $as = $tag['as'] ?? '';
+    $media = $tag['media'] ?? '';
+    
+    if (empty($type) || empty($href)) {
+      continue;
+    }
+    
+    switch ($type) {
+      case 'preconnect':
+        $element = [
+          '#tag' => 'link',
+          '#attributes' => [
+            'rel' => 'preconnect',
+            'href' => $href
+          ]
+        ];
+        if (!empty($crossorigin)) {
+          $element['#attributes']['crossorigin'] = ($crossorigin === 'anonymous') ? 'anonymous' : TRUE;
+        }
+        $key = 'preconnect_' . md5($href);
+        break;
+      
+      case 'stylesheet':
+        $element = [
+          '#tag' => 'link',
+          '#attributes' => [
+            'rel' => 'stylesheet',
+            'href' => $href
+          ]
+        ];
+        if (!empty($media)) {
+          $element['#attributes']['media'] = $media;
+        }
+        if (!empty($crossorigin)) {
+          $element['#attributes']['crossorigin'] = ($crossorigin === 'anonymous') ? 'anonymous' : TRUE;
+        }
+        $key = 'stylesheet_' . md5($href);
+        break;
+      
+      case 'preload':
+        $element = [
+          '#tag' => 'link',
+          '#attributes' => [
+            'rel' => 'preload',
+            'href' => $href,
+            'as' => $as
+          ]
+        ];
+        if (!empty($crossorigin)) {
+          $element['#attributes']['crossorigin'] = ($crossorigin === 'anonymous') ? 'anonymous' : TRUE;
+        }
+        if (!empty($media)) {
+          $element['#attributes']['media'] = $media;
+        }
+        $key = 'preload_' . md5($href . $as);
+        break;
+      
+      case 'dns-prefetch':
+        $element = [
+          '#tag' => 'link',
+          '#attributes' => [
+            'rel' => 'dns-prefetch',
+            'href' => $href
+          ]
+        ];
+        $key = 'dns-prefetch_' . md5($href);
+        break;
+      
+      default:
+        // Type inconnu, on ignore.
+        continue 2;
+    }
+    
+    // Ajout dans le head.
+    $attachments['#attached']['html_head'][] = [
+      $element,
+      $key
     ];
   }
 }
-
 
 
 

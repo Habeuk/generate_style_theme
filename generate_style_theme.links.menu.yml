@@ -51,3 +51,11 @@ entity.filesmailstyle.collection:
   description: "List of filesmailstyles."
   route_name: entity.filesmailstyle.collection
   parent: entity.files_style.collection
+
+generate_style_theme.manage_headers:
+  title: Manage headers
+  description: Permet de gerer les données ajouté en entete
+  parent: generate_style_theme.config_tab1
+  route_name: generate_style_theme.manage_headers
+  weight: 10
+  

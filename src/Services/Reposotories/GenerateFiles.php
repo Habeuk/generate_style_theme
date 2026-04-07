@@ -196,7 +196,7 @@ mail-style:
     // On copie tous les fichiers present dans wbu-atomique-generate-theme, sauf
     // le dossier node_modules.
     if ($return_var === 0) {
-      $script = ' mkdir ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
+      $script = ' mkdir -p ' . $this->themePath . '/' . $this->themeName . '/wbu-atomique-theme';
       foreach ($outputs as $output) {
         if ($output !== 'node_modules') {
           if ($script) {

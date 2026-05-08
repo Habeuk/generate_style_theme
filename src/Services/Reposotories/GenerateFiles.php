@@ -193,6 +193,10 @@ mail-style:
     $outputs = '';
     $return_var = '';
     exec($cmd . " 2>&1", $outputs, $return_var);
+    $themaPath = $this->themePath . '/' . $this->themeName;
+    if(!is_writable($themaPath)){
+        \Drupal::messenger()->addError("Les fichiers du theme sont incomplet, car Le dossier n'est pas accessble en ecriture : ".$themaPath);
+    }
     // On copie tous les fichiers present dans wbu-atomique-generate-theme, sauf
     // le dossier node_modules.
     if ($return_var === 0) {

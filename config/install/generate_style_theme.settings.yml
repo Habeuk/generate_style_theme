@@ -9,5 +9,5 @@ tab1:
   vendor_import: 
     scss: ''
     js: 'import "@stephane888/wbu-atomique/js/bootstrap/all.js";'
-    load_custom_in_vendor: true
+    load_custom_in_vendor: false
   
